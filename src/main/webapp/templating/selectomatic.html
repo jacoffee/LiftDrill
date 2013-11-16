@@ -1,0 +1,38 @@
+<lift:surround with="default" at="content">
+    <p>
+        On this page, we'll allow the user to select a series
+        of &lt;div&gt; tags to display based on the results
+        of a form submission.
+    </p>
+
+    <div>
+        <form data-lift="DivSelector.populate?form=post">
+            <div class="line">
+                &lt;div&gt; number <span class="number"></span> visible
+                <input class="checkbox">
+                <br>
+            </div>
+            <input type="submit" value="Update Page">
+        </form>
+    </div>
+
+    <div data-lift="DivSelector.select">
+        <div id="num_0">This is div 0</div>
+        <div id="num_1">This is div 1</div>
+        <div id="num_2">This is div 2</div>
+        <div id="num_3">This is div 3</div>
+        <div id="num_4">This is div 4</div>
+        <div id="num_5">This is div 5</div>
+    </div>
+    <br>
+    <br>
+
+    <p>
+        The code to store the state of the div tags is:
+    <div data-lift="github?file=net/liftweb/example/snippet/DivSelector.scala&lines=27-27"></div>
+
+    And to select the div tags:
+    <div data-lift="github?file=net/liftweb/example/snippet/DivSelector.scala&lines=41-51"></div>
+    </p>
+
+</lift:surround>
