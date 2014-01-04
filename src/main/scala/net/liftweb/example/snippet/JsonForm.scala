@@ -36,7 +36,7 @@ class JsonForm {
 		//def jQuery = SHtml.a(() => , body, attrs)
 		// scala.xml.NodeSeq
 		// 默认调用 json的 apply方法 
-		def show = "#form" #> ((ns: NodeSeq) =>  SHtml.jsonForm(json, ns))
+		def show = "#form" #> ((ns: NodeSeq) =>  SHtml.jsonForm(json, Alert("成功提交"), ns))
 
 		//def show(xhtml: NodeSeq): NodeSeq = xhtml
 		object json extends JsonHandler {

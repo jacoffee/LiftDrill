@@ -4,8 +4,12 @@
 	</lift:bind-at>
 	
 	<h2>JSON Form</h2>
+	<!-- 这个form  相当于<form id="myForm" method="POST">标签  -->
 	<div id="form" data-lift="JsonForm.show">
-	       <!--  JsonForm 的转换流程  { "title" : xxx, "publisher": yyy } -->
+	       <!--
+	                JsonForm 的转换流程  { "title" : xxx, "publisher": yyy }
+	               所以后台有 params("title")
+	        -->
 		<p>
 			Book Name: <br /> <input type="text" name="title" />
 		</p>
