@@ -1,0 +1,35 @@
+<lift:surround with="default" at="content">
+  <p>
+    Lift supports lazy loading of a snippet.  This is
+    useful when a snippet may take a long time to render,
+    but you want to return the page to the browser quickly.
+  </p>
+
+  
+  <div data-lift="lazy-load">
+    <div class="lift:LongTime"></div>
+  </div>
+
+  <div data-lift="lazy-load">
+    <div class="lift:LongTime"></div>
+  </div>
+
+  <div data-lift="lazy-load">
+    <div class="lift:LongTime"></div>
+  </div>
+
+  <div data-lift="lazy-load">
+    <div class="lift:LongTime"></div>
+  </div>
+
+    <hr>
+
+    <p>The Markup:</p>
+    <div data-lift="github?file=src/main/webapp/lazy.html&lines=9-11"></div>
+
+
+    <p>The Scala Code:</p>
+    <div data-lift="github?file=net/liftweb/example/snippet/LongTime.scala&lines=22-32"></div>
+
+
+</lift:surround>

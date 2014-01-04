@@ -1,0 +1,22 @@
+<lift:surround with="default" at="content">
+  <center><b>JSON Samples</b></center>
+  <br>
+  <div data-lift="Json.sample">
+    <div id="jsonscript"></div>
+    <textarea id="json_question" rows="8" cols="50"></textarea>
+    <br>
+    <select id="json_select">
+      <option value="show">Show</option>
+      <option value="textile">Show in Textile</option>
+      <option value="count">Count Characters</option>
+      <option value="error">Show an error</option>
+    </select>
+    <br >
+    <button class="json">Click Me</button>
+    <div id="json_result"></div>
+  </div>
+
+  <p>Here's the code:</p>
+
+  <div data-lift="github?file=net/liftweb/example/snippet/Json.scala&lines=29-48"></div>
+</lift:surround>

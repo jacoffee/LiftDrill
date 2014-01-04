@@ -1,6 +1,6 @@
 import com.typesafe.sbt.SbtStartScript 
 
-name := "Lift 2.5 samples"
+name := "LiftDrill"
 
 version := "0.0.1"
 
@@ -27,6 +27,9 @@ libraryDependencies ++= {
     "net.liftweb"       %% "lift-webkit"        % liftVersion        % "compile",
     "net.liftweb"       %% "lift-wizard"        % liftVersion        % "compile",
     "net.liftweb"       %% "lift-mapper"        % liftVersion        % "compile",
+    "net.liftweb"        %% "lift-mongodb-record"    % liftVersion  % "compile",
+    "net.liftweb"        %% "lift-mongodb"    % liftVersion  % "compile",
+    "net.liftweb"        %% "lift-record"    % liftVersion  % "compile",
     "net.liftmodules"   %% "textile_2.5"        % "1.3"      % "compile",
     "net.liftmodules"   %% "widgets_2.5"        % "1.3"      % "compile",
     "org.eclipse.jetty" % "jetty-webapp"        % "8.1.10.v20130312" % "compile,container,test",

@@ -1,0 +1,98 @@
+<lift:surround with="default" at="content">
+  <center><b>More JSON Samples</b></center>
+  <br >
+  <span data-lift="AllJson"></span>
+
+  <div>
+    <script>
+      // <![CDATA[
+        function callNoParam() {
+          noParam("noParamCallback");
+        }
+
+        function noParamCallback() {
+          alert("the server called me back... woo hoo!");
+        }
+      // ]]>
+    </script>
+    This example calls the <code>noParam</code> function which
+    invokes a server-side JSON call that then calls a handler
+    back in the browser.  
+    <button onclick="javascript:callNoParam()">Press Me</button>
+
+    <br>
+    The client-side JavaScript for looks like:
+    <div data-lift="github?file=src/main/webapp/json_more.html&lines=7-17"></div>
+  </div>
+
+  <hr>
+  
+  <div>
+    <script>
+      // <![CDATA[
+        function stringSender() {
+          var q = jQuery("#myField")[0];
+          var v = q.value;
+          oneString("stringCallback", v);
+        }
+
+        function stringCallback(what) {
+          jQuery("#dest")[0].innerHTML = "The server said: "+what;
+        }
+      // ]]>
+    </script>
+
+    Let's send the contents of a test field and process it:
+
+    <input id="myField">
+    <button onclick="javascript:stringSender()">Press Me</button>
+    <br>
+    <div id="dest"></div>
+    <br>
+    The Script to do this is:
+    <div data-lift="github?file=src/main/webapp/json_more.html&lines=31-43"></div>
+
+  </div>
+
+  <hr >
+  
+  <div>
+    <script>
+      // <![CDATA[
+        function parseAndSend() {
+          var q = jQuery("#numbers")[0];
+          var v = q.value;
+          var ww = v.split(/,/);
+          for (var i = 0; i < ww.length; i++) {
+            ww[i] = parseInt(ww[i]);
+          }
+          addOne("addOneCallback", ww);
+        }
+
+        function addOneCallback(what) {
+          alert("Server sez: "+what);
+        }
+      // ]]>
+    </script>
+    
+    
+    Let's send some numbers to the server and have the server
+    add 1 to each of the numbers.
+    <br >
+    Enter comma separated numbers:
+    <input id="numbers" style="width: 300px;">
+    <button onclick="parseAndSend()">Click Me</button>
+  </div>
+  
+  <hr>
+
+
+  <div>
+    The server-side code looks like:
+
+    <div data-lift="github?file=net/liftweb/example/snippet/AllJson.scala&lines=50-63"></div>
+
+
+  </div>
+
+</lift:surround>

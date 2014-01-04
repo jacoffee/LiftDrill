@@ -1,0 +1,26 @@
+<html lift:content_id="main">
+<head>
+    <title>Lift Example</title>
+</head>
+<body>
+<div id="main" class="lift:surround?with=default;at=content">
+
+    <p>
+        Lift evaluates the &lt;lift:xxx/&gt; tags from the outside in, otherwise
+        knows as lazy evaluation. This means that the following code will only
+        embed a single template:
+
+        <span data-lift="github.js"></span>
+    <pre class="prettyprint lang-html"><code>&lt;lift:TestCond.loggedout&gt;<br/>  &lt;lift:embed what=&quot;/templates/_login_panel&quot;/&gt;<br/>&lt;/lift:TestCond.loggedout&gt;<br/><br/>&lt;lift:TestCond.loggedin&gt;<br/>  &lt;lift:embed what=&quot;/templates/_welcome_message&quot;/&gt;<br/>&lt;/lift:TestCond.loggedin&gt;</code></pre>
+
+    Depending on if the user is logged in.
+    </p>
+
+    <p>
+        This also means that a snippet may return XML that
+        contains other snippet tags.
+    </p>
+</div>
+</body>
+</html>
+

@@ -1,0 +1,37 @@
+<lift:surround with="default" at="content">
+	<head>
+			<script type="text/javascript" src="/classpath/jlift.js" ></script>
+			<lift:snippet type="JsonForm.head" ></lift:snippet>
+			<lift:snippet type="JsonForm.play" ></lift:snippet>
+	</head>
+
+	<lift:bind-at name="second">
+			<p>Wow, I am going elsewhere!</p>
+	</lift:bind-at>
+	
+	<h2>JSON Form</h2>
+	
+	<div id="form" data-lift="JsonForm.show">
+		<p>
+			Book Name: <br /> <input type="text" name="title" />
+		</p>
+		<p>
+			Publisher: <br /> <select name="publisher">
+				<option value="manning">Manning</option>
+				<option value="penguin">Penguin</option>
+				<option value="bbc">BBC</option>
+			</select>
+		</p>
+		<p>
+			<input type="submit" />
+		</p>
+	</div>
+	<hr />
+	<h2>JSON Result</h2>
+	<div id="json_result"></div>
+
+        <div data-lift="jQuery">
+                     <input id="content"  / >
+        </div>
+
+</lift:surround>
