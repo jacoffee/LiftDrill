@@ -32,7 +32,6 @@ class JsonForm {
 		def head = Script(json.jsCmd) 
 		
 		// net.liftweb.http.js.JsCmds.Run
-		def play= Script(Run("你是个大傻逼"))
 		
 		//def jQuery = SHtml.a(() => , body, attrs)
 		// scala.xml.NodeSeq
@@ -40,13 +39,11 @@ class JsonForm {
 		def show = "#form" #> ((ns: NodeSeq) =>  SHtml.jsonForm(json, ns))
 
 		//def show(xhtml: NodeSeq): NodeSeq = xhtml
-		
 		object json extends JsonHandler {
 				def apply(in: Any): JsCmd =
 						SetHtml("json_result", in match {
-							case JsonCmd("processForm", _, params: Map[String, Any], _) => 
-							  	<p>Publisher: {params("publisher")}, 
-							  	Title: {params("title")}</p>
+							case JsonCmd("processForm", _, params: Map[String, _], _) => 
+							  	<p>Publisher: { params("publisher") },  Title: { params("title") }</p>
 							case x =>
 								<span class="error">Unknown error: {x}</span>
 						})
