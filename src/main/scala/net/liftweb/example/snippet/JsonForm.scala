@@ -28,7 +28,7 @@ import js._
 import JsCmds._
 
 class JsonForm {
-  
+		import net.liftweb.builtin.snippet.CSS
 		def head = Script(json.jsCmd) 
 		
 		// net.liftweb.http.js.JsCmds.Run
