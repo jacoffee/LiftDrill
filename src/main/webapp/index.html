@@ -47,13 +47,10 @@
         the compiler
         catches type errors. For example:<br/>
 
-    <span data-lift="github.js"></span>
     <pre class="prettyprint">
 	<code>User.find(By(User.email, "foo@bar.com")) // legal</code>
 	<code>User.find(By(User.birthday, new Date("Jan 4, 1975"))) // legal</code>
 	<code>User.find(By(User.birthday, "foo@bar.com")) // compiler error</code>
     </pre>
-
    </div>
-    <p><i>Lift</i> is an open source project distributed under an Apache License V2.0</p>
 </lift:surround>
