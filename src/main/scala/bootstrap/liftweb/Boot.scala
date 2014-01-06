@@ -151,12 +151,7 @@ class Boot {
         Menu(Loc("login", Link(List("login"), true, "/login/index"),
           <xml:group>Requiring Login<strike>SiteMap</strike> </xml:group>)),
         Menu("Counting") / "count"
-        ),
-      Menu(Loc("lift", ExtLink("http://liftweb.net"), <xml:group>
-        <i>Lift</i>
-        project home</xml:group>)),
-      Menu(Loc("src", ExtLink(s"https://github.com/${SourceConfig.path}"), "Source code for this site"))
-
+        )
     )
   }
 
