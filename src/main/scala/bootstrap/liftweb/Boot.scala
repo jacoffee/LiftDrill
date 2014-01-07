@@ -29,7 +29,7 @@ import net.liftweb.sitemap.Loc.Test
  * A class that's instantiated early and run.  It allows the application
  * to modify lift's environment
  */
-class Boot {
+class Boot extends Bootable{
 
   def boot {
     // where to search snippet
@@ -79,17 +79,21 @@ class Boot {
     DB.defineConnectionManager(DefaultConnectionIdentifier, DBVendor)
     Schemifier.schemify(true, Schemifier.infoF _, Person, User)
 
+    initSnippetDisapatch
+  }
+
+  private def initSnippetDisapatch {
+	  LiftRules.snippetDispatch.append {
+		case "JSoup" => net.liftweb.example.snippet.JSoup
+	  }
   }
 
   object MenuInfo {
-    //     
-    //    Menu("BookList") / "book",
-    //       Menu("登陆") / "mylogin",
     def sitemap = SiteMap(
 		      Menu("Home") / "index" >> Hidden,
 		      Menu("Stuff") / "interactive",
 		      Menu("Persistence") / "persistence",
-		      Menu("Templating") / "templating"
+		      Menu("Jsoup") / "jsoup"
     	)
   }
 
