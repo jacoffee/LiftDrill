@@ -84,7 +84,7 @@ class Boot extends Bootable{
 
   private def initSnippetDisapatch {
 	  LiftRules.snippetDispatch.append {
-		case "JSoup" => net.liftweb.example.snippet.JSoup
+		case "JSoup" => net.liftweb.example.snippet.Scraper
 	  }
   }
 
@@ -93,7 +93,7 @@ class Boot extends Bootable{
 		      Menu("Home") / "index" >> Hidden,
 		      Menu("Stuff") / "interactive",
 		      Menu("Persistence") / "persistence",
-		      Menu("Jsoup") / "jsoup"
+		      Menu("Scraper") / "scraper"
     	)
   }
 
