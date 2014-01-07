@@ -4,117 +4,113 @@
 	<title data-lift="Menu.title">Lift Web Framework: %*%</title>
 	<link rel="stylesheet"  type="text/css" href="/css/index.css">
 	<style type="text/css">
-        body {
-              font: 13px Helvetica, Tahoma, Arial, sans-serif;
-              height: 100%;
-        }
-	.container {
-		width: 920px;
-		position: relative;
-		left: 15%;
-	}
-	#logo:hover {
-		opacity: 0.8;
-	}
-	#logo:hover #logo-mark {
-		-moz-transform: rotate(360deg);
-		transform: rotate(360deg);
-	}
-	#logo-mark {
-		float: left;
-		margin: 0 15px 0 0;
-		transition: all 0.6s ease-in-out;
-	}
-	.mainbody {
-		margin-top: 20px;
-	}
-	.group {
+	    body {
+			width: 920px;
+			height: 100%;
+			margin: 50px auto;
+	    }
+		.container {
+		}
+		#logo-type:hover {
+			opacity: 0.8;
+		}
+		#logo-mark:hover {
+			-moz-transform: rotate(360deg);
+			transform: rotate(360deg);
+		}
+		#logo-mark {
+			float: left;
+			margin: 0 15px 0 0;
+			transition: all 0.6s ease-in-out;
+		}
+		.mainbody {
+			margin-top: 20px;
+		}
+		.group {
 	       padding: 5px;
-	}
-	/*好好研究  清除浮动的方案*/
-	.group:after {
-	    clear: both;
-	    content: ".";
-	    display: block;
-	    height: 0;
-	    visibility: hidden;
-	}
-	#logo-type {
-	       margin-top: 10px;
-	}
-	widget {
-	        border:1px solid #ccc;
-	        background:#f5f5f5;
-	        padding:5px;
-	        margin:10px 0 0 0;
-	        font-size:8pt;
-	}
-	.sidebar {
-	       float: right;
-	}
-	.sidebar ul {
-	        width: 100%;
-                float: left;
-                list-style: none;
-	}
-	.sidebar ul li {
-	        padding:0;
-	        list-style:none;
-	        border-bottom:none;
-	        float: left;
-	}
-	.sidebar ul li ul li {
-	        margin:0;
-	        padding:0;
-	        border-style: none;
-	        list-style-type: square;
-	        list-style-position: inside;
-	        padding-left: 10px;
-	}
-	.sidebar ul li ul li a {
-	        display: inline;
-	}
-	.sidebar ul li ul {
-	        margin: 0;
-	        border-bottom: none;
-	}
-	.sidebar ul li a {
-	        display:block;
-	        padding:3px 5px;
-	        text-indent:10px;
-	        text-decoration:none;
-	        border-radius: 5px;
-	        transition: background 0.3 ease-in-out;
-	        color: rgba(255, 255, 255, 0.7);
-	}
-	.sidebar ul li a:hover {
-	        background: none repeat scroll 0 0 rgba(255, 255, 255, 0.3);
-                color: #FFFFFF;
-	}
-	.lift_error {
-	        color: red;
-	}
-	.bg {
-	        background-color: #EEEEEE;
-	}
-	.logo {
-	        -moz-transform: rotate(360deg);
-	        transform: rotate(360deg);
-	}
-	/* JsonForm page*/
-	a.foo {
-	        padding: 5px 10px;
-	        background: #9c3;
-	        -webkit-transition: background .3s ease, color 0.2s linear;
-	        -moz-transition: background .3s ease, color 0.2s linear;
-	        -o-transition: background .3s ease, color 0.2s linear;
-	        transition: background .3s ease, color 0.2s linear;
-	}
-	a.foo:hover,
-	a.foo:focus {
-	        color: #030;
-	        background: #690;
-	}
+		}
+		/*好好研究  清除浮动的方案*/
+		.group:after {
+		    clear: both;
+		    content: ".";
+		    display: block;
+		    height: 0;
+		    visibility: hidden;
+		}
+		#logo-type {
+			margin-top: 10px;
+		}
+		widget {
+			border:1px solid #ccc;
+			background:#f5f5f5;
+			padding:5px;
+			margin:10px 0 0 0;
+		}
+		.sidebar {
+			float: right;
+		}
+		.sidebar ul {
+			width: 100%;
+			float: left;
+			list-style: none;
+		}
+		.sidebar ul li {
+			padding:0;
+			list-style:none;
+			border-bottom:none;
+			float: left;
+		}
+		.sidebar ul li ul li {
+			margin:0;
+			padding:0;
+			border-style: none;
+			list-style-type: square;
+			list-style-position: inside;
+			padding-left: 10px;
+		}
+		.sidebar ul li ul li a {
+			display: inline;
+		}
+		.sidebar ul li ul {
+			margin: 0;
+			border-bottom: none;
+		}
+		.sidebar ul li a {
+			display:block;
+			padding:3px 5px;
+			text-indent:10px;
+			text-decoration:none;
+			border-radius: 5px;
+			transition: background 0.3 ease-in-out;
+			color: rgba(255, 255, 255, 0.7);
+		}
+		.sidebar ul li a:hover {
+			background: none repeat scroll 0 0 rgba(255, 255, 255, 0.3);
+			color: #FFFFFF;
+		}
+		.lift_error {
+			color: red;
+		}
+		.bg {
+			background-color: #EEEEEE;
+		}
+		.logo {
+			-moz-transform: rotate(360deg);
+			transform: rotate(360deg);
+		}
+		/* JsonForm page*/
+		a.foo {
+			padding: 5px 10px;
+			background: #9c3;
+			-webkit-transition: background .3s ease, color 0.2s linear;
+			-moz-transition: background .3s ease, color 0.2s linear;
+			-o-transition: background .3s ease, color 0.2s linear;
+			transition: background .3s ease, color 0.2s linear;
+		}
+		a.foo:hover, a.foo:focus {
+			color: #030;
+			background: #690;
+		}
 	</style>
 	<script id="jquery" type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
 	<script id="json" src="/classpath/json.js" type="text/javascript"></script>
@@ -122,15 +118,14 @@
 <body>
 
 <div class="container">
-	<div id="logo" class="group"   style="border:1px  solid #EEE ">
+	<div id="logo" class="group">
         	<img src="/images/moon.png"  alt="logo"  id="logo-mark"></img>
         	<img src="/images/type.png" alt="Things You Left On Moon" id="logo-type"></img>
         	 <div class="sidebar">
                          <div data-lift="menu.builder"></div>
                  </div>
 	</div>
-
-    <div class="mainbody bg"  style="border:1px  solid red">
+    <div class="mainbody bg">
 		<lift:bind name="content"></lift:bind>
     </div>
 </div>
