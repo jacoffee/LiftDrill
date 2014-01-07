@@ -7,7 +7,7 @@
 	    body {
 			width: 920px;
 			height: 100%;
-			margin: 50px auto;
+			margin: 20px auto;
 	    }
 		.container {
 		}
@@ -15,16 +15,20 @@
 			opacity: 0.8;
 		}
 		#logo-mark:hover {
+			-webkit-transform: rotate(360deg);
 			-moz-transform: rotate(360deg);
 			transform: rotate(360deg);
 		}
 		#logo-mark {
 			float: left;
 			margin: 0 15px 0 0;
+			-webkit-transition: all 0.6s ease-in-out;
 			transition: all 0.6s ease-in-out;
 		}
 		.mainbody {
 			margin-top: 20px;
+			text-indent: 10px;
+			padding: 3px;
 		}
 		.group {
 	       padding: 5px;
@@ -76,11 +80,12 @@
 			border-bottom: none;
 		}
 		.sidebar ul li a {
-			display:block;
-			padding:3px 5px;
-			text-indent:10px;
+			/*display: block 导致左右不一样宽*/
+			padding:3px 10px;
 			text-decoration:none;
 			border-radius: 5px;
+			-moz-transition: background-color 0.3 ease-in-out;
+			-webkit-transition: background-color 0.3 ease-in-out;
 			transition: background 0.3 ease-in-out;
 			color: rgba(255, 255, 255, 0.7);
 		}
@@ -92,7 +97,7 @@
 			color: red;
 		}
 		.bg {
-			background-color: #EEEEEE;
+			background-color: rgba(255, 255, 255, 0.7);
 		}
 		.logo {
 			-moz-transform: rotate(360deg);
