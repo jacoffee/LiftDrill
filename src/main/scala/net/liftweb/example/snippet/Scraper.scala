@@ -20,6 +20,7 @@ object Scraper extends DispatchSnippet {
 		case "extractAttr"  => extractAttr
 		case "htCity" => htCity
 		case "wordsParser" => wordsParser
+		case  "responsiveNav" => responsiveNav
 	}
 
 	val baseUrlOfXJH = "http://xjh.haitou.cc"
@@ -81,19 +82,23 @@ object Scraper extends DispatchSnippet {
 	} 
 
 	def htCity(xhtml: NodeSeq): NodeSeq = {
-		getCityNamesAndUrls(buildConnection(baseUrlOfXJH),cityLoc).map { 
-			case (cityText, cityUrl) => {
+		val cityInfo = getCityNamesAndUrls(buildConnection(baseUrlOfXJH),cityLoc).map {
+				case (cityText, cityUrl) => {
 				<div>
 					<a href={ cityUrl } target="_blank" class="city">{ cityText }</a>
 					{
-						getUniversityInCity(cityUrl).map { case (universityText, universityUrl) =>
-							<a href={ universityUrl } target="_blank">{ universityText }</a> 
+							getUniversityInCity(cityUrl).map { case (universityText, universityUrl) =>
+								<a href={ universityUrl } target="_blank">{ universityText }</a> 
+							}
 						}
-					}
 				</div>
-			}
-			case _ => <p>爬取失败</p>
+				}
+				case _ => <p>爬取失败</p>
 		}
+		<div id="projects">
+			<h2>projects</h2>
+			{ cityInfo }
+		</div>
 	}
 
 	def wordsParser(xhtml: NodeSeq): NodeSeq = {
@@ -111,8 +116,8 @@ object Scraper extends DispatchSnippet {
 		// raw analyzer
 		<div>
 		{
-			val fileSrc = Jsoup.parse(new File("C:\\Users\\qbt\\Desktop\\test.txt"), "GBK")
-			analyzer.getTerms(fileSrc.toString).toList.mkString("\n")
+			val fileSrc = Jsoup.parse(new File("C:\\Users\\Administrator\\Desktop\\test.txt"), "GBK")
+			analyzer.getTerms(fileSrc.text).toList.mkString("\n")
 		}
 		</div>
 	}
