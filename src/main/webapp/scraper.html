@@ -1,5 +1,10 @@
 <lift:surround with="default" at="content">
-  	<!-- info scrape with JSoup -->
-	<lift:snippet type="Scraper:wiki"  />  
-	<lift:snippet type="Scraper:htmlParser" />
+	<!-- info scrape with JSoup -->
+	<lift:snippet type="Scraper:wiki"></lift:snippet>
+	<hr>  
+	<lift:snippet type="Scraper:stringToHtml"></lift:snippet>
+	<hr>
+	<lift:snippet type="Scraper:extractAttr"></lift:snippet>
+	<hr>
+	<!-- <lift:snippet type="Scraper:htCity"></lift:snippet> -->
 </lift:surround>
