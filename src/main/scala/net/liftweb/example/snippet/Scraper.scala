@@ -5,6 +5,13 @@ import net.liftweb.http.DispatchSnippet
 import scala.xml.NodeSeq
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.apache.lucene.analysis.cn.smart.SmartChineseAnalyzer
+import org.apache.lucene.util.Version
+import org.apache.lucene.analysis.WordlistLoader
+import org.apache.lucene.analysis.Analyzer
+import java.io.StringReader
+import org.apache.lucene.analysis.tokenattributes.CharTermAttribute
+import java.io.File
 
 object Scraper extends DispatchSnippet {
 	def dispatch = {
@@ -12,6 +19,7 @@ object Scraper extends DispatchSnippet {
 		case "stringToHtml"  => stringToHtml 
 		case "extractAttr"  => extractAttr
 		case "htCity" => htCity
+		case "wordsParser" => wordsParser
 	}
 
 	val baseUrlOfXJH = "http://xjh.haitou.cc"
@@ -20,7 +28,7 @@ object Scraper extends DispatchSnippet {
 	def buildConnection(baseUrl: String) = {
 		Jsoup.connect(baseUrl).timeout(defaultTimeout).userAgent("Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:25.0) Gecko/20100101 Firefox/25.0").get
 	} 
-		
+
 	def getCityNamesAndUrls(ele: Document, cityLoc: String) = ele.select(cityLoc).map{ alink => (alink.text, s"${baseUrlOfXJH}${alink.attr("href")}") }.toList
 	def getUniversityInCity(cityUrl: String) = {
 		val doc = buildConnection(cityUrl)
@@ -44,7 +52,7 @@ object Scraper extends DispatchSnippet {
 		}
 		</div>
 	}
-	
+
 	def stringToHtml(xhtml: NodeSeq): NodeSeq = {
 		val html = "<html><head><title>First parse</title></head><body><p>Parsed HTML into a doc.</p></body></html>"
 		val document = Jsoup.parse(html)
@@ -83,8 +91,30 @@ object Scraper extends DispatchSnippet {
 						}
 					}
 				</div>
-			} 
+			}
+			case _ => <p>爬取失败</p>
 		}
+	}
+
+	def wordsParser(xhtml: NodeSeq): NodeSeq = {
+		
+		implicit class RichAnalyzer[AnalyzerType <: Analyzer](poorAnalyzer: AnalyzerType) {
+			def getTerms(text: String) = {
+				val stream = poorAnalyzer.reusableTokenStream("", new StringReader(text))
+				val charTermAttribute = stream.addAttribute(classOf[CharTermAttribute])
+				Stream.continually((stream.incrementToken, charTermAttribute.toString)).takeWhile(_._1).map(_._2)
+			}
+		}
+		// lucene smart chinese parse
+		// analyzer
+		val analyzer = new SmartChineseAnalyzer(Version.LUCENE_34,  WordlistLoader.getWordSet(new File("D:\\stopwords.txt"), "//"))
+		// raw analyzer
+		<div>
+		{
+			val fileSrc = Jsoup.parse(new File("C:\\Users\\qbt\\Desktop\\test.txt"), "GBK")
+			analyzer.getTerms(fileSrc.toString).toList.mkString("\n")
+		}
+		</div>
 	}
 }
 
