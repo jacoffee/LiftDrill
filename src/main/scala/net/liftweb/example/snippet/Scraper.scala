@@ -20,7 +20,6 @@ object Scraper extends DispatchSnippet {
 		case "extractAttr"  => extractAttr
 		case "htCity" => htCity
 		case "wordsParser" => wordsParser
-		case  "responsiveNav" => responsiveNav
 	}
 
 	val baseUrlOfXJH = "http://xjh.haitou.cc"
@@ -88,7 +87,7 @@ object Scraper extends DispatchSnippet {
 					<a href={ cityUrl } target="_blank" class="city">{ cityText }</a>
 					{
 							getUniversityInCity(cityUrl).map { case (universityText, universityUrl) =>
-								<a href={ universityUrl } target="_blank">{ universityText }</a> 
+								<a href={ universityUrl } target="_blank">{ universityText }&#x0020;&#x0020;</a>
 							}
 						}
 				</div>
@@ -110,14 +109,15 @@ object Scraper extends DispatchSnippet {
 				Stream.continually((stream.incrementToken, charTermAttribute.toString)).takeWhile(_._1).map(_._2)
 			}
 		}
+		val file = Option(new File("C:\\Users\\qbt\\Desktop\\test.txt")).getOrElse(new File("/test.txt"))
 		// lucene smart chinese parse
 		// analyzer
 		val analyzer = new SmartChineseAnalyzer(Version.LUCENE_34,  WordlistLoader.getWordSet(new File("D:\\stopwords.txt"), "//"))
 		// raw analyzer
 		<div>
 		{
-			val fileSrc = Jsoup.parse(new File("C:\\Users\\Administrator\\Desktop\\test.txt"), "GBK")
-			analyzer.getTerms(fileSrc.text).toList.mkString("\n")
+			val fileSrc = Jsoup.parse(file, "GBK")
+			analyzer.getTerms(fileSrc.text).toList.mkString("\r\n")
 		}
 		</div>
 	}

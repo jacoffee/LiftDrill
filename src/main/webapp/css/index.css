@@ -1,10 +1,157 @@
-﻿	body {
-		background: url("../images/stars-1.png") repeat-x fixed -130% 0px, 
-					url("../images/stars-2.png") repeat-x fixed 40% 0px, 
-					url("../images/space-bg.png") repeat-x fixed -80% 0px, 
-					url("../images/clouds.png") repeat-x fixed 100% 0 #1A1A1A;
-		color: #222222;
-		font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-		font-size: 100%;
-	}
-	
+﻿body {
+	background: url("../images/stars-1.png") repeat-x fixed -130% 0px,
+		url("../images/stars-2.png") repeat-x fixed 40% 0px,
+		url("../images/space-bg.png") repeat-x fixed -80% 0px,
+		url("../images/clouds.png") repeat-x fixed 100% 0 #1A1A1A;
+	color: #222222;
+	font-family: "Times New Roman",Helvetica,Arial,sans-serif;
+	font-size: 100%;
+	width: 920px;
+	height: 100%;
+	margin: 20px auto;
+}
+h2 {
+     color: #f43c12;
+     font-size: 2.375em;
+     -webkit-font-smoothing: antialiased;
+     -moz-font-smoothing: antialiased;
+}
+a {
+	text-decoration: none;
+}
+
+#logo-type:hover {
+	opacity: 0.8;
+}
+#logo-mark:hover {
+	-webkit-transform: rotate(360deg);
+	-moz-transform: rotate(360deg);
+	transform: rotate(360deg);
+}
+#logo-mark {
+	float: left;
+	margin: 0 15px 0 0;
+	-webkit-transition: all 0.6s ease-in-out;
+	transition: all 0.6s ease-in-out;
+}
+.mainbody {
+	text-indent: 10px;
+	padding: 3px;
+	word-wrap: break-word;
+}
+.wikiTitle {
+	margin: 0 auto;
+}
+.wikiTitle a {
+	color: #666666;
+	display: block;
+	text-decoration: none;
+}
+.wikiTitle a:hover {
+	color: rgba(255, 255, 255, 0.6)
+}
+.group {
+      padding: 5px;
+}
+/*好好研究  清除浮动的方案*/
+.group:after {
+    clear: both;
+    content: ".";
+    display: block;
+    height: 0;
+    visibility: hidden;
+}
+#logo-type {
+	margin-top: 10px;
+}
+widget {
+	border:1px solid #ccc;
+	background:#f5f5f5;
+	padding:5px;
+	margin:10px 0 0 0;
+}
+.sidebar {
+	float: right;
+}
+.sidebar ul {
+	width: 100%;
+	float: left;
+	list-style: none;
+}
+.sidebar ul li {
+	padding:0;
+	list-style:none;
+	border-bottom:none;
+	float: left;
+}
+.sidebar ul li a {
+	/*display: block 导致左右不一样宽*/
+	padding:3px 10px;
+	text-decoration:none;
+	border-radius: 5px;
+	-moz-transition: background-color 0.3 ease-in-out;
+	-webkit-transition: background-color 0.3 ease-in-out;
+	transition: background 0.3 ease-in-out;
+	color: rgba(255, 255, 255, 0.7);
+}
+.sidebar ul li a:hover {
+	background: none repeat scroll 0 0 rgba(255, 255, 255, 0.3);
+	color: #FFFFFF;
+}
+
+/* submenu  display like cascade */
+.sidebar ul li ul {
+	margin: 0;
+	border-bottom: none;
+	display: none;
+}
+.sidebar ul li ul li {
+	margin:0;
+	padding:0;
+	border-style: none;
+	list-style-type: none;
+	float: none;
+}
+.sidebar ul li ul li a {
+	display: inline;
+}
+
+.lift_error {
+	color: red;
+}
+.bg {
+	background-color: rgba(255, 255, 255, 0.7);
+}
+.logo {
+	-moz-transform: rotate(360deg);
+	transform: rotate(360deg);
+}
+
+/* JsonForm page*/
+a.foo {
+	padding: 5px 10px;
+	background: #9c3;
+	-webkit-transition: background .3s ease, color 0.2s linear;
+	-moz-transition: background .3s ease, color 0.2s linear;
+	-o-transition: background .3s ease, color 0.2s linear;
+	transition: background .3s ease, color 0.2s linear;
+}
+a.foo:hover, a.foo:focus {
+	color: #030;
+	background: #690;
+}
+
+a.city {
+	display: block;
+}
+#projects:before, #projects:after {
+	display: table;
+	content: "";
+}
+#projects a {
+	color: #222;
+}
+
+
+/* Persistence Person List*/
+

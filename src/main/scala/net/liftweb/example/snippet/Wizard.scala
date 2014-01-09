@@ -99,7 +99,7 @@ class WizardChallenge extends Wizard {
   }
 }
 
-class PersonScreen extends LiftScreen {
+/*class PersonScreen extends LiftScreen {
 
   object person extends ScreenVar(Person.create)
 
@@ -120,7 +120,7 @@ class PersonScreen extends LiftScreen {
       S.notice(person.is.toString + " Saved in the database")
     }
   }
-}
+}*/
 
 object VariableScreenInfo {
 

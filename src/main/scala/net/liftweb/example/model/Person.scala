@@ -1,48 +1,70 @@
-/*
- * Copyright 2007-2013 WorldWide Conferencing, LLC
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package net.liftweb.example.model
 
-import _root_.net.liftweb._
-import mapper._
+import net.liftweb._
 import common._
 import util._
+import net.liftweb.mongodb.record.MongoRecord
+import net.liftweb.mongodb.record.field.ObjectIdPk
+import net.liftweb.mongodb.record.MongoMetaRecord
+import net.liftweb.record.field.StringField
+import net.liftweb.record.field.EnumField
+import net.liftweb.mongodb.Limit
+import net.liftweb.json.JsonDSL._
+import net.liftweb.mongodb.record.field.MongoPasswordField
+import net.liftweb.record.field.DateTimeField
+import java.util.Calendar
+import net.liftweb.mongodb.record.field.Password
+import net.liftweb.example.MongoConfig
+import net.liftweb.json.JsonAST.JObject
+import java.text.SimpleDateFormat
+import java.util.Date
 
-object Person extends Person with LongKeyedMetaMapper[Person]
+object Person extends Person with MongoMetaRecord[Person] {
+	override val mongoIdentifier = MongoConfig.DefaultMongoIdentifier
+	// sort accroding firstname
+	def getAllSortByFirstName = findAll(JObject(Nil),(firstName.name, 1) )
 
-class Person extends LongKeyedMapper[Person] with IdPK {
-  def getSingleton = Person
+	def numOfPeople = count
 
-  object firstName extends MappedString(this, 100) {
-    override def validations = valMinLen(2, "First name must be 2 characters long") _ :: super.validations
-  }
+	// list all fields Name
+	def listFieldsName = List(firstName, lastName, email, birthDate, personalityType).map(_.name)
+	def getPersonAttrs(person: Person) =  List(firstName, lastName, email, birthDate, personalityType)
 
-  object lastName extends MappedString(this, 100)
-
-  object personalityType extends MappedEnum(this, Personality)
-
+	def formatDate(date: Date) = {
+		val formatPattern = new SimpleDateFormat("yyyy-MM-dd HH:mm")
+		formatPattern.format(date)
+	}
+	def setCalendar = {
+		val calendar = Calendar.getInstance
+		calendar.set(2012, 1, 10, 12, 25, 12)
+		calendar
+	}
+	def dfltUser {
+		Person.firstName("xiao").
+			lastName("ming").
+			email("123456@163.com").
+			birthDate(Calendar.getInstance).
+			personalityType(Personality.TypeA).
+			password(Password(""))
+	}
 }
 
+class Person extends MongoRecord[Person] with ObjectIdPk[Person] {
+	def meta = Person
+	object firstName extends StringField[Person](this, 100)
+	object lastName extends StringField[Person](this, 100)
+	object password extends MongoPasswordField[Person](this, 30)
+	object email extends StringField[Person](this, 100)
+	object birthDate extends DateTimeField(this)
+	object personalityType extends EnumField(this, Personality)
+}
+
+// extends JsonObjectField[OwnerType, Password](rec, Password)
 object Personality extends Enumeration {
-  val TypeA = Value(1, "Type A")
-  val TypeB = Value(2, "Type B")
-  val ENTJ = Value(3, "ENTJ")
-  val INTJ = Value(4, "INTJ")
-
-  val allTypes = Array(TypeA, TypeB, ENTJ, INTJ)
-
-  def rand = allTypes(Helpers.randomInt(allTypes.length))
+	val TypeA = Value(1, "Type A")
+	val TypeB = Value(2, "Type B")
+	val ENTJ = Value(3, "ENTJ")
+	val INTJ = Value(4, "INTJ")
+	val allTypes = Array(TypeA, TypeB, ENTJ, INTJ)
+	def rand = allTypes(Helpers.randomInt(allTypes.length))
 }
