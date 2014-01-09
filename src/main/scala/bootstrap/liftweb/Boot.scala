@@ -23,6 +23,13 @@ import scala.language.postfixOps
 import net.liftmodules.widgets.autocomplete.AutoComplete
 import java.sql.{DriverManager, Connection}
 import net.liftweb.sitemap.Loc.Test
+import com.mongodb.ServerAddress
+import net.liftweb.mongodb.MongoDB
+import com.mongodb.Mongo
+import net.liftweb.mongodb.DefaultMongoIdentifier
+import com.mongodb.MongoOptions
+import net.liftweb.mongodb.MongoAddress
+import net.liftweb.mongodb.MongoHost
 
 
 /**
@@ -68,7 +75,7 @@ class Boot extends Bootable{
     LiftRules.dispatch.append(AsyncRest)
 
 
-    LiftRules.localeCalculator = r => definedLocale.openOr(LiftRules.defaultLocaleCalculator(r))
+   // LiftRules.localeCalculator = r => definedLocale.openOr(LiftRules.defaultLocaleCalculator(r))
 
     // comet clock widget
     LiftRules.cometCreation.append {
@@ -77,24 +84,41 @@ class Boot extends Bootable{
     }
 
     DB.defineConnectionManager(DefaultConnectionIdentifier, DBVendor)
-    Schemifier.schemify(true, Schemifier.infoF _, Person, User)
 
     initSnippetDisapatch
+    // dbBase Connection
+    initConnect
   }
 
   private def initSnippetDisapatch {
 	  LiftRules.snippetDispatch.append {
 		case "JSoup" => net.liftweb.example.snippet.Scraper
+		case "Mongo" => net.liftweb.example.snippet.Mongo
 	  }
+  }
+
+  private def initConnect {
+	  // Properties.whereToLook = () => ((filename, () => Full(new FileInputStream(filename))) :: Nil)
+	  val mongoOptions = new MongoOptions
+	  mongoOptions.connectionsPerHost = MongoConfig.connectionsPerHost
+	  mongoOptions.threadsAllowedToBlockForConnectionMultiplier = MongoConfig.threadsAllowedToBlockForConnectionMultiplier
+	  MongoDB.defineDb(
+		MongoConfig.DefaultMongoIdentifier,
+		MongoAddress(MongoHost(MongoConfig.host, MongoConfig.port, mongoOptions), MongoConfig.db)
+	  )
   }
 
   object MenuInfo {
     def sitemap = SiteMap(
-		      Menu("Home") / "index" >> Hidden,
-		      Menu("Stuff") / "interactive",
-		      Menu("Persistence") / "persistence",
-		      Menu("Scraper") / "scraper"
-    	)
+		Menu("Home") / "index" >> Hidden,
+		Menu("Stuff") / "interactive",
+		Menu("Scraper") / "scraper",
+		Menu("Persistence") / "persistence" submenus(
+			Menu("XML Fun") / "xml_fun",
+			Menu("Database") / "database",
+			Menu(Loc("simple", Link(List("simple"), true, "/simple/index"), "Simple Forms") )
+		)
+	)
   }
 
   object SessionInfoDumper extends LiftActor with Loggable {
@@ -209,22 +233,3 @@ class Boot extends Bootable{
     }
   }
 }
-
-
- /*    Menu("Misc code") / "misc" submenus(
-    	//菜单中的结构 和 在 Application的 文件位置是 一一对应的
-        Menu("Long Time") / "misc" /"longtime",
-        Menu("Number Guessing") / "guess",
-        Menu("Wizard") / "wiz",
-        Menu("Wizard Challenge") / "wiz2",
-        Menu("Simple Screen") / "simple_screen",
-        Menu("Variable Screen") / "variable_screen",
-        Menu("Arc Challenge #1") / "arc",
-        Menu("Simple Wiring") / "simple_wiring",
-        Menu("Wiring Invoice") / "invoice_wiring",
-        Menu("File Upload") / "file_upload",
-        Menu("Async REST") / "async_rest",
-        Menu(Loc("login", Link(List("login"), true, "/login/index"),
-          <xml:group>Requiring Login<strike>SiteMap</strike> </xml:group>)),
-        Menu("Counting") / "count"
-        )*/
