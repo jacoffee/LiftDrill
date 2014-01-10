@@ -1,40 +1,87 @@
-/*
- * Copyright 2007-2013 WorldWide Conferencing, LLC
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package net.liftweb.example.snippet
 
-import _root_.net.liftweb.http._
+import net.liftweb.http._
 import net.liftweb.common._
-
 import net.liftweb.util.Helpers._
-
 import js._
 import js.jquery._
 import JqJsCmds._
 import JsCmds._
 import SHtml._
-import _root_.scala.xml.{Text, NodeSeq}
+import scala.xml.{Text, NodeSeq}
 import net.liftmodules.widgets.autocomplete._
-
-//import _root_.net.liftweb.widgets.autocomplete._
-
 import scala.language.postfixOps
+import net.liftweb.http.js.JE.{JsNotEq, Num}
+import net.liftweb.http.SessionVar
 
-class Ajax extends Loggable {
+object Ajax extends DispatchSnippet with Loggable {
+	def dispatch = {
+		case "one" => one
+		case "two" => two
+		case "delete" => delete
+		case "ajaxEdi" => ajaxEdi
+	}
 
+	def alert(xhtml: NodeSeq): NodeSeq =  Script(Alert("Important Alert Goes Here!"))
+
+	def one(xhtml: NodeSeq) = SHtml.a(() => Alert("You Click Me"), Text("Go on, Click me "), ("class" -> "mylink"))
+
+	def two(xhtml: NodeSeq): NodeSeq = Script(
+			/*SetHtml("replaceme", Text("I have been replaced!")) &
+			Alert("Text Replaced")*/
+			Run(
+				JsIf(JsNotEq(Num(1), Num(2)), Alert("3: 1 does not equal 2!")).toJsCmd
+			)
+	)
+
+	// Ajax Link
+	val elem = <p>nihao</p>
+	// def a (func: () ⇒ JsCmd, body: NodeSeq, attrs: ElemAttr*): Elem
+
+	def delete(xhtml: NodeSeq) = {
+		SHtml.a(()=>{
+			// 单击链接的时候 确认是否删除
+			// case class Confirm (text: String, yes: JsCmd) extends JsCmd
+			// 第二个参数 很明确的指出了 如果确认的话就怎样
+			JsCmds.Confirm("您确定要删除该选项",
+				// def ajaxInvoke (func: () ⇒ JsCmd): (String, JsExp)
+				SHtml.ajaxInvoke(
+					() => {
+						// 删除的数据库操作
+						S.notice("operation completed")
+						// 3秒之后 重新刷新页面
+						// case class After(time: TimeSpan, toDo: JsCmd)
+						JsCmds.After(3 seconds,JsCmds.Reload)
+					}
+				).cmd
+			)
+		}, <div>MADAN</div>)
+	}
+
+	object ExampleVar extends SessionVar[String]("Replace me With Text")
+
+	def ajaxEdi(xhtml: NodeSeq): NodeSeq = {
+		// SHtml.ajaxEditable(displayContents, editForm, onSubmit)
+		// SHtml.text(ExampleVar.is, ExampleVar(_) / whatever you put in the edit form will replace _
+		SHtml.ajaxEditable(
+				Text(ExampleVar.is),
+		//fetch the value from session variable and render it to Text
+				SHtml.text(ExampleVar.is, ExampleVar(_)),
+		// Here, the input simply displays the value of the user and executes the set function to
+		// insert the value back into the session when the OK button,is clicked by the user.
+				// def apply(id: String): net.liftweb.http.js.jquery.JqJsCmds.FadeIn
+				// 元素id 唯一标志了 一个DOM element 因为name并不是唯一的
+				() => FadeIn("test",500,200)
+		)
+	}
+
+	/*
+		<script type="text/javascript">
+			<![CDATA[
+					if ( 1 != 2 ) { alert("3: 1 does not equal 2!"); };
+			]]>
+		</script>
+	*/
   def render = {
     // local state for the counter
     var cnt = 0

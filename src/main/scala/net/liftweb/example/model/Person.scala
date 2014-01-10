@@ -30,10 +30,15 @@ object Person extends Person with MongoMetaRecord[Person] {
 	def listFieldsName = List(firstName, lastName, email, birthDate, personalityType).map(_.name)
 	def getPersonAttrs(person: Person) =  List(firstName, lastName, email, birthDate, personalityType)
 
-	def formatDate(date: Date) = {
-		val formatPattern = new SimpleDateFormat("yyyy-MM-dd HH:mm")
-		formatPattern.format(date)
+	def formatPattern = new SimpleDateFormat("yyyy-MM-dd HH:mm")
+	def formatDate(date: Date) = formatPattern.format(date)
+	def formatString(dateLike: String) = formatPattern.parse(dateLike)
+	def dateToCal(date: Date) = {
+		val calendar = Calendar.getInstance
+		calendar.setTime(date)
+		calendar
 	}
+
 	def setCalendar = {
 		val calendar = Calendar.getInstance
 		calendar.set(2012, 1, 10, 12, 25, 12)
@@ -44,7 +49,7 @@ object Person extends Person with MongoMetaRecord[Person] {
 			lastName("ming").
 			email("123456@163.com").
 			birthDate(Calendar.getInstance).
-			personalityType(Personality.TypeA).
+			personalityType(Personality.rand).
 			password(Password(""))
 	}
 }
