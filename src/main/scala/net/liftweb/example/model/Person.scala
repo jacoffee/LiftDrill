@@ -36,16 +36,16 @@ object Person extends Person with MongoMetaRecord[Person] {
 
 	def setCalendar = {
 		val calendar = Calendar.getInstance
-		calendar.set(2012, 1, 10, 12, 25, 12)
+		calendar.set(2014, 4, 12, 14, 25, 12)
 		calendar
 	}
 	def dfltUser = {
-		Person.firstName("xiao").
-			lastName("ming").
-			email("123456@163.com").
-			birthDate(Calendar.getInstance).
+		Person.firstName("lao").
+			lastName("luo").
+			email("ad2121d@hotmail.com").
+			birthDate(setCalendar).
 			personalityType(Personality.rand).
-			password(Password(""))
+			password("sd43434").save
 	}
 
 	def idValue = id.get.toString
@@ -58,13 +58,13 @@ class Person extends MongoRecord[Person] with ObjectIdPk[Person] {
 	def meta = Person
 	object firstName extends StringField[Person](this, 100)
 	object lastName extends StringField[Person](this, 100)
-	object password extends MongoPasswordField[Person](this, 30)
+	object password extends StringField[Person](this, 30)
 	object email extends StringField[Person](this, 100)
 	object birthDate extends DateTimeField(this)
 	object personalityType extends EnumField(this, Personality)
 }
 
-// extends JsonObjectField[OwnerType, Password](rec, Password)
+// extends JsonObjectFi eld[OwnerType, Password](rec, Password)
 object Personality extends Enumeration {
 	val TypeA = Value(1, "Type A")
 	val TypeB = Value(2, "Type B")

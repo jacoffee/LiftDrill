@@ -14,6 +14,7 @@ import net.liftweb.util.BindPlus.nodeSeqToBindable
 import net.liftweb.json.JsonAST.{ JArray, JString, JValue }
 import net.liftweb.common.{ Empty, Box, Full }
 import net.liftweb.util.{ Helpers, ToJsCmd }
+import net.liftweb.http.js.HtmlFixer
 
 object Mongo extends DispatchSnippet {
 
@@ -26,6 +27,11 @@ object Mongo extends DispatchSnippet {
 	private object selectedPerson extends RequestVar[Box[PersonModel]](Empty)
 
 	implicit def stringToNodeSeq(jString: String) = Text(jString)
+
+	case class JsHtml(node: NodeSeq) extends  JsExp with HtmlFixer {
+		def toJsCmd = fixHtmlAndJs("inline", node)._1
+	}
+
 	/**
 	 * Get the XHTML containing a list of users
 	 */
@@ -48,10 +54,25 @@ object Mongo extends DispatchSnippet {
 					<td>{ person.firstName.get }</td>
 					<td>{ person.lastName.get }</td>
 					<td>{ person.email.get }</td>
-					<td>{ PersonModel.formatDate( person.birthDate.get.getTime() ) }</td>
+					<td>{ PersonModel.formatDate( person.birthDate.get.getTime ) }</td>
 					<td>{ person.personalityType.get }</td>
 					<td>
 						<!-- { SHtml.link("/simple/edit", () => selectedPerson(Full(person)), Text("Edit")) }  -->
+						<!--单击编辑 弹出框进行编辑-->
+						{
+							SHtml.a(
+								"edit",
+								Call("popupDiv.infoContent",
+									"修改Person信息",
+									JsHtml {
+										<input type="text" value= { person.firstName.get }></input>
+										<input type="text" value= { person.lastName.get }></input>
+										<input type="text" value= { person.email.get }></input>
+										<input type="text" value= { PersonModel.formatDate( person.birthDate.get.getTime ) }></input>
+									}
+								).cmd
+							)
+						}
 					</td>
 					<td>
 						<!-- { SHtml.link("/simple/delete", () => selectedPerson(Full(person)), Text("Delete")) } -->
@@ -125,7 +146,7 @@ object Mongo extends DispatchSnippet {
 		person.firstName(UserName.is)
 		person.lastName("haha")
 		person.email(Email.is)
-		person.password(Password(Pass.is))
+		person.password(Pass.is)
 		person.birthDate(PersonModel.dateToCal(PersonModel.formatString(DateTime.is)))
 		person.save
 		saveAndRedirect

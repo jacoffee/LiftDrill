@@ -5,4 +5,24 @@
 			<td>test</td>
 		</tr>
 	</table>
+	<tail>
+		<script type="text/javascript">
+			var popupDiv = {
+				infoContent: function(title, content) {
+					var titleElement = function(){
+						if (title === null || title === undefined) {
+							return $();
+						} else {
+							return $("<span class='title'></span>");
+						}
+					}();
+					titleElement.text(title);
+					var container = $("<div class='infoContainer'><div>");
+					var personInfo = $("<div class='personInfo'></div>").html(content);
+					window.alert("asasasa");
+					$("body").append( personInfo );
+				}
+			}
+		</script>
+	</tail>
 </lift:surround>

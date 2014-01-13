@@ -1,5 +1,5 @@
 ﻿body {
-	background: url("../images/stars-1.png") repeat-x fixed -130% 0px,
+/* 	background: url("../images/stars-1.png") repeat-x fixed -130% 0px,
 		url("../images/stars-2.png") repeat-x fixed 40% 0px,
 		url("../images/space-bg.png") repeat-x fixed -80% 0px,
 		url("../images/clouds.png") repeat-x fixed 100% 0 #1A1A1A;
@@ -8,7 +8,7 @@
 	font-size: 100%;
 	width: 920px;
 	height: 100%;
-	margin: 20px auto;
+	margin: 20px auto; */
 }
 h2 {
      color: #f43c12;
@@ -284,4 +284,20 @@ a.city {
     line-height: 17px;
     margin-left: 10px;
     padding: 5px 8px;
+}
+
+
+div.personInfo {
+    background: none repeat scroll 0 0 red;
+    border: 1px solid #888888;
+    border-radius: 5px 5px 5px 5px;
+    box-shadow: 0 0 80px 0 rgba(0, 0, 0, 0.4);
+    height: auto;
+    left: 400px;
+    min-height: 255px;
+    padding: 100px 0 0;
+    position: fixed;
+    top: 500px;
+    width: 500px;
+    z-index: 1000;
 }
