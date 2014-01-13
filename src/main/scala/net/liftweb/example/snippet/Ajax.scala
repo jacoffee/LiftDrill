@@ -27,16 +27,15 @@ object Ajax extends DispatchSnippet with Loggable {
 	def one(xhtml: NodeSeq) = SHtml.a(() => Alert("You Click Me"), Text("Go on, Click me "), ("class" -> "mylink"))
 
 	def two(xhtml: NodeSeq): NodeSeq = Script(
-			/*SetHtml("replaceme", Text("I have been replaced!")) &
-			Alert("Text Replaced")*/
-			Run(
-				JsIf(JsNotEq(Num(1), Num(2)), Alert("3: 1 does not equal 2!")).toJsCmd
-			)
+		Run(JsIf(JsNotEq(Num(1), Num(2)), Alert("3: 1 does not equal 2!")).toJsCmd)
 	)
-
-	// Ajax Link
-	val elem = <p>nihao</p>
-	// def a (func: () ⇒ JsCmd, body: NodeSeq, attrs: ElemAttr*): Elem
+	/*
+		<script type="text/javascript">
+			<![CDATA[
+					if ( 1 != 2 ) { alert("3: 1 does not equal 2!"); };
+			]]>
+		</script>
+	*/
 
 	def delete(xhtml: NodeSeq) = {
 		SHtml.a(()=>{
@@ -63,25 +62,14 @@ object Ajax extends DispatchSnippet with Loggable {
 	def ajaxEdi(xhtml: NodeSeq): NodeSeq = {
 		// SHtml.ajaxEditable(displayContents, editForm, onSubmit)
 		// SHtml.text(ExampleVar.is, ExampleVar(_) / whatever you put in the edit form will replace _
-		SHtml.ajaxEditable(
-				Text(ExampleVar.is),
+		SHtml.ajaxEditable( Text(ExampleVar.is), SHtml.text(ExampleVar.is, ExampleVar(_)),() => FadeIn("test", 500, 200) )
 		//fetch the value from session variable and render it to Text
-				SHtml.text(ExampleVar.is, ExampleVar(_)),
 		// Here, the input simply displays the value of the user and executes the set function to
 		// insert the value back into the session when the OK button,is clicked by the user.
-				// def apply(id: String): net.liftweb.http.js.jquery.JqJsCmds.FadeIn
-				// 元素id 唯一标志了 一个DOM element 因为name并不是唯一的
-				() => FadeIn("test",500,200)
-		)
+		// def apply(id: String): net.liftweb.http.js.jquery.JqJsCmds.FadeIn
+		// 元素id 唯一标志了 一个DOM element 因为name并不是唯一的
 	}
 
-	/*
-		<script type="text/javascript">
-			<![CDATA[
-					if ( 1 != 2 ) { alert("3: 1 does not equal 2!"); };
-			]]>
-		</script>
-	*/
   def render = {
     // local state for the counter
     var cnt = 0

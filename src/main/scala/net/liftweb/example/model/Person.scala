@@ -1,23 +1,18 @@
 package net.liftweb.example.model
 
-import net.liftweb._
-import common._
-import util._
-import net.liftweb.mongodb.record.MongoRecord
+import net.liftweb.mongodb.record.{ MongoRecord, MongoMetaRecord }
 import net.liftweb.mongodb.record.field.ObjectIdPk
-import net.liftweb.mongodb.record.MongoMetaRecord
-import net.liftweb.record.field.StringField
-import net.liftweb.record.field.EnumField
-import net.liftweb.mongodb.Limit
+import net.liftweb.record.field.{ StringField,  EnumField }
 import net.liftweb.json.JsonDSL._
-import net.liftweb.mongodb.record.field.MongoPasswordField
-import net.liftweb.record.field.DateTimeField
-import java.util.Calendar
-import net.liftweb.mongodb.record.field.Password
-import net.liftweb.example.MongoConfig
 import net.liftweb.json.JsonAST.JObject
+import net.liftweb.mongodb.record.field.MongoPasswordField
+import net.liftweb.mongodb.record.field.Password
+import net.liftweb.record.field.DateTimeField
+import net.liftweb.example.MongoConfig
+import net.liftweb.util.Helpers
+import java.util.{ Calendar, Date }
 import java.text.SimpleDateFormat
-import java.util.Date
+
 
 object Person extends Person with MongoMetaRecord[Person] {
 	override val mongoIdentifier = MongoConfig.DefaultMongoIdentifier
@@ -44,7 +39,7 @@ object Person extends Person with MongoMetaRecord[Person] {
 		calendar.set(2012, 1, 10, 12, 25, 12)
 		calendar
 	}
-	def dfltUser {
+	def dfltUser = {
 		Person.firstName("xiao").
 			lastName("ming").
 			email("123456@163.com").
@@ -52,6 +47,11 @@ object Person extends Person with MongoMetaRecord[Person] {
 			personalityType(Personality.rand).
 			password(Password(""))
 	}
+
+	def idValue = id.get.toString
+
+	def deleteUser(oid: String) = delete(id.name, oid)
+
 }
 
 class Person extends MongoRecord[Person] with ObjectIdPk[Person] {

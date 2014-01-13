@@ -1,39 +1,31 @@
 package net.liftweb.example.snippet
 
-import net.liftweb._
-import http._
-import mapper.{Ascending, OrderBy}
-import S._
-import SHtml._
-import common._
-import util._
-import net.liftweb.example.model._
-import Helpers._
-import _root_.java.util.Locale
-import xml.{Text, Group, NodeSeq}
+import scala.xml.{ Text, Group, NodeSeq, Elem }
 import net.liftweb.example.model.{ Person => PersonModel }
 import net.liftweb.util.Helpers.{ strToSuperArrowAssoc, millis, AttrBindParam }
 import net.liftweb.util.BindPlus.nodeSeqToBindable
-import net.liftweb.http.js.JsCmds.Alert
-import net.liftweb.http.js.JsCmd
-import scala.xml.Elem
-import net.liftweb.http.js.JE
-import net.liftweb.http.js.JE.AnonFunc
-import net.liftweb.http.js.JE.Call
-import net.liftweb.http.js.JsCmds.Prompt
-import net.liftweb.http.js.JsCmds.SetHtml
-import net.liftweb.util.ToJsCmd
+import net.liftweb.http.{ S, SHtml, RequestVar, DispatchSnippet }
+import net.liftweb.http.SHtml.ElemAttr
+import net.liftweb.http.js.JsCmds.{ Alert, Prompt, SetHtml, jsExpToJsCmd, Noop, Confirm }
+import net.liftweb.http.js.jquery.JqJE.{ Jq, JqId, JqRemove }
+import net.liftweb.http.js.JE.{ AnonFunc, Call, JsFunc, JsObj, JsArray }
+import net.liftweb.http.js.{ JsCmds, JE, JsExp, JsCmd }
+import net.liftweb.util.BindPlus.nodeSeqToBindable
+import net.liftweb.json.JsonAST.{ JArray, JString, JValue }
+import net.liftweb.common.{ Empty, Box, Full }
+import net.liftweb.util.{ Helpers, ToJsCmd }
 
-object Mongo extends DispatchSnippet with SHtml {
+object Mongo extends DispatchSnippet {
 
 	def dispatch = {
 		case "users" => users
 		case "add" => add
-		//case "upload" => upload
+		case "call" => call
 	}
 
 	private object selectedPerson extends RequestVar[Box[PersonModel]](Empty)
 
+	implicit def stringToNodeSeq(jString: String) = Text(jString)
 	/**
 	 * Get the XHTML containing a list of users
 	 */
@@ -50,7 +42,8 @@ object Mongo extends DispatchSnippet with SHtml {
 			<th>DELETE</th>
 		</tr> ++
 		{
-			Person.getAllSortByFirstName.map {person =>
+			PersonModel.getAllSortByFirstName.map {person =>
+				val idValue = person.id.get.toString
 				<tr>
 					<td>{ person.firstName.get }</td>
 					<td>{ person.lastName.get }</td>
@@ -58,10 +51,23 @@ object Mongo extends DispatchSnippet with SHtml {
 					<td>{ PersonModel.formatDate( person.birthDate.get.getTime() ) }</td>
 					<td>{ person.personalityType.get }</td>
 					<td>
-						{ link("/simple/edit", () => selectedPerson(Full(person)), Text("Edit")) }
+						<!-- { SHtml.link("/simple/edit", () => selectedPerson(Full(person)), Text("Edit")) }  -->
 					</td>
 					<td>
-						{ link("/simple/delete", () => selectedPerson(Full(person)), Text("Delete")) }
+						<!-- { SHtml.link("/simple/delete", () => selectedPerson(Full(person)), Text("Delete")) } -->
+						<!-- ajaxOperation  -->
+						{
+							SHtml.a("delete",
+								JsCmds.Confirm("确认要删除该记录吗",
+									SHtml.ajaxInvoke( () => {
+										//  数据删除操作
+											PersonModel.deleteUser(idValue)
+											Call("window.location.reload")     // jsExpToJsCmd(Call("window.location.reload"))
+										}
+									).exp
+								)
+							)
+						}
 					</td>
 				</tr>
 			}
@@ -83,15 +89,39 @@ object Mongo extends DispatchSnippet with SHtml {
 						"placeholder" -> "请输入密码"),
 				"datetime" -> SHtml.text(DateTime.is, d => DateTime(d.trim), "id" -> "dateTime", "class" -> "text",
 						"placeholder" -> "请输入日期"),
-				"mycall" ->  SHtml.a(Text("I am calling"),  Call("addUser.overPopup").cmd,  "id" -> "mycall"),
+				"mycall" -> SHtml.a(Text("add Practice"),  Call("addUser.calculate",JsExp.intToJsExp(3), 4).cmd,  "id" -> "myadd"),
+				"delete" -> {
+					SHtml.a(
+						() => JsCmds.Confirm(
+							"确定要删除吗？",
+							SHtml.ajaxInvoke(() =>
+								{
+									S.notice("Operation Completed")
+									JsCmds.After(Helpers.TimeSpan(3L), JsCmds.Reload)
+								}
+							).cmd
+						),
+						Text("to be deleted")
+					)
+				},
+				"autoExc" -> {
+					SHtml.a(
+						() => AnonFunc(Alert("ha ha ha")),
+						Text("auto exec")
+					)
+				},
 				"action" -> SHtml.hidden(createUser _)
 			)
+	}
+
+	def call(xhtml: NodeSeq): NodeSeq = {
+		SHtml.a(Text("加法练习"),  Call("addUser.calculate",3, 4).cmd,  "id" -> "myadd")
 	}
 
 	def createUser = {
 		import net.liftweb.mongodb.record.field.Password
 		//创建record
-		val person = Person.createRecord
+		val person = PersonModel.createRecord
 		person.firstName(UserName.is)
 		person.lastName("haha")
 		person.email(Email.is)
@@ -107,9 +137,9 @@ object Mongo extends DispatchSnippet with SHtml {
 		S.redirectTo("/simple/index.html")
 	}
 
-	// 重新实现 SHtml.a
-	def alink (func: () => JsCmd, body: NodeSeq, attrs: ElemAttr*): Elem = {
-		       attrs.foldLeft(
+// 重新实现 SHtml.a
+/* def alink (func: () => JsCmd, body: NodeSeq, attrs: ElemAttr*): Elem = {
+		attrs.foldLeft(
                 // fmapFunc 给每一个函数 建立 map 映射
                   fmapFunc( (func)  )
                       ( name =>
@@ -120,6 +150,6 @@ object Mongo extends DispatchSnippet with SHtml {
                           </a>
                       )
         )(_ % _)
-	}
+}*/
 
 }

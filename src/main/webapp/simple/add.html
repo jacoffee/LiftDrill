@@ -17,6 +17,9 @@
 					<td><input:mycall /></td>
 				</tr>
 				<tr>
+					<td><input:delete /></td>
+				</tr>
+				<tr>
 					<td>
 						<a href="/simple/index.html">Cancel</a>
 					</td>
@@ -28,6 +31,7 @@
 			</table>
 			<span id="page_alert"></span>
 		</div>
+		<lift:snippet type="Mongo:call"></lift:snippet>
 		<div id="question-box" class="model-dialog">
 			<div class="banner">
 				提问
@@ -58,9 +62,17 @@
 					setText: function() {
 						$("#page_alert").text("ha ha shoot");
 					},
-					overPopup: function(){
+					overPopup: function() {
 						$("#question-box").css("display", "block");
 						$("#fade").css("display", "block");
+					},
+					calculate: function(x, y) {
+						console.log(x+y);
+						return x + y;
+					}
+					auto: function(x, y) {
+						console.log(x-y);
+						return x-y;
 					}
 				}
 				$(function(){
