@@ -8,7 +8,9 @@
 	<tail>
 		<script type="text/javascript">
 			var popupDiv = {
-				infoContent: function(title, content) {
+				// actions actually an object in JavaScript key-value
+				// the essence of the following codes is to generate html snippets with some sort of action binding
+				infoContent: function(title, content, actionObject) {
 					var titleElement = function(){
 						if (title === null || title === undefined) {
 							return $();
@@ -17,10 +19,20 @@
 						}
 					}();
 					titleElement.text(title);
-					var container = $("<div class='infoContainer'><div>");
+					var container = $("<div class='infoContainer'></div>");
 					var personInfo = $("<div class='personInfo'></div>").html(content);
-					window.alert("asasasa");
-					$("body").append( personInfo );
+					$(".mainbody").append( personInfo );
+
+					// action bind
+					$.each(actionObject, function(val, action){
+	                       var btn = $("<button type='button'></button>").html(val).unbind("click").click(function(){
+								action();
+	                       });
+							var alink = $("<a href='javascript:;'></a>").text("取消").click(function(){
+								alert("hah");
+							});
+							$(".mainbody").append(btn).append(alink)
+					});
 				}
 			}
 		</script>

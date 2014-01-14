@@ -15,6 +15,7 @@ import net.liftweb.json.JsonAST.{ JArray, JString, JValue }
 import net.liftweb.common.{ Empty, Box, Full }
 import net.liftweb.util.{ Helpers, ToJsCmd }
 import net.liftweb.http.js.HtmlFixer
+import net.liftweb.http.js.JE.ValById
 
 object Mongo extends DispatchSnippet {
 
@@ -65,11 +66,45 @@ object Mongo extends DispatchSnippet {
 								Call("popupDiv.infoContent",
 									"修改Person信息",
 									JsHtml {
-										<input type="text" value= { person.firstName.get }></input>
-										<input type="text" value= { person.lastName.get }></input>
-										<input type="text" value= { person.email.get }></input>
-										<input type="text" value= { PersonModel.formatDate( person.birthDate.get.getTime ) }></input>
-									}
+										<input type="text" value= { person.firstName.get } id="firstName"></input>
+										<input type="text" value= { person.lastName.get } id="lastName"></input>
+										<input type="text" value= { person.email.get } id="email"></input>
+										<input type="text" value= { PersonModel.formatDate( person.birthDate.get.getTime )} id="date"></input>
+									},
+									JsObj("确认修改" ->
+										AnonFunc(
+											// SHtml.jsonCall(jsExpValue, JValue => JsCmd)
+											// when clicking the 确认修改按钮 首先获取要传递的数据 并进行验证然后 提交提交到服务器端进行相关处理 最后以JsCmd进行回调处理  
+											SHtml.jsonCall(
+												JsArray{
+													List(
+														ValById("firstName"),
+														ValById("lastName"),
+														ValById("email"),
+														ValById("date")
+													)
+												},
+												{
+													_ match {
+														case JArray(
+															JString(firstName) :: JString(lastName) :: JString(email) :: JString(date) :: Nil
+														) => {
+															try {
+																Call("window.location.reload")
+															} catch {
+																case e: Exception =>  {
+																	Call("window.location.reload")
+																}
+															}
+														}
+														case _ => {
+															Call("window.location.reload")
+														}
+													}
+												}:(JValue => JsCmd)
+											)
+										)
+									)
 								).cmd
 							)
 						}
