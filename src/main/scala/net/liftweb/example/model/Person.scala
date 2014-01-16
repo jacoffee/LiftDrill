@@ -5,8 +5,6 @@ import net.liftweb.mongodb.record.field.ObjectIdPk
 import net.liftweb.record.field.{ StringField,  EnumField }
 import net.liftweb.json.JsonDSL._
 import net.liftweb.json.JsonAST.JObject
-import net.liftweb.mongodb.record.field.MongoPasswordField
-import net.liftweb.mongodb.record.field.Password
 import net.liftweb.record.field.DateTimeField
 import net.liftweb.example.MongoConfig
 import net.liftweb.util.Helpers
@@ -28,6 +26,19 @@ object Person extends Person with MongoMetaRecord[Person] {
 	def formatPattern = new SimpleDateFormat("yyyy-MM-dd HH:mm")
 	def formatDate(date: Date) = formatPattern.format(date)
 	def formatString(dateLike: String) = formatPattern.parse(dateLike)
+
+	// transferorm string to calendar, usually the string is from input
+	def stringToCal(dateLike: String) = {
+		// date format authentication
+		try {
+			dateToCal(formatString(dateLike))
+		} catch {
+			case e: Exception => {
+				val calendar = Calendar.getInstance
+				calendar
+			}
+		}
+	}
 	def dateToCal(date: Date) = {
 		val calendar = Calendar.getInstance
 		calendar.setTime(date)
@@ -49,9 +60,7 @@ object Person extends Person with MongoMetaRecord[Person] {
 	}
 
 	def idValue = id.get.toString
-
 	def deleteUser(oid: String) = delete(id.name, oid)
-
 }
 
 class Person extends MongoRecord[Person] with ObjectIdPk[Person] {

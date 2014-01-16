@@ -16,6 +16,7 @@ import net.liftweb.common.{ Empty, Box, Full }
 import net.liftweb.util.{ Helpers, ToJsCmd }
 import net.liftweb.http.js.HtmlFixer
 import net.liftweb.http.js.JE.ValById
+import org.bson.types.ObjectId
 
 object Mongo extends DispatchSnippet {
 
@@ -49,8 +50,9 @@ object Mongo extends DispatchSnippet {
 			<th>DELETE</th>
 		</tr> ++
 		{
-			PersonModel.getAllSortByFirstName.map {person =>
+			PersonModel.getAllSortByFirstName.map { person =>
 				val idValue = person.id.get.toString
+				println("idValue " + idValue)
 				<tr>
 					<td>{ person.firstName.get }</td>
 					<td>{ person.lastName.get }</td>
@@ -66,7 +68,7 @@ object Mongo extends DispatchSnippet {
 								Call("popupDiv.infoContent",
 									"修改Person信息",
 									JsHtml {
-										<input type="text" value= { person.firstName.get } id="firstName"></input>
+										<input type="text" value= { idValue + " |||| " + person.firstName.get } id="firstName"></input>
 										<input type="text" value= { person.lastName.get } id="lastName"></input>
 										<input type="text" value= { person.email.get } id="email"></input>
 										<input type="text" value= { PersonModel.formatDate( person.birthDate.get.getTime )} id="date"></input>
@@ -74,7 +76,8 @@ object Mongo extends DispatchSnippet {
 									JsObj("确认修改" ->
 										AnonFunc(
 											// SHtml.jsonCall(jsExpValue, JValue => JsCmd)
-											// when clicking the 确认修改按钮 首先获取要传递的数据 并进行验证然后 提交提交到服务器端进行相关处理 最后以JsCmd进行回调处理  
+											// when clicking the 确认修改按钮 首先获取要传递的数据 并进行验证然后 提交提交到服务器端进行相关处理
+											// 最后以JsCmd进行回调处理
 											SHtml.jsonCall(
 												JsArray{
 													List(
@@ -90,6 +93,17 @@ object Mongo extends DispatchSnippet {
 															JString(firstName) :: JString(lastName) :: JString(email) :: JString(date) :: Nil
 														) => {
 															try {
+																//进行更新操作  先查询 然后再进行更新 验证
+																PersonModel.find(idValue) match {
+																	case Full(person) => {
+																		person.firstName(firstName)
+																			.lastName(lastName)
+																			.email(email)
+																			.birthDate(PersonModel.stringToCal(date))
+																			.save
+																	}
+																	case _ =>
+																}
 																Call("window.location.reload")
 															} catch {
 																case e: Exception =>  {
@@ -188,7 +202,6 @@ object Mongo extends DispatchSnippet {
 	}
 
 	def saveAndRedirect =  {
-		println("success ---------------------------------")
 		S.notice("page_alert", <span>恭喜您， 成功注册</span>)
 		S.redirectTo("/simple/index.html")
 	}
