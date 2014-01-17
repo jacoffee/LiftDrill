@@ -18,7 +18,7 @@ import net.liftweb.json.JsonAST.JObject
 // create book record  ---  rows  and save
 object Book extends Book  with MongoMetaRecord[Book] {
 		// 存储一条记录  
-       	Config.initConnection
+       //	Config.initConnection
        	// def collectioName = "db"
        	//怎么同时存储三条记录
 }

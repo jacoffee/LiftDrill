@@ -52,7 +52,6 @@ object Mongo extends DispatchSnippet {
 		{
 			PersonModel.getAllSortByFirstName.map { person =>
 				val idValue = person.id.get.toString
-				println("idValue " + idValue)
 				<tr>
 					<td>{ person.firstName.get }</td>
 					<td>{ person.lastName.get }</td>

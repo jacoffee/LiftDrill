@@ -105,13 +105,17 @@ widget {
 	margin: 0;
 	border-bottom: none;
 	display: none;
+	z-index: 199999;
+	position: absolute;
 }
 .sidebar ul li ul li {
-	margin:0;
+	margin: 0 0 0 -35px;
 	padding:0;
 	border-style: none;
 	list-style-type: none;
 	float: none;
+	background-color: #d9d9d9;
+	width: 120px;
 }
 .sidebar ul li ul li a {
 	display: inline;

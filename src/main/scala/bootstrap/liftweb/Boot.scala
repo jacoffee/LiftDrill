@@ -15,7 +15,6 @@ import actor._
 import sitemap._
 import Helpers._
 import example._
-import comet.{ThingBuilder, ExampleClock}
 import lib.{AsyncRest, StatelessJson}
 import model._
 import snippet._
@@ -39,9 +38,6 @@ import net.liftweb.mongodb.MongoHost
 class Boot extends Bootable{
 
   def boot {
-    // where to search snippet
-    LiftRules.addToPackages("net.liftweb.example")
-
     //Init the jQuery module, see http://liftweb.net/jquery for more information.
     // 选择默认的 js支持
     LiftRules.jsArtifacts = JQueryArtifacts
@@ -60,28 +56,14 @@ class Boot extends Bootable{
 
     LiftRules.setSiteMapFunc(() => MenuInfo.sitemap)
 
-    // Dump information about session every 10 seconds
-    SessionMaster.sessionWatchers = SessionInfoDumper :: SessionMaster.sessionWatchers
-
     StatelessJson.init()
 
     // used by the Ajax example
     AutoComplete.init()
 
-    // used by Misc/LongTime
-    ThingBuilder.boot()
 
     // Async REST sample
     LiftRules.dispatch.append(AsyncRest)
-
-
-   // LiftRules.localeCalculator = r => definedLocale.openOr(LiftRules.defaultLocaleCalculator(r))
-
-    // comet clock widget
-    LiftRules.cometCreation.append {
-      case CometCreationInfo("Clock", name, defaultXml, attributes, session) =>
-        new ExampleClock(session, Full("Clock"), name, defaultXml, attributes)
-    }
 
     DB.defineConnectionManager(DefaultConnectionIdentifier, DBVendor)
 
@@ -92,7 +74,7 @@ class Boot extends Bootable{
 
   private def initSnippetDisapatch {
 	  LiftRules.snippetDispatch.append {
-		case "JSoup" => net.liftweb.example.snippet.Scraper
+		case "Scraper" => net.liftweb.example.snippet.Scraper
 		case "Mongo" => net.liftweb.example.snippet.Mongo
 	  }
   }
@@ -121,54 +103,6 @@ class Boot extends Bootable{
 	)
   }
 
-  object SessionInfoDumper extends LiftActor with Loggable {
-    private var lastTime = millis
-
-    private def cyclePeriod = 1 minute
-
-    import net.liftweb.example.lib.SessionChecker
-
-    protected def messageHandler = {
-      case SessionWatcherInfo(sessions) =>
-        if ((millis - cyclePeriod) > lastTime) {
-          lastTime = millis
-          val rt = Runtime.getRuntime
-          rt.gc
-
-          RuntimeStats.lastUpdate = now
-          RuntimeStats.totalMem = rt.totalMemory
-          RuntimeStats.freeMem = rt.freeMemory
-          RuntimeStats.sessions = sessions.size
-
-          val percent = (RuntimeStats.freeMem * 100L) / RuntimeStats.totalMem
-
-          // get more aggressive about purging if we're
-          // at less than 35% free memory
-          if (percent < 35L) {
-            SessionChecker.killWhen /= 2L
-            if (SessionChecker.killWhen < 5000L)
-              SessionChecker.killWhen = 5000L
-            SessionChecker.killCnt *= 2
-          } else {
-            SessionChecker.killWhen *= 2L
-            if (SessionChecker.killWhen >
-              SessionChecker.defaultKillWhen)
-              SessionChecker.killWhen = SessionChecker.defaultKillWhen
-            val newKillCnt = SessionChecker.killCnt / 2
-            if (newKillCnt > 0) SessionChecker.killCnt = newKillCnt
-          }
-
-          def pretty(in: Long): String = if (in > 1000L) pretty(in / 1000L) + "," + (in % 1000L) else in.toString
-
-          val dateStr: String = now.toString
-          logger.debug("[MEMDEBUG] At " + dateStr + " Number of open sessions: " + sessions.size)
-          logger.debug("[MEMDEBUG] Free Memory: " + pretty(RuntimeStats.freeMem))
-          logger.debug("[MEMDEBUG] Total Memory: " + pretty(RuntimeStats.totalMem))
-          logger.debug("[MEMDEBUG] Kill Interval: " + (SessionChecker.killWhen / 1000L))
-          logger.debug("[MEMDEBUG] Kill Count: " + (SessionChecker.killCnt))
-        }
-    }
-  }
 
   /**
    * Database connection calculation
