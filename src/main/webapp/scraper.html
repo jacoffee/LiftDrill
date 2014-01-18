@@ -23,11 +23,59 @@
 		    <li><a href="#feature">Feature</a></li>
 		</ul>
 	</div>
-	<!-- Old form submit -->
-	<form  data-lift="Scraper.plain"  method="POST" >
+	<!-- Old Form Submit -->
+<!-- 	<form  data-lift="Scraper.plain"  method="POST" >
 		<input type="text" name="username" placeholder="what's your name" />
 		<input type="submit" value="GO">
+	</form> -->
+	<!-- Ajax Form Submit Without refreshing the page
+		Mark your form as an Ajax form with data-lift="form.ajax"and supply a function
+		to run on the server when the form is submitted.
+	-->
+	<form data-lift="form.ajax"> <!-- Don't forget this cause this mark the form as ajaxForm -->
+		 <!-- <div  data-lift="Scraper.ajax"> 这种形式的话 DIV会留在上面 所以这个地方应该使用原始的 -->
+		<div  data-lift="Scraper.ajax">
+			<input type="text" name="name" placeholder="请输入用户名" />
+			<!--  <input type="submit" /> -->
+			<button id="submit" class="btn btn-primary btn-large">
+				<i class="icon-white icon-ok"></i>Submit
+				<!-- <input value="true" type="hidden" name="F9629569403212JQ3CS"> -->
+			</button>
+		</div>
 	</form>
+	<div id="result">Your name will be echoed here</div>
+	<!--
+		You want to process a form via Ajax, sending the data in JSON format. $.post("/loginAction", {"username": username})
+		Make use of Lift’s jlift.jsJavaScript library and JsonHandlerclass
+	-->
+	<h1>Json Form example</h1>
+	<!-- Required for JSON forms processing -->
+	<script src="/classpath/jlift.js" data-lift="tail"></script>
+	<div data-lift="Scraper.jsonForm">
+		<script id="jsonScript" data-lift="tail"></script>
+		<button onclick="javascript:changeCase('upper')">Upper case the Motto</button>
+		<button onclick="javascript:changeCase('lower')">Lower case the Motto</button>
+		<!-- 上面的这两段 就相当于在以前的基础之上 给button 绑定了事件
+			$("#upper").click(function(){
+				val upperCaseValue = $("#motto").val().toUpperCase();
+				$("#motto").val(upperCaseValue);
+			});
+		 -->
+		<!-- 替换成Script(MotoServer.jsCmd) 并且放在Body最后 -->
+		<div id="jsonForm">
+			<label for="name">
+				Institution
+				<input id="name" type="text" name="name" value="Royal Society" />
+			</label>
+			<label for="motto">
+				Motto
+				<input id="motto" type="text" name="motto" value="Nullius in verba" />
+			</label>
+			<input type="submit" value="Send" />
+		</div>
+	<div id="jsonResult"> Result will appear here.  </div>
+	<!-- Add Extra Function to Target  -->
+	</div>
 	<tail>
 		<script> var navigation = responsiveNav("#nav"); </script>
 	</tail>

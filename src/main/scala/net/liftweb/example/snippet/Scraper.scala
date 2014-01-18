@@ -16,9 +16,17 @@ import scala.util.Random
 import net.liftweb.util.PassThru
 import net.liftweb.util.Helpers._
 import net.liftweb.common.Full
-import net.liftweb.builtin.snippet.Msg
+import net.liftweb.builtin.snippet.Form
 import net.liftweb.http.S
 import scala.xml.Text
+import net.liftweb.http.SHtml
+import net.liftweb.http.js.JsCmd
+import net.liftweb.http.JsonHandler
+import net.liftweb.http.js.JsCmds.Alert
+import net.liftweb.util.JsonCmd
+import net.liftweb.http.js.JsCmds.{SetHtml, Script, SetValById, Function}
+import net.liftweb.http.js.JE.JsVar
+import net.liftweb.http.js.JE.JsRaw
 
 
 object Scraper extends DispatchSnippet {
@@ -30,6 +38,8 @@ object Scraper extends DispatchSnippet {
 		case "wordsParser" => wordsParser
 		case "passThru" => passThru
 		case "plain" => plain
+		case "ajax" => ajax
+		case "jsonForm" => jsonForm
 	}
 
 	val baseUrlOfXJH = "http://xjh.haitou.cc"
@@ -46,7 +56,6 @@ object Scraper extends DispatchSnippet {
 			university => (university.text, s"${baseUrlOfXJH}${university.select("a").attr("href")}")
 		}.toList
 	}
-
 	def wiki(xhtml: NodeSeq): NodeSeq = {
 		// connect to certain webpage
 		val doc = Jsoup.connect("http://en.wikipedia.org/wiki/Main_Page").get()
@@ -148,6 +157,13 @@ object Scraper extends DispatchSnippet {
 	// In the snippet, we can pick out the value of the field namewith S.param("name"):
 	def plain = {
 		println(S.param("username").openOr(""))
+		println(S.request.toList)
+		// List(Req(List(username), Map(username -> List(zhoumenglin)), ParsePath(List(scraper),,true,false), , PostRequest, Full(application/x-www-form-urlencoded)))
+		val paramList = for {
+			req <- S.request.toList
+			params <- req.paramNames
+		} yield params
+		println(paramList) // List(username)
 		S.param("username") match {
 			case Full(username)  =>  {
 				//S.notice("error", "hello" + username)
@@ -162,6 +178,60 @@ object Scraper extends DispatchSnippet {
 			case _ =>  PassThru
 		}
 	}
+
+	def ajax = {
+		var username = ""
+		def process: JsCmd = SetHtml("result", Text(username))
+		"@name" #> SHtml.text(username, u => username = u) &
+		"button *+" #> SHtml.hidden(() => process) // 其实不用<input type="submit">也是可以的 就像以前一样用button照样可以提交
+	}
+
+	def jsonForm = {
+		// Script的含义可以理解为 在服务器端动态的生成 JS 函数
+		"#jsonForm" #> ( (ns: NodeSeq) => SHtml.jsonForm(MotoServer, ns)) &
+		"#jsonScript" #> Script(
+			MotoServer.jsCmd &
+			Function("changeCase", List("direction"),
+				MotoServer.call("processCase", JsVar("direction"),
+				JsRaw("$('#motto').val()")) // 获取motto的val 并且提交
+			)
+		)
+		/*
+
+// <![CDATA[
+function F368303627065RF34HS(obj) {liftAjax.lift_ajaxHandler('F368303627065RF34HS='+
+							encodeURIComponent(JSON.stringify(obj)), null,null);}
+	function changeCase(direction) {
+		F368303627065RF34HS({'command': "processCase", 'target': direction, 'params':$('#motto').val()});
+	}
+// ]]>
+		*/
+		// The jsonScript element is bound to JavaScript that will perform the transmission and
+		// encoding of the values to the server.
+		// 当单击发送的时候  Script中的命令就会被执行 这一段相当于以前放在
+	}
+	// F3733121248364SIULY:{"command":"processForm","params":{"name":"Royal Society","motto":"Nullius in verba"}}
+	// MotoServer 有点类似于以前的 LoginAction 处理Json请求
+	object MotoServer extends JsonHandler {
+		// in 数据格式验证 如果是处理Json的命令就如何
+		def apply(in: Any): JsCmd =  in match {
+			case JsonCmd("processForm", target, params: Map[String, String], all)=> {
+				val name = params.getOrElse("name", "no name")
+				val motto = params.getOrElse("motto", "No Motto")
+				SetHtml("jsonResult", Text(name + " : " + motto))
+			}
+			case JsonCmd("processCase", direction, motto: String, all) =>
+				val update = if (direction == "upper") motto.toUpperCase
+				else motto.toLowerCase
+				SetValById("motto", update)
+		}
+	}
+	// 原理解释
+	/*
+		The  jsonForm method is arranging for form fields to be encoded as JSON
+		and sent, via Ajax, to our  MottoServer  as a  JsonCmd.
+		In fact, it’s a  JsonCmd  with a default command name of "processForm".
+	*/
 }
 
 
