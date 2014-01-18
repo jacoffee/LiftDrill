@@ -113,12 +113,8 @@ widget {
 	padding:0;
 	border-style: none;
 	list-style-type: none;
-	float: none;
 	background-color: #d9d9d9;
-	width: 120px;
-}
-.sidebar ul li ul li a {
-	display: inline;
+	width: 100px;
 }
 
 .lift_error {
@@ -251,7 +247,7 @@ a.city {
 
 /*新增问题的主界面 outline: none;  可以去除点击div时的虚框 */
 
-.question-content,.topic-selected {
+.notice_class {
     border: 1px solid #CCCCCC;
     border-radius: 4px 4px 4px 4px;
     color: #222222;

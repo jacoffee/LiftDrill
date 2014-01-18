@@ -204,20 +204,4 @@ object Mongo extends DispatchSnippet {
 		S.notice("page_alert", <span>恭喜您， 成功注册</span>)
 		S.redirectTo("/simple/index.html")
 	}
-
-// 重新实现 SHtml.a
-/* def alink (func: () => JsCmd, body: NodeSeq, attrs: ElemAttr*): Elem = {
-		attrs.foldLeft(
-                // fmapFunc 给每一个函数 建立 map 映射
-                  fmapFunc( (func)  )
-                      ( name =>
-                          <a href="javascript://" onclick={
-                                makeAjaxCall( JE.Str(name + "=true")   ).toJsCmd +   "; return false;"
-                          }>
-                              { s"${name}${body}" }
-                          </a>
-                      )
-        )(_ % _)
-}*/
-
 }

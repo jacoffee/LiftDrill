@@ -52,8 +52,8 @@ object FormSubmit extends DispatchSnippet{
 				    "type=submit"  #> SHtml.onSubmitUnit(process)
 				    
 	  def process() = {
-				      S.notice(<p>登陆成功</p>)
-				      S.redirectTo("/index")
+	      S.notice(<p>登陆成功</p>)
+	      S.redirectTo("/index")
 	   }
 	
 	  def render(xhtml: NodeSeq): NodeSeq  =  {
