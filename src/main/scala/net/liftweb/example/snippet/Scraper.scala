@@ -27,9 +27,14 @@ import net.liftweb.util.JsonCmd
 import net.liftweb.http.js.JsCmds.{SetHtml, Script, SetValById, Function}
 import net.liftweb.http.js.JE.JsVar
 import net.liftweb.http.js.JE.JsRaw
+import java.text.SimpleDateFormat
+import java.util.Date
+import net.liftweb.http.js.JsCmds.Run
+import net.liftmodules.widgets.autocomplete.AutoComplete
+import net.liftweb.common.Loggable
 
 
-object Scraper extends DispatchSnippet {
+object Scraper extends DispatchSnippet with Loggable {
 	def dispatch = {
 		case "wiki"  =>  wiki
 		case "stringToHtml"  => stringToHtml 
@@ -40,6 +45,8 @@ object Scraper extends DispatchSnippet {
 		case "plain" => plain
 		case "ajax" => ajax
 		case "jsonForm" => jsonForm
+		case "jqDatePicker" => jqDatePicker
+		case "programmingLanguages" => programmingLanguages
 	}
 
 	val baseUrlOfXJH = "http://xjh.haitou.cc"
@@ -232,6 +239,32 @@ function F368303627065RF34HS(obj) {liftAjax.lift_ajaxHandler('F368303627065RF34H
 		and sent, via Ajax, to our  MottoServer  as a  JsonCmd.
 		In fact, it’s a  JsonCmd  with a default command name of "processForm".
 	*/
+	private def dateFormat = new SimpleDateFormat("yyyy-MM-dd")
+	private def stringToDate(dateLike: String) = dateFormat.parse(dateLike)
+	def jqDatePicker = {
+		// 页面加载的时候 会执行这个东西 也就是相当于绑定了 datePicker插件
+		val addDatePicker = Run("$('#birthday').datepicker({dateFormat: 'yy-mm-dd'});")
+		val default = dateFormat.format(new Date())
+		S.appendJs(addDatePicker)
+		"#birthday" #> SHtml.text("", u => u )
+	}
+
+	def programmingLanguages = {
+
+		val default = ""
+		val languages = List(
+			"C", "C++", "Clojure", "CoffeeScript",
+			"Java", "JavaScript",
+			"POP-11", "Prolog", "Python", "Processing",
+			"Scala", "Scheme", "Smalltalk", "SuperCollider"
+		)
+
+		def suggest(fillin: String, limit: Int) = {
+			languages.filter(_.toLowerCase.startsWith(fillin))
+		}
+		def submit(value: String) : Unit = logger.info("Value submitted: "+value)
+		"#autocomplete" #> AutoComplete(default, suggest, submit)
+	}
 }
 
 

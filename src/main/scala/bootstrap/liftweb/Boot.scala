@@ -29,12 +29,8 @@ import net.liftweb.mongodb.DefaultMongoIdentifier
 import com.mongodb.MongoOptions
 import net.liftweb.mongodb.MongoAddress
 import net.liftweb.mongodb.MongoHost
+import net.liftmodules.widgets.autocomplete.AutoComplete
 
-
-/**
- * A class that's instantiated early and run.  It allows the application
- * to modify lift's environment
- */
 class Boot extends Bootable{
 
   def boot {
@@ -59,6 +55,7 @@ class Boot extends Bootable{
     initSnippetDisapatch
     // dbBase Connection
     initConnect
+    AutoComplete.init
   }
 
   private def initSnippetDisapatch {

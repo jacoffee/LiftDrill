@@ -76,7 +76,15 @@
 	<div id="jsonResult"> Result will appear here.  </div>
 	<!-- Add Extra Function to Target  -->
 	</div>
-	<tail>
-		<script> var navigation = responsiveNav("#nav"); </script>
-	</tail>
+	<!-- add Date Picker for input type -->
+	<!-- import link as uasual -->
+	<div data-lift="Scraper.jqDatePicker?form=Post">
+		<input type="text" name="birthday" id="birthday" />
+		<input type="submit" value="Submit">
+	</div>
+	<!-- autoComplete -->
+	<form data-lift="Scraper.programmingLanguages?form=post">
+		<input id="autocomplete">
+		<input type="submit">
+	</form>
 </lift:surround>
