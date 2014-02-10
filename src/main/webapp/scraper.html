@@ -84,7 +84,13 @@
 	</div>
 	<!-- autoComplete -->
 	<form data-lift="Scraper.programmingLanguages?form=post">
-		<input id="autocomplete">
-		<input type="submit">
+		<input type="text" id="autocomplete" /> <!-- the default behavior: will not send value that's not suggested -->
+		<input type="submit" />
 	</form>
+	<script type="text/javascript">
+		var obj = {x:1, y:2}  // 字符串化  将对象转换成 字符串
+		alert( typeof JSON.stringify(obj)  )
+		var stringToJson = "{'x':3, 'y':4}"
+		alert( typeof JSON.parse(stringToJson) )
+	</script>
 </lift:surround>
