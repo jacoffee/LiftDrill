@@ -67,6 +67,7 @@ class Boot extends Bootable{
 
   private def initConnect {
 	  // Properties.whereToLook = () => ((filename, () => Full(new FileInputStream(filename))) :: Nil)
+
 	  val mongoOptions = new MongoOptions
 	  mongoOptions.connectionsPerHost = MongoConfig.connectionsPerHost
 	  mongoOptions.threadsAllowedToBlockForConnectionMultiplier = MongoConfig.threadsAllowedToBlockForConnectionMultiplier

@@ -47,16 +47,16 @@ object Person extends Person with MongoMetaRecord[Person] {
 
 	def setCalendar = {
 		val calendar = Calendar.getInstance
-		calendar.set(2014, 4, 12, 14, 25, 12)
+		calendar.set(2015, 3, 12, 6, 25, 12)
 		calendar
 	}
 	def dfltUser = {
-		Person.firstName("lao").
-			lastName("luo").
-			email("ad2121d@hotmail.com").
+		Person.firstName("li").
+			lastName("lai").
+			email("ad212ad@163.com").
 			birthDate(setCalendar).
 			personalityType(Personality.rand).
-			password("sd43434").save
+			password("121223").save
 	}
 
 	def idValue = id.get.toString

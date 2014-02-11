@@ -67,7 +67,7 @@ object Mongo extends DispatchSnippet {
 								Call("popupDiv.infoContent",
 									"修改Person信息",
 									JsHtml {
-										<input type="text" value= { idValue + " |||| " + person.firstName.get } id="firstName"></input>
+										<input type="text" value= { person.firstName.get } id="firstName"></input>
 										<input type="text" value= { person.lastName.get } id="lastName"></input>
 										<input type="text" value= { person.email.get } id="email"></input>
 										<input type="text" value= { PersonModel.formatDate( person.birthDate.get.getTime )} id="date"></input>

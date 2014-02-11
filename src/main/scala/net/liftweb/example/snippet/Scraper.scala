@@ -32,6 +32,11 @@ import java.util.Date
 import net.liftweb.http.js.JsCmds.Run
 import net.liftmodules.widgets.autocomplete.AutoComplete
 import net.liftweb.common.Loggable
+import net.liftweb.http.js.JsExp
+import net.liftweb.http.js.JE
+import scala.xml.parsing.XhtmlParser
+import scala.io.Source
+import net.liftweb.example.contact.MockLogin
 
 
 object Scraper extends DispatchSnippet with Loggable {
@@ -47,8 +52,9 @@ object Scraper extends DispatchSnippet with Loggable {
 		case "jsonForm" => jsonForm
 		case "jqDatePicker" => jqDatePicker
 		case "programmingLanguages" => programmingLanguages
+		case "mailQQ" => mailQQ
+		case "webQQ" => webQQ
 	}
-
 	val baseUrlOfXJH = "http://xjh.haitou.cc"
 	val defaultTimeout = 5000
 	val cityLoc = ".city_con li a"
@@ -250,7 +256,9 @@ function F368303627065RF34HS(obj) {liftAjax.lift_ajaxHandler('F368303627065RF34H
 	}
 
 	def programmingLanguages = {
-
+		Script(
+			Run(""" if(5>3) window.alert("haha") else window.alert("xixi") """ )
+		)
 		val default = ""
 		val languages = List(
 			"C", "C++", "Clojure", "CoffeeScript",
@@ -258,16 +266,103 @@ function F368303627065RF34HS(obj) {liftAjax.lift_ajaxHandler('F368303627065RF34H
 			"POP-11", "Prolog", "Python", "Processing",
 			"Scala", "Scheme", "Smalltalk", "SuperCollider"
 		)
-
 		def suggest(fillin: String, limit: Int) = {
 			languages.filter(_.toLowerCase.startsWith(fillin))
 		}
-		def submit(value: String) : Unit = logger.info("Value submitted: "+value)
+		def submit(value: String) : Unit = println("Value submitted: "+ value)
+		S.appendJs(
+			Run(
+				"""
+				$('#autocomplete input[type=text]').bind('blur', function(){
+					$(this).next().val($(this).val());
+				});
+				"""
+			)
+		)
 		"#autocomplete" #> AutoComplete(default, suggest, submit)
 	}
+
+	def mailQQ(xhtml: NodeSeq): NodeSeq = {
+		S.setHeader("Host", "ssl.ptlogin2.qq.com")
+		S.setHeader("Referer", "https://mail.qq.com/cgi-bin/loginpage")
+		<form id="loginform" onsubmit="return QMLogin.checkInput();" method="post" name="loginform" target="_self" autocomplete="on">
+		<input value="522005705" type="hidden" id="aid" name="aid" />
+		<input value="4" type="hidden" id="daid" name="daid" />
+		<input value="https://mail.qq.com/cgi-bin/login?vt=passport&amp;vm=wpt&amp;ft=ptlogin&amp;ss=&amp;validcnt=&amp;clientaddr=361541673@qq.com" type="hidden" name="u1" id="u1" />
+		<input value="1" type="hidden" name="from_ui" />
+		<input value="1" type="hidden" name="ptredirect" />
+		<input value="1" type="hidden" name="h" />
+		<input value="快速登录" name="wording" id="wording" type="hidden" />
+		<input	value="https://mail.qq.com/zh_CN/htmledition/style/fast_login181b91.css" type="hidden" id="css" name="css" />
+		<input value="m_ptmail" type="hidden" name="mibao_css" />
+
+    <div class="username"><label class="txt_default" for="uin" id="label_uin" default_txt="邮箱帐号或QQ号码" style="">&nbsp;</label>
+<input onchange="QMLogin.judgeVC()" readonly="true" class="login_domain" id="domain" name="u_domain" style="font-size: 18px;" value="@qq.com" type="text" tabindex="-1" />
+<input onblur="QMLogin.judgeVC()" class="txt alias" id="uin" name="uin" type="text" tabindex="1" value="361541673" />
+<input id="u" name="u" value="361541673@qq.com" type="hidden" />
+        <div class="autocomplete" id="auto_container" tabindex="-1" hidefocus="true" style="display: none;"></div>
+    </div>
+    <div class="password"><label class="txt_default" for="p" id="label_p" default_txt="QQ密码" style="">QQ密码</label><input
+            onfocus="QMLogin.judgeVC()" class="txt password" id="p" name="p" type="password" tabindex="2" />
+
+        <div id="capTip" class="captips" style="display: none;">大写锁定已打开</div>
+    </div>
+    <div class="about_password"><input class="remerber_password" type="checkbox" id="remerber_password"
+                                       tabindex="5" /><label for="remerber_password">记住登录状态</label><a
+            class="forgetPassword" href="/cgi-bin/loginpage?t=getpwdback" target="_blank">忘记密码？</a></div>
+    <div id="divSavePassWarning" class="red" style="display:none;">选择此项后，下次将自动登录邮箱（本机两周内有效）。为了您的信息安全，请不要在网吧或公用电脑上使用。
+    </div>
+    <div id="verifyinput" class="vfcode" style="display: none;">
+        <div class="vfcodeinput"><label class="txt_default" for="verifycode" id="label_verifycode" default_txt="验证码">
+            &nbsp;</label><input class="txt" id="verifycode" value="" name="verifycode" type="text" tabindex="4"
+                                 placeholder="" maxlength="6" autocomplete="off" />
+
+            <div id="verifytip" class="verifytip" style="display: none;">按右图填写，不区分大小写</div>
+        </div>
+        <div class="gray vfcode_img" style="">
+			<img id="imgVerify" onclick="QMLogin.changeImg();"
+                                                   onload="QMLogin.onLoadVC();" alt="验证码" onerror="QMLogin.imgError();"></img>
+            <div class="vfcode_change"><a id="verifyshow" href="javascript:QMLogin.changeImg();" style="display: none;">看不清楚？换一个</a>
+            </div>
+        </div>
+    </div>
+    <div class="login_submit" style=""><a class="login_btn_wrapper" href="javascript:;">
+        <input class="login_btn" id="btlogin" name="btlogin" type="submit"  value="登录" tabindex="5" /></a>
+    </div>
+	</form>
+	}
+
+	def webQQ(xhtml: NodeSeq): NodeSeq = {
+	<form method="post"  id="loginForm">
+		<div class="content">
+			<input type="hidden" name="device" value="" />
+            <input type="hidden" value="1392122000" name="ts" id="ts" />
+            <input type="hidden" value="" name="p" id="p" />
+            <input type="hidden" name="f" value="xhtml" />
+			<input type="hidden" name="delegate_url" value="" />
+            <input type="hidden"  name="action" value="" />
+            <input  type="hidden" name="https" value="true" />
+            <input type="hidden" name="tfcont" value="" />
+            <div id="validcodeMsg" style="display:none;" class="logintips_error"></div>
+            <div class="item">
+            <div>邮箱帐号或QQ号码：</div>
+            <input type="text" name="uin" size="10" id="uin" class="input_obj" value="361541673" /> @
+            <select name="aliastype" class="select_obj">
+                <option value="@qq.com">qq.com</option>
+                <option value="vip">vip.qq.com</option>
+                <option value="fox">foxmail.com</option>
+            </select>
+        </div>
+        <div class="item"><label for="pwd">QQ密码：</label><br />
+			<input type="password" name="pwd" id="pwd" size="10" class="input_obj" value="" autocomplete="off" />
+		</div>
+        <div class="item remember">
+			<input type="checkbox" id="remember_obj" name="mss" value="1" checked="true" />
+			<label for="remember_obj">记住登录状态</label></div>
+        <div class="tool_bar ">
+			<input type="submit" value=" 登录 " name="btlogin" class="btn1" id="submitBtn" />
+		</div>
+		</div>
+		</form>
+	}
 }
-
-
-
-
-
