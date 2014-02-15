@@ -58,10 +58,21 @@ class Boot extends Bootable{
     AutoComplete.init
   }
 
+  private def requestDispatch {
+	 // 因为这个相当于是重定向 所以想这个发送请求 相当于请求后面的那个页面 没有state的存储
+	/* LiftRules.statelessRewrite.append {
+		 case RewriteRequest(ParsePath("formsubmit"::Nil, _, _, _), GetRequest, _) =>
+			 RewriteResponse("formsubmit"::Nil)
+	 }*/
+
+  }
+
   private def initSnippetDisapatch {
 	  LiftRules.snippetDispatch.append {
 		case "Scraper" => net.liftweb.example.snippet.Scraper
 		case "Mongo" => net.liftweb.example.snippet.Mongo
+		case "ContactList" => net.liftweb.example.snippet.ContactList
+		case "FormSubmit" => net.liftweb.example.snippet.FormSubmit
 	  }
   }
 
@@ -81,7 +92,9 @@ class Boot extends Bootable{
     def sitemap = SiteMap(
 		Menu("Home") / "index" >> Hidden,
 		Menu("Scraper") / "scraper",
-		Menu("MongoOp") / "/simple/index"
+		Menu("MongoOp") / "/simple/index",
+		Menu("Contact") / "contact",
+		Menu("FormSubmit") / "formsubmit" >> Hidden
 	)
   }
 

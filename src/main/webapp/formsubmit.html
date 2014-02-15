@@ -1,0 +1,99 @@
+<!-- this html is to deeply study all kinds of form submit-->
+<div data-lift="surround?with=default&at=content">
+	<hr>
+	<h2>Pass Thru Example</h2>
+	<p> There's a 50:50 chance of seeing "Try again" or "Congratulations!":</p>
+	<div data-lift="FormSubmit.passThru"> 
+		Try again - this is the template content.
+	</div>
+	<hr>
+
+	<!-- html page fragments jump  -->
+	<div id="nav">
+		<ul>
+		    <li><a href="#">Home</a></li>
+		    <li><a href="#">About</a></li>
+		    <li><a href="#projects">Projects</a></li>
+		    <li><a href="#feature">Feature</a></li>
+		</ul>
+	</div>
+
+	<hr>
+	
+	
+	Old Form Submit
+	<div>
+		<i>keys to know</i>
+		<p>contents in plain will be executed when loading the page</p>
+	</div>
+	<form  data-lift="FormSubmit.plain"  method="POST" >
+		<input type="text" name="username" placeholder="what's your name" autocomplete="off"/>
+		<input type="submit" value="GO" />
+	</form>
+	<div data-lift="Msg?id=myError&noticeClass=notice_class"></div>
+	
+	<form data-lift="FormSubmit.plain2"  method="POST" >
+		<input type="text" name="password" placeholder="what's your password" autocomplete="off" />
+		<input type="submit" value="GO" />
+	</form>
+
+<!-- 	Ajax Form Submit Without refreshing the page
+		Mark your form as an Ajax form with data-lift="form.ajax"and supply a function
+		to run on the server when the form is submitted.
+	
+	<form data-lift="form.ajax"> Don't forget this cause this mark the form as ajaxForm
+		 这种形式的话 DIV会留在上面 所以这个地方应该使用原始的
+		<div  data-lift="FormSubmit.ajax">
+			<input type="text" name="name" placeholder="请输入用户名" />
+			 <input type="submit" />
+			<button id="submit" class="btn btn-primary btn-large">
+				<i class="icon-white icon-ok"></i>Submit
+				<input value="true" type="hidden" name="F9629569403212JQ3CS"></input>
+			</button>
+		</div>
+	</form>
+	<div id="result">Your name will be echoed here</div>
+	
+		You want to process a form via Ajax, sending the data in JSON format. $.post("/loginAction", {"username": username})
+		Make use of Lift’s jlift.jsJavaScript library and JsonHandlerclass
+	
+	<h1>Json Form example</h1>
+	Required for JSON forms processing
+	<script src="/classpath/jlift.js" data-lift="tail"></script>
+	<div data-lift="FormSubmit.jsonForm">
+		<script id="jsonScript" data-lift="tail"></script>
+		<button onclick="javascript:changeCase('upper')">Upper case the Motto</button>
+		<button onclick="javascript:changeCase('lower')">Lower case the Motto</button>
+		上面的这两段 就相当于在以前的基础之上 给button 绑定了事件
+			$("#upper").click(function(){
+				val upperCaseValue = $("#motto").val().toUpperCase();
+				$("#motto").val(upperCaseValue);
+			});
+		
+		替换成Script(MotoServer.jsCmd) 并且放在Body最后
+		<div id="jsonForm">
+			<label for="name">
+				Institution
+				<input id="name" type="text" name="name" value="Royal Society" />
+			</label>
+			<label for="motto">
+				Motto
+				<input id="motto" type="text" name="motto" value="Nullius in verba" />
+			</label>
+			<input type="submit" value="Send" />
+		</div>
+	<div id="jsonResult"> Result will appear here.  </div>
+	Add Extra Function to Target 
+	</div>
+	add Date Picker for input type
+	import link as uasual
+	<div data-lift="FormSubmit.jqDatePicker?form=Post">
+		<input type="text" name="birthday" id="birthday" />
+		<input type="submit" value="Submit">
+	</div>
+	autoComplete
+	<form data-lift="FormSubmit.programmingLanguages?form=post">
+		<input type="text" id="autocomplete" /> the default behavior: will not send value that's not suggested
+		<input type="submit" />
+	</form> -->
+</div>

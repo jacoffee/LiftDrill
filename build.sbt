@@ -24,12 +24,14 @@ scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature")
 libraryDependencies ++= {
   val liftVersion = "2.5"
   Seq(
-    "net.liftweb"       %% "lift-webkit"        % liftVersion        % "compile",
-    "net.liftweb"       %% "lift-wizard"        % liftVersion        % "compile",
-    "net.liftweb"       %% "lift-mapper"        % liftVersion        % "compile",
-    "net.liftweb"        %% "lift-mongodb-record"    % liftVersion  % "compile",
-    "net.liftweb"        %% "lift-mongodb"    % liftVersion  % "compile",
-    "net.liftweb"        %% "lift-record"    % liftVersion  % "compile",
+   "org.scalaj" %% "scalaj-collection" % "1.5",
+    "net.liftweb"       %% "lift-webkit"        % liftVersion        %     "compile"  withSources () ,
+    "net.liftweb"       %% "lift-wizard"        % liftVersion        %     "compile"  withSources () ,
+    "net.liftweb"       %% "lift-mapper"        % liftVersion       %     "compile"  withSources () ,
+    "net.liftweb"        %% "lift-mongodb-record"    % liftVersion   %     "compile"  withSources () ,
+    "net.liftweb"        %% "lift-mongodb"    % liftVersion   %     "compile"  withSources () ,
+    "net.liftweb"        %% "lift-record"    % liftVersion   %     "compile"  withSources () ,
+     "net.liftweb"        %% "lift-util"    % liftVersion   %     "compile"  withSources () ,
     "net.liftmodules"   %% "textile_2.5"        % "1.3"      % "compile",
     "net.liftmodules"   %% "widgets_2.5"        % "1.3"      % "compile"   withSources (),
     "org.eclipse.jetty" % "jetty-webapp"        % "8.1.10.v20130312" % "compile,container,test",
@@ -42,4 +44,4 @@ libraryDependencies ++= {
   )
 }
 
-port in container.Configuration := 8081
+port in container.Configuration := 80
