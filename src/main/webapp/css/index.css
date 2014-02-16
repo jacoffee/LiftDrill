@@ -293,3 +293,15 @@ div.personInfo {
 	box-shadow: 0 0 80px 0 rgba(0, 0, 0, 0.6);
 	margin: 0 auto;
 }
+
+
+div.logintips_error {
+	border: 1px solid #deacb4;
+	background: #f2dede;
+	color: #b94a48;
+	font-size: 14px;
+	line-height: 1.5;
+	padding: 6px 12px;
+	border-radius: 3px;
+	margin-bottom: 12px;
+}

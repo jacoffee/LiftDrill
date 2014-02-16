@@ -55,7 +55,7 @@ import scala.io.Source
 import net.liftweb.http.SessionVar
 import net.liftweb.common.Empty
 import net.liftweb.common.Box
-import net.liftweb.builtin.snippet.Msg
+import net.liftweb.builtin.snippet.Form
 import net.liftweb.http.RequestVar
 
 /*
@@ -172,8 +172,13 @@ object FormSubmit extends DispatchSnippet {
 	def ajax = {
 		var username = ""
 		def process: JsCmd = SetHtml("result", Text(username))
-		"@name" #> SHtml.text(username, u => username = u) &
-		"button *+" #> SHtml.hidden(() => process) // 其实不用<input type="submit">也是可以的 就像以前一样用button照样可以提交
+		"@name" #> SHtml.text(username, u => { 
+			println("hello "+ username) 
+			username = u
+		}) &
+		"button *+" #> SHtml.hidden(() => process)
+		// *+ stands for append the content on the right of #> to the last child node of button elem
+		// 其实不用<input type="submit">也是可以的 就像以前一样用button照样可以提交
 	}
 
 	def jsonForm = {
