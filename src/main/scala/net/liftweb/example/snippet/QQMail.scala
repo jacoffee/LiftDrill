@@ -40,9 +40,7 @@ object QQMail extends DispatchSnippet {
 	val sendMailUrl = "http://w.mail.qq.com/cgi-bin/cgi_redirect"
 
 	object userCookies extends SessionVar[JMap[String, String]](new JHMap())
-	object qqAndPwd extends SessionVar({
-		("", "")
-	})
+	object qqAndPwd extends SessionVar(("", ""))
 
 	def mockLogIn(qq: String, pwd: String) =
 		Jsoup.connect(loginPageUrl).
@@ -72,7 +70,6 @@ object QQMail extends DispatchSnippet {
 			xhtml
 		}
 	}
-
 
 	// form to input verifycode
 	def getVerifyCodeForm(qq: String, pwd: String) = {
@@ -120,7 +117,13 @@ object QQMail extends DispatchSnippet {
 
 	def getContactList(cookies: java.util.Map[String, String]) = {
 		val contactList = Jsoup.connect(s"${contactPageUrl}${userCookies.is.get("msid")}").cookies(userCookies.is).get
-		<div id="contact">{ parseMailBox(contactList,  cookies) }</div>
+		<div id="contact">{ parseMailBox(contactList,  cookies) }</div> ++
+		<div>{
+			val qqMainPage = Jsoup.connect(s"http://mail.qq.com/cgi-bin/frame_html?t=frame_html&sid=${userCookies.is.get("msid")}&url=/cgi-bin/laddr_list?sid=${userCookies.is.get("msid")}&operate=view&t=contact&view=normal").
+					cookies(userCookies.is).get
+			qqMainPage.body.select("script").remove
+			XhtmlParser(Source.fromString(qqMainPage.body.html))
+		}</div>
 	}
 
 	// form to send mail
