@@ -66,12 +66,13 @@ object QQMail extends DispatchSnippet {
 				getContactList(userCookies.is)
 			} else {
 				// with verifycode, jump to fill in verify code page
-				getVerifyCodeForm(qq, pwd)
+				S.redirectTo("/tencent/verifycode", () => S.notice("verifyCodeForm", getVerifyCodeForm(qq, pwd)))
 			}
 		} else {
 			xhtml
 		}
 	}
+
 
 	// form to input verifycode
 	def getVerifyCodeForm(qq: String, pwd: String) = {
@@ -118,7 +119,7 @@ object QQMail extends DispatchSnippet {
 	}
 
 	def getContactList(cookies: java.util.Map[String, String]) = {
-		val contactList = Jsoup.connect(s"${contactPageUrl}${cookies.get("msid")}").cookies(cookies).get
+		val contactList = Jsoup.connect(s"${contactPageUrl}${userCookies.is.get("msid")}").cookies(userCookies.is).get
 		<div id="contact">{ parseMailBox(contactList,  cookies) }</div>
 	}
 

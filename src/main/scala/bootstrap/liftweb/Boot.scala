@@ -96,7 +96,8 @@ class Boot extends Bootable{
 		Menu("FormSubmit") / "formsubmit" >> Hidden,
 		Menu("Login") / "tencent" / "login" >> Hidden,
 		Menu("Contact") / "tencent" / "contact" >> Hidden,
-		Menu("Mail") / "tencent" / "mail" >> Hidden
+		Menu("Mail") / "tencent" / "mail" >> Hidden,
+		Menu("Verify") / "tencent" / "verifycode" >> Hidden
 	)
   }
 
