@@ -24,26 +24,27 @@ import org.jsoup.nodes.Element
 import org.jsoup.nodes.Attributes
 import org.jsoup.parser.Tag
 import org.jsoup.nodes.Attribute
+import net.liftweb.builtin.snippet.Surround
 
-object SendQQMail extends DispatchSnippet {
+object QQMail extends DispatchSnippet {
 	
 	def dispatch = {
 		case "login" => login
 		case "contact" => contact
-		case "sendMail" => sendMail
+		case "send" => send
 	}
 
 	val loginPageUrl = "http://w.mail.qq.com/cgi-bin/login"
 	val contactPageUrl = "http://w.mail.qq.com/cgi-bin/addr_listall?sid="
-	val sendMailUrl = "http://w.mail.qq.com/cgi-bin/cgi_redirect"
 	val sendToPageUrl = "http://w.mail.qq.com/cgi-bin/readtemplate?t=compose&"
-
-	// the purpose is to obtain the cookie when successfully sign in
+	val sendMailUrl = "http://w.mail.qq.com/cgi-bin/cgi_redirect"
 
 	object userCookies extends SessionVar[JMap[String, String]](new JHMap())
-	object qqAndPwd extends SessionVar(("", ""))
+	object qqAndPwd extends SessionVar({
+		("", "")
+	})
 
-	def mockLogIn(qq: String, pwd: String) = 
+	def mockLogIn(qq: String, pwd: String) =
 		Jsoup.connect(loginPageUrl).
 		data("f", "xhtml").
 		data("uin", qq).
@@ -80,7 +81,7 @@ object SendQQMail extends DispatchSnippet {
 		verifyCodeForm.select("form").removeAttr("action")
 		verifyCodeForm.select("form").attr("action", "/tencent/contact")
 		verifyCodeForm.select("p.tip").remove
-		verifyCodeForm.select("p a").get(0).remove
+		verifyCodeForm.select("p a").remove
 		verifyCodeForm.select("p").get(2).remove
 		<div>
 			<div id="loginform">{ XhtmlParser(Source.fromString(verifyCodeForm.outerHtml)) }</div>
@@ -107,10 +108,8 @@ object SendQQMail extends DispatchSnippet {
 	}
 	def contact(xhtml: NodeSeq): NodeSeq  = {
 		val verifycode = S.param("verifycode").openOr("")
-		println(verifycode)
 		S.param("verifycode") match {
 			case Full(verifycode)  =>  {
-				println("enter hahah ")
 				userCookies(Jsoup.connect(loginPageUrl).data(getFormDatas).execute.cookies)
 				getContactList(userCookies.is)
 			}
@@ -125,18 +124,20 @@ object SendQQMail extends DispatchSnippet {
 
 	// form to send mail
 	def getSendMailForm(doc: Document) = {
-		val sendMailForm = doc.getElementsByTag("form")
-		sendMailForm.select("form").removeAttr("action")
-		sendMailForm.select("form").attr("action", "/tencent/mail")
-		sendMailForm.select("form").removeAttr("name")
-		sendMailForm.first.getElementsByAttributeValueContaining("type", "submit").remove
-		sendMailForm.first.getElementsByAttributeValueContaining("class", "g").remove
-		val attrs =  new Attributes
-		attrs.put(new Attribute("type", "submit"))
-		attrs.put(new Attribute("value", "发送"))
-		val submitElement = new Element(Tag.valueOf("input"), "",attrs)
-		sendMailForm.first.appendChild(submitElement)
-		sendMailForm
+		try {
+			val sendMailForm = doc.getElementsByTag("form")
+			sendMailForm.select("form").removeAttr("action")
+			sendMailForm.select("form").attr("action", "/tencent/mail")
+			sendMailForm.select("form").removeAttr("name")
+			sendMailForm.first.getElementsByAttributeValue("class", "g").remove
+			sendMailForm.first.select("input[name=content]").first.attr("type", "textarea")
+			val sendButton = sendMailForm.first.select("input[value=发送]").first
+			sendMailForm.first.select("input[type=submit]").remove
+			sendMailForm.append(sendButton.outerHtml)
+			sendMailForm.outerHtml
+		} catch {
+			case e: Exception => "<div>邮件发送表单获取失败</div>"
+		}
 	}
 	def parseMailBox(doc: Document, cookies: java.util.Map[String, String]) = {
 		val contactElems = doc.getElementsByAttributeValue("class", "hr")
@@ -149,8 +150,7 @@ object SendQQMail extends DispatchSnippet {
 				<p class="logintips_error">验证码输入错误</p>
 				{ getVerifyCodeForm(qqAndPwd.is._1, qqAndPwd.is._2)}
 			</div> 
-		} 
-		else {
+		} else {
 			val contactLinks = contactElems.get(1).select("a")
 			val cotactAndMailBox = for( i <- 0 until contactLinks.size ) yield contactLinks.get(i).text
 			cotactAndMailBox.toList.map { contactList => 
@@ -165,7 +165,7 @@ object SendQQMail extends DispatchSnippet {
 									Replace(
 										"contact", 
 										XhtmlParser(
-											Source.fromString{ getSendMailForm(sendFormResponse(contactList, lastlt+1, lastgt).parse).outerHtml }
+											Source.fromString{ getSendMailForm(sendFormResponse(contactList, lastlt+1, lastgt).parse) }
 										)
 									)
 								}).cmd
@@ -179,12 +179,12 @@ object SendQQMail extends DispatchSnippet {
 		}
 	}
 
-	def sendMail = {
-		println("have you accessed ")
+	def send = {
 		S.param("content") match {
 			case Full(content)  =>  {
 				Jsoup.connect(sendMailUrl).data(getFormDatas).cookies(userCookies.is).post
-				S.redirectTo("/", () => S.notice("myError", "成功发送邮件"))
+				userCookies.remove
+				S.redirectTo("/", () => S.notice("success", "成功发送邮件"))
 			}
 			case _ =>  PassThru
 		}
