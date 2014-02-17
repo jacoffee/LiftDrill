@@ -295,7 +295,7 @@ div.personInfo {
 }
 
 
-div.logintips_error {
+p.logintips_error {
 	border: 1px solid #deacb4;
 	background: #f2dede;
 	color: #b94a48;
@@ -305,3 +305,4 @@ div.logintips_error {
 	border-radius: 3px;
 	margin-bottom: 12px;
 }
+

@@ -20,12 +20,16 @@ import net.liftweb.http.js.JsCmds.Alert
 import net.liftweb.http.js.JsCmds.Replace
 import net.liftweb.util.PassThru
 import java.util.{ Map => JMap, HashMap => JHMap}
+import org.jsoup.nodes.Element
+import org.jsoup.nodes.Attributes
+import org.jsoup.parser.Tag
+import org.jsoup.nodes.Attribute
 
 object SendQQMail extends DispatchSnippet {
 	
 	def dispatch = {
 		case "login" => login
-		case "contactList" => contactList 
+		case "contact" => contact
 		case "sendMail" => sendMail
 	}
 
@@ -74,7 +78,7 @@ object SendQQMail extends DispatchSnippet {
 		val verifyCodePage = Jsoup.connect(redirectToUrl).execute
 		val verifyCodeForm = verifyCodePage.parse.getElementsByTag("form")
 		verifyCodeForm.select("form").removeAttr("action")
-		verifyCodeForm.select("form").attr("action", "/contact")
+		verifyCodeForm.select("form").attr("action", "/tencent/contact")
 		verifyCodeForm.select("p.tip").remove
 		verifyCodeForm.select("p a").get(0).remove
 		verifyCodeForm.select("p").get(2).remove
@@ -83,8 +87,12 @@ object SendQQMail extends DispatchSnippet {
 			{
 				{
 					SHtml.a(
-						() => { SHtml.ajaxInvoke(() => { SetHtml("loginform", XhtmlParser(Source.fromString(verifyCodeForm.outerHtml))) }).cmd },
-						Text("看不清, 换一张"), 
+						() => {
+							SHtml.ajaxInvoke(() => {
+								SetHtml("loginform", XhtmlParser(Source.fromString(verifyCodeForm.outerHtml)))
+							}).cmd
+						},
+						Text("看不清, 换一张"),
 						"id"-> "refresh"
 					)
 				}
@@ -97,7 +105,7 @@ object SendQQMail extends DispatchSnippet {
 			S.request.map { req => req.params.map { param => param._1 -> param._2.head} }.get
 		)
 	}
-	def contactList(xhtml: NodeSeq): NodeSeq  = {
+	def contact(xhtml: NodeSeq): NodeSeq  = {
 		val verifycode = S.param("verifycode").openOr("")
 		println(verifycode)
 		S.param("verifycode") match {
@@ -119,8 +127,15 @@ object SendQQMail extends DispatchSnippet {
 	def getSendMailForm(doc: Document) = {
 		val sendMailForm = doc.getElementsByTag("form")
 		sendMailForm.select("form").removeAttr("action")
-		sendMailForm.select("form").attr("action", "/mail")
+		sendMailForm.select("form").attr("action", "/tencent/mail")
 		sendMailForm.select("form").removeAttr("name")
+		sendMailForm.first.getElementsByAttributeValueContaining("type", "submit").remove
+		sendMailForm.first.getElementsByAttributeValueContaining("class", "g").remove
+		val attrs =  new Attributes
+		attrs.put(new Attribute("type", "submit"))
+		attrs.put(new Attribute("value", "发送"))
+		val submitElement = new Element(Tag.valueOf("input"), "",attrs)
+		sendMailForm.first.appendChild(submitElement)
 		sendMailForm
 	}
 	def parseMailBox(doc: Document, cookies: java.util.Map[String, String]) = {
@@ -131,7 +146,8 @@ object SendQQMail extends DispatchSnippet {
 			execute
 		if(contactElems.isEmpty) { 
 			<div> 
-				<p class="logintips_error">验证码输入错误</p>  ++
+				<p class="logintips_error">验证码输入错误</p>
+				{ getVerifyCodeForm(qqAndPwd.is._1, qqAndPwd.is._2)}
 			</div> 
 		} 
 		else {
@@ -144,14 +160,14 @@ object SendQQMail extends DispatchSnippet {
 					<p>
 					{
 						SHtml.a(() => 
-							{ 
-								SHtml.ajaxInvoke(() => { 
+							{
+								SHtml.ajaxInvoke(() => {
 									Replace(
 										"contact", 
 										XhtmlParser(
 											Source.fromString{ getSendMailForm(sendFormResponse(contactList, lastlt+1, lastgt).parse).outerHtml }
 										)
-									) 
+									)
 								}).cmd
 							},
 							Text(contactList)

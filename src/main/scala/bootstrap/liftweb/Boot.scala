@@ -64,12 +64,6 @@ class Boot extends Bootable{
 	LiftRules.statelessRewrite.append {
 		case RewriteRequest(ParsePath("formsubmit":: id :: Nil, _, _, _), GetRequest, _) =>
 			 RewriteResponse( "formsubmit" :: Nil, Map("id" -> id))
-		case RewriteRequest(ParsePath("login" :: id :: Nil, _, _, _), GetRequest, _) =>
-			 RewriteResponse("login" :: Nil, Map("id" -> id))
-		case RewriteRequest(ParsePath("contact" :: Nil, _, _, _), GetRequest, _) =>
-			 RewriteResponse("contact" ::Nil )
-		case RewriteRequest(ParsePath("mail" :: Nil, _, _, _), GetRequest, _) =>
-			 RewriteResponse("mail" :: Nil )
 	}
   }
 
@@ -77,7 +71,7 @@ class Boot extends Bootable{
 	  LiftRules.snippetDispatch.append {
 		case "Scraper" => net.liftweb.example.snippet.Scraper
 		case "Mongo" => net.liftweb.example.snippet.Mongo
-		case "SendQQMail" => net.liftweb.example.snippet.SendQQMail
+		case "QQMail" => net.liftweb.example.snippet.QQMail
 		case "FormSubmit" => net.liftweb.example.snippet.FormSubmit
 	  }
   }
@@ -98,11 +92,11 @@ class Boot extends Bootable{
     def sitemap = SiteMap(
 		Menu("Home") / "index" >> Hidden,
 		Menu("Scraper") / "scraper",
-		Menu("MongoOp") / "/simple/index",
+		Menu("MongoOp") / "simple" / "index",
 		Menu("FormSubmit") / "formsubmit" >> Hidden,
-		Menu("Login") / "login" >> Hidden,
-		Menu("Contact") / "contact" >> Hidden,
-		Menu("Mail") / "mail" >> Hidden
+		Menu("Login") / "tencent" / "login" >> Hidden,
+		Menu("Contact") / "tencent" / "contact" >> Hidden,
+		Menu("Mail") / "tencent" / "mail" >> Hidden
 	)
   }
 
