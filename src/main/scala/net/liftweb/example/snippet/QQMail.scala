@@ -117,13 +117,7 @@ object QQMail extends DispatchSnippet {
 
 	def getContactList(cookies: java.util.Map[String, String]) = {
 		val contactList = Jsoup.connect(s"${contactPageUrl}${userCookies.is.get("msid")}").cookies(userCookies.is).get
-		<div id="contact">{ parseMailBox(contactList,  cookies) }</div> ++
-		<div>{
-			val qqMainPage = Jsoup.connect(s"http://mail.qq.com/cgi-bin/frame_html?t=frame_html&sid=${userCookies.is.get("msid")}&url=/cgi-bin/laddr_list?sid=${userCookies.is.get("msid")}&operate=view&t=contact&view=normal").
-					cookies(userCookies.is).get
-			qqMainPage.body.select("script").remove
-			XhtmlParser(Source.fromString(qqMainPage.body.html))
-		}</div>
+		<div id="contact">{ parseMailBox(contactList,  cookies) }</div>
 	}
 
 	// form to send mail
@@ -148,7 +142,7 @@ object QQMail extends DispatchSnippet {
 		def sendFormResponse(mailbox: String, start: Int, end: Int) = Jsoup.
 			connect(s"${sendToPageUrl}sid=${cookies.get("msid")}&to=${ mailbox.slice(start, end)}").
 			cookies(cookies).
-			execute
+			post
 		if(contactElems.isEmpty) { 
 			<div> 
 				<p class="logintips_error">验证码输入错误</p>
@@ -169,7 +163,7 @@ object QQMail extends DispatchSnippet {
 									Replace(
 										"contact", 
 										XhtmlParser(
-											Source.fromString{ getSendMailForm(sendFormResponse(contactList, lastlt+1, lastgt).parse) }
+											Source.fromString{ getSendMailForm(sendFormResponse(contactList, lastlt+1, lastgt)) }
 										)
 									)
 								}).cmd
