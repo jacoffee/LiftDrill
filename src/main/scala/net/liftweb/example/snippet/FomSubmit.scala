@@ -57,6 +57,7 @@ import net.liftweb.common.Empty
 import net.liftweb.common.Box
 import net.liftweb.builtin.snippet.Form
 import net.liftweb.http.RequestVar
+import net.liftweb.builtin.snippet.Tail
 
 /*
  * object BasicDispatchUsage extends RestHelper {
@@ -71,13 +72,16 @@ import net.liftweb.http.RequestVar
 // 不要放到别的对象里面去了
 object LoggedIn extends SessionVar[Box[String]](Empty)
 
-object FormSubmit extends DispatchSnippet {
+object FormSubmit extends DispatchSnippet with Loggable{
 
 	def dispatch = {
 		case "checkLogIn"   =>  checkLogIn _
 		case "passThru" => passThru
 		case "plain" => plain
 		case "plain2" => plain2
+		case "likes" => likes
+		case "opts" => opts
+		case "dropdown" => dropdown
 		case "ajax" => ajax
 		case "jsonForm" => jsonForm
 		case "jqDatePicker" => jqDatePicker
@@ -167,6 +171,43 @@ object FormSubmit extends DispatchSnippet {
 			}
 			case _ => PassThru
 		}
+	}
+
+	def likes = {
+		println(
+			S.request.map { req => req.params.map { param => param._1 -> param._2.head} }.get.init.values.toList
+		)
+		var likesTurtles = false
+		def disbale = {
+			if( Math.random > 0.5d ) "* [disabled]" #> "disable"
+			else PassThru
+		}
+		val possible = List("apple", "banana", "pear")
+		var actual = List("")
+		def receive(values: Seq[String]) = {
+			println(values)
+			<p>{ values }</p>
+		}
+		// 这种情况用于判断 某个选项是否选择 以进行后续的操作
+		"type=submit"  #> SHtml.onSubmitUnit( () => println("<><><><><>" +likesTurtles) )
+		//"#like" #> SHtml.checkbox(possible, actual, receive(actual))
+	}
+
+	def opts = {
+		val opts = List(("apple", "apple"),("banana", "banana"),("pear", "pear"))
+		val default = List("apple")
+		"#opts" #> SHtml.multiSelect(opts, default, opts => println(opts)) &
+		 "type=submit"  #> SHtml.onSubmitUnit( () => println(default) )
+	}
+
+	def dropdown = {
+		def getSelected(selected: String) = println( s"you choose${selected}")
+		val options = List(("shidanwh@qq.com", "julia<shidanwh@qq.com>"),("837265033@qq.com", "°★·°颍°<837265033@qq.com>"))
+		val default = Empty
+		def logSelected() = println("Values selected: "+ default)
+
+		"#dropdown" #> SHtml.selectObj(options, default, getSelected, "id" -> "dropdown") &
+		"type=submit"  #> SHtml.onSubmitUnit( logSelected )
 	}
 
 	def ajax = {

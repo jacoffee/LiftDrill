@@ -31,6 +31,7 @@ object QQMail extends DispatchSnippet {
 	def dispatch = {
 		case "login" => login
 		case "contact" => contact
+		case "write" => write
 		case "send" => send
 	}
 
@@ -84,7 +85,6 @@ object QQMail extends DispatchSnippet {
 		<div>
 			<div id="loginform">{ XhtmlParser(Source.fromString(verifyCodeForm.outerHtml)) }</div>
 			{
-				{
 					SHtml.a(
 						() => {
 							SHtml.ajaxInvoke(() => {
@@ -94,14 +94,13 @@ object QQMail extends DispatchSnippet {
 						Text("看不清, 换一张"),
 						"id"-> "refresh"
 					)
-				}
 			}
 		</div>
 	}
 
 	def getFormDatas = {
 		JavaConversions.mapAsJavaMap(
-			S.request.map { req => req.params.map { param => param._1 -> param._2.head} }.get
+			S.request.map { req => req.params.filterNot(pair => pair._1 == "to").map { param => param._1 -> param._2.head} }.get
 		)
 	}
 	def contact(xhtml: NodeSeq): NodeSeq  = {
@@ -117,70 +116,86 @@ object QQMail extends DispatchSnippet {
 
 	def getContactList(cookies: java.util.Map[String, String]) = {
 		val contactList = Jsoup.connect(s"${contactPageUrl}${userCookies.is.get("msid")}").cookies(userCookies.is).get
-		<div id="contact">{ parseMailBox(contactList,  cookies) }</div>
+		<div id="contact">{ parseMailBox(contactList) }</div>
+	}
+
+	def sendFormResponse(mailbox: String) = Jsoup.
+			connect(s"${sendToPageUrl}sid=${userCookies.is.get("msid")}&to=${ mailbox }").
+			cookies(userCookies.is).
+			post
+
+	def parseMailBox(doc: Document) = {
+		val contactElems = doc.getElementsByAttributeValue("class", "hr")
+		if(contactElems.isEmpty) {
+			<div>
+				<p class="logintips_error">验证码输入错误</p>
+				{ getVerifyCodeForm(qqAndPwd.is._1, qqAndPwd.is._2)}
+			</div>
+		} else {
+			val contactLinks = contactElems.get(1).select("a")
+			val cotactAndMailBox = for( i <- 0 until contactLinks.size ) yield contactLinks.get(i).text
+			<form action="/tencent/write" method="post">
+			{
+				cotactAndMailBox.toList.zipWithIndex.map {
+					case (contactList, index) => {
+						val lastgt = contactList.lastIndexOf(">")
+						val lastlt = contactList.lastIndexOf("<")
+						<input type="checkbox" name={ index.toString } value={ contactList.slice(lastlt+1, lastgt) }  /><label>{ contactList }</label><br />
+					}
+					case _ => <div></div>
+				} ++
+				<input type="submit" value="写邮件" />
+			}
+			</form>
+		}
+	}
+
+	def write(xhtml: NodeSeq): NodeSeq = {
+		println(getFormDatas)
+		val mailBoxList = S.request.map { req => req.params.map { param => param._1 -> param._2.head} }.get.values.toList
+		println(mailBoxList)
+		XhtmlParser(
+			Source.fromString{ getSendMailForm(sendFormResponse( mailBoxList.mkString("", ",", ",") )) }
+		)
 	}
 
 	// form to send mail
 	def getSendMailForm(doc: Document) = {
+		/* val generatedForm =
+			"""
+				<label for="content">收件人 :</label><input name="to" type="text" class="to" /><br />
+				<label for="content">主题 :</label><input name="subject" type="text" class="subject" /><br />
+				<label for="content">正文 :</label><input name="content" type="textarea" class="mailbody" /><br />
+			""" */
 		try {
 			val sendMailForm = doc.getElementsByTag("form")
 			sendMailForm.select("form").removeAttr("action")
 			sendMailForm.select("form").attr("action", "/tencent/mail")
 			sendMailForm.select("form").removeAttr("name")
 			sendMailForm.first.getElementsByAttributeValue("class", "g").remove
-			sendMailForm.first.select("input[name=content]").first.attr("type", "textarea")
+			// sendMailForm.first.select("input[name=content]").first.attr("type", "textarea")
 			val sendButton = sendMailForm.first.select("input[value=发送]").first
 			sendMailForm.first.select("input[type=submit]").remove
+			// sendMailForm.select("p.hr").get(0).empty.append(generatedForm)
 			sendMailForm.append(sendButton.outerHtml)
 			sendMailForm.outerHtml
 		} catch {
 			case e: Exception => "<div>邮件发送表单获取失败</div>"
 		}
 	}
-	def parseMailBox(doc: Document, cookies: java.util.Map[String, String]) = {
-		val contactElems = doc.getElementsByAttributeValue("class", "hr")
-		def sendFormResponse(mailbox: String, start: Int, end: Int) = Jsoup.
-			connect(s"${sendToPageUrl}sid=${cookies.get("msid")}&to=${ mailbox.slice(start, end)}").
-			cookies(cookies).
-			post
-		if(contactElems.isEmpty) { 
-			<div> 
-				<p class="logintips_error">验证码输入错误</p>
-				{ getVerifyCodeForm(qqAndPwd.is._1, qqAndPwd.is._2)}
-			</div> 
-		} else {
-			val contactLinks = contactElems.get(1).select("a")
-			val cotactAndMailBox = for( i <- 0 until contactLinks.size ) yield contactLinks.get(i).text
-			cotactAndMailBox.toList.map { contactList => 
-				{
-					val lastgt = contactList.lastIndexOf(">")
-					val lastlt = contactList.lastIndexOf("<")
-					<p>
-					{
-						SHtml.a(() => 
-							{
-								SHtml.ajaxInvoke(() => {
-									Replace(
-										"contact", 
-										XhtmlParser(
-											Source.fromString{ getSendMailForm(sendFormResponse(contactList, lastlt+1, lastgt)) }
-										)
-									)
-								}).cmd
-							},
-							Text(contactList)
-						)
-					}
-					</p>
-				}	
-			}
-		}
-	}
 
 	def send = {
+		val to = S.param("to").openOr("")
+		val mailList = if ( to.contains(",")){
+			to.split(",").toList
+		} else {
+			List(to)
+		}
 		S.param("content") match {
 			case Full(content)  =>  {
-				Jsoup.connect(sendMailUrl).data(getFormDatas).cookies(userCookies.is).post
+				mailList.map { mailBox =>
+					Jsoup.connect(sendMailUrl).data(getFormDatas).data("to", mailBox).cookies(userCookies.is).post
+				}
 				userCookies.remove
 				S.redirectTo("/", () => S.notice("success", "成功发送邮件"))
 			}

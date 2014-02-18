@@ -38,6 +38,29 @@
 	</form>
 
 	<hr>
+		<p> CheckBox will be disabled for 50 percent approximity</p>
+		<form data-lift="FormSubmit.likes">
+			<input id="like" type="checkbox" name="zml" /><label for="likes">Do you like turtles?</label>
+			<input id="like" type="checkbox"  name="xiao" /><label for="likes">Do you like football?</label>
+			<input type="submit" id="send" value="发送"  />
+		</form>
+	
+	<hr>
+		<i>Practice the usage of MultiSelectBox</i>
+		<form data-lift="FormSubmit.opts">
+			<div id="opts" ></div>
+			<input type="submit" id="send" value="发送"  />
+		</form>
+		<br>
+		<br>
+		<i>Practice the usage of MultiSelectBox with drpDownList</i>
+		<form data-lift="FormSubmit.dropdown">
+			<label for="dropdown">Select Guys you wanna send Mail</label><input id="dropdown" />
+			<input type="submit" id="send" value="发送"  />
+		</form>
+	
+	<hr>
+	<br>
 	<i>
 		Ajax Form Submit Without refreshing the page
 		Mark your form as an Ajax form with data-lift="form.ajax"and supply a function
@@ -63,10 +86,8 @@
 		You want to process a form via Ajax, sending the data in JSON format. $.post("/loginAction", {"username": username})
 		Make use of Lift’s jlift.jsJavaScript library and JsonHandlerclass
 	<hr>
-
 	
-	
-<!-- 	<h1>Json Form example</h1>
+	<h1>Json Form example</h1>
 	Required for JSON forms processing
 	<script src="/classpath/jlift.js" data-lift="tail"></script>
 	<div data-lift="FormSubmit.jsonForm">
@@ -104,5 +125,5 @@
 	<form data-lift="FormSubmit.programmingLanguages?form=post">
 		<input type="text" id="autocomplete" /> the default behavior: will not send value that's not suggested
 		<input type="submit" />
-	</form>  -->
+	</form> 
 </div>

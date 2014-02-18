@@ -56,7 +56,6 @@ class Boot extends Bootable{
     // dbBase Connection
     initConnect
     AutoComplete.init
-    
   }
 
   private def requestDispatch {
@@ -97,7 +96,8 @@ class Boot extends Bootable{
 		Menu("Login") / "tencent" / "login" >> Hidden,
 		Menu("Contact") / "tencent" / "contact" >> Hidden,
 		Menu("Mail") / "tencent" / "mail" >> Hidden,
-		Menu("Verify") / "tencent" / "verifycode" >> Hidden
+		Menu("Verify") / "tencent" / "verifycode" >> Hidden,
+		Menu("Verify") / "tencent" / "write" >> Hidden
 	)
   }
 

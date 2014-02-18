@@ -39,8 +39,7 @@ libraryDependencies ++= {
     "ch.qos.logback"    % "logback-classic"     % "1.0.11",
     "com.h2database"    % "h2"     % "1.3.171",
      "org.jsoup"  %  "jsoup"  %  "1.7.3",
-     "org.apache.lucene" % "lucene-smartcn" % "3.4.0",
-     "org.apache.httpcomponents" % "httpclient" % "4.3.2"  %   "compile"  withSources ()
+     "org.apache.lucene" % "lucene-smartcn" % "3.4.0"
   )
 }
 
