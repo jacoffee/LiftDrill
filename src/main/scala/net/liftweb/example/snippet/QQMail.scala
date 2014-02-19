@@ -37,7 +37,7 @@ object QQMail extends DispatchSnippet {
 		case "send" => send
 	}
 
-	val loginPageUrl = "http://w.mail.qq.com/cgi-bin/login"
+	val loginPageUrl = "https://w.mail.qq.com/cgi-bin/login"
 		
 	val contactPageUrl = "http://w.mail.qq.com/cgi-bin/addr_listall?sid="
 	val sendToPageUrl = "http://w.mail.qq.com/cgi-bin/readtemplate?t=compose&"
@@ -80,28 +80,38 @@ object QQMail extends DispatchSnippet {
 
 	// form to input verifycode
 	def getVerifyCodeForm(qq: String, pwd: String) = {
-		val redirectToUrl = mockLogIn(qq, pwd).parse.select("meta").last.attr("content").drop(6)
-		val verifyCodePage = Jsoup.connect(redirectToUrl).execute
-		val verifyCodeForm = verifyCodePage.parse.getElementsByTag("form")
-		verifyCodeForm.select("form").removeAttr("action")
-		verifyCodeForm.select("form").attr("action", "/tencent/contact")
-		verifyCodeForm.select("p.tip").remove
-		verifyCodeForm.select("p a").remove
-		verifyCodeForm.select("p").get(2).remove
-		<div>
-			<div id="loginform">{ XhtmlParser(Source.fromString(verifyCodeForm.outerHtml)) }</div>
-			{
-					SHtml.a(
-						() => {
-							SHtml.ajaxInvoke(() => {
-								SetHtml("loginform", XhtmlParser(Source.fromString(verifyCodeForm.outerHtml)))
-							}).cmd
-						},
-						Text("看不清, 换一张"),
-						"id"-> "refresh"
-					)
-			}
-		</div>
+		try {
+			println("codes")
+			println(mockLogIn(qq, pwd).parse)
+			val redirectToUrl = mockLogIn(qq, pwd).parse.select("meta").last.attr("content").drop(6)
+			println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+			println(redirectToUrl)
+			val verifyCodePage = Jsoup.connect(redirectToUrl).timeout(0).
+			header("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:27.0) Gecko/20100101 Firefox/27.0").
+			execute
+			val verifyCodeForm = verifyCodePage.parse.getElementsByTag("form")
+			verifyCodeForm.select("form").removeAttr("action")
+			verifyCodeForm.select("form").attr("action", "/tencent/contact")
+			verifyCodeForm.select("p.tip").remove
+			verifyCodeForm.select("p a").remove
+			verifyCodeForm.select("p").get(2).remove
+			<div>
+				<div id="loginform">{ XhtmlParser(Source.fromString(verifyCodeForm.outerHtml)) }</div>
+				{
+						SHtml.a(
+							() => {
+								SHtml.ajaxInvoke(() => {
+									SetHtml("loginform", XhtmlParser(Source.fromString(verifyCodeForm.outerHtml)))
+								}).cmd
+							},
+							Text("看不清, 换一张"),
+							"id"-> "refresh"
+						)
+				}
+			</div>
+		} catch {
+			case e: Exception => <p>错误</p>
+		}
 	}
 
 	def getFormDatas = {
@@ -119,9 +129,14 @@ object QQMail extends DispatchSnippet {
 		getSendMailForm.select("table.composetab").remove
 		getSendMailForm.select("div#toolbar").remove
 		getSendMailForm.select("div.clear").remove
-		//getSendMailForm.select("div#sendtimepadding").remove
-		// <textarea id="content" name="content__html" style="display:none;"></textarea>
-		getSendMailForm.appendElement("input").attr("type", "submit").attr("value", "发送")
+		val wrappForm = getSendMailForm.select("div#sendtimepadding").empty.first
+		val formElems = {
+			<span>收件人:</span><input type="text" name="to" /><br/>
+			<span>主题:</span><input style="word-break:break-all;height:16px;line-height:16px;width:99%;border-width:0;" type="text" name="subject">积分分享计划</input><br/>
+			<span>正文:</span><textarea name="content__html" id="content"><div><b style='color:red;'>Hello</b><img src='http://www.baidu.com/img/bdlogo.gif' width='270' height='129' /></div></textarea><br/>
+			<input type="submit" value="发送" />
+		}
+		wrappForm.append(formElems.mkString)
 		getSendMailForm.outerHtml
 	}
 
@@ -238,8 +253,8 @@ object QQMail extends DispatchSnippet {
 		
 		val issue = Jsoup.connect(s"http://mail.qq.com/cgi-bin/compose_send?sid=${userCookies.is.get("msid")}")
 		.data(getFormDatas)
-		.data("to", "我自己的邮箱<361541673@qq.com>")
-		.data("content__html", "<img src='http://www.baidu.com/img/bdlogo.gif' />")
+		.data("to", "我自己的邮箱<361541673@qq.com>;1253246958<1253246958@qq.com>")
+		//.data("content__html", "<img src='http://www.baidu.com/img/bdlogo.gif' />")
 		.data("t", "compose_send.json")
 		/*.data("sendmailname", "361541673@qq.com")
 		.data("savesendbox", "1")

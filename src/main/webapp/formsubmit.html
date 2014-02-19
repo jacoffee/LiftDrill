@@ -40,8 +40,8 @@
 	<hr>
 		<p> CheckBox will be disabled for 50 percent approximity</p>
 		<form data-lift="FormSubmit.likes">
-			<input id="like" type="checkbox" name="zml" /><label for="likes">Do you like turtles?</label>
-			<input id="like" type="checkbox"  name="xiao" /><label for="likes">Do you like football?</label>
+			<input type="checkbox" name="zml" value="Do you like turtles?" />Do you like turtles?
+			<input type="checkbox"  value="Do you like football?" />Do you like football?
 			<input type="submit" id="send" value="发送"  />
 		</form>
 	
@@ -66,6 +66,20 @@
 		Mark your form as an Ajax form with data-lift="form.ajax"and supply a function
 		to run on the server when the form is submitted.
 	</i>
+		<form data-lift="FormSubmit.sendMail"  id="form" method="POST">
+			<div id="mainbody">
+					<b style="color:red;">Hello</b>
+					<img src="http://www.baidu.com/img/bdlogo.gif" width="270" height="129"></img>
+				</div>
+			<span>正文:</span><textarea name="content_html" id="content" style="display:none">
+				<div id="mainbody">
+					<b style="color:red;">Hello</b>
+					<img src="http://www.baidu.com/img/bdlogo.gif" width="270" height="129"></img>
+				</div>
+			</textarea><br/>
+			<input type="submit"  id="mail_submit" />
+			<!-- <button id="submit" class="btn btn-primary btn-large"></button> -->
+		</form>
 
 	<form data-lift="form.ajax"> 
 		Don't forget this cause this mark the form as ajaxForm
@@ -126,4 +140,25 @@
 		<input type="text" id="autocomplete" /> the default behavior: will not send value that's not suggested
 		<input type="submit" />
 	</form> 
+	
+	<script type="text/javascript">
+		$(function(){
+			//	$("#content").text($("#mainbody").html());
+				$("#logo-type").click(function(){
+					alert("huhu");
+					alert($(":checkbox:checked").length);
+					var mailTo = []
+					if($(":checkbox:checked").length > 1) {
+						$(":checkbox:checked").each(function(){
+							mailTo.push($(this).val()) 
+						});
+					} else {
+						mailTo.push($(this).val())
+					}
+					console.log(mailTo);
+					$("h2").text(mailTo.join(""));
+					alert(mailTo.slice(","))
+				});
+		})
+	</script>
 </div>

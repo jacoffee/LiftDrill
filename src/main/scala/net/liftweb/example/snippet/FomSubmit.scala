@@ -83,6 +83,7 @@ object FormSubmit extends DispatchSnippet with Loggable{
 		case "opts" => opts
 		case "dropdown" => dropdown
 		case "ajax" => ajax
+		case "sendMail" => sendMail
 		case "jsonForm" => jsonForm
 		case "jqDatePicker" => jqDatePicker
 		case "programmingLanguages" => programmingLanguages
@@ -174,9 +175,6 @@ object FormSubmit extends DispatchSnippet with Loggable{
 	}
 
 	def likes = {
-		println(
-			S.request.map { req => req.params.map { param => param._1 -> param._2.head} }.get.init.values.toList
-		)
 		var likesTurtles = false
 		def disbale = {
 			if( Math.random > 0.5d ) "* [disabled]" #> "disable"
@@ -222,6 +220,38 @@ object FormSubmit extends DispatchSnippet with Loggable{
 		// 其实不用<input type="submit">也是可以的 就像以前一样用button照样可以提交
 	}
 
+	 def sendMail(xhtml: NodeSeq): NodeSeq = {
+		 println("请求结果")
+		 println(S.request)
+		 var content = ""
+		 def process ={
+			 println("提交了")
+			 SetHtml("content", 
+				 <div id="mainbody">
+				 	<b style='color:red;'>Hello</b><img src='http://www.baidu.com/img/bdlogo.gif' width='270' height='129' />
+				 </div>
+			 )
+		 }
+		/* "#form" #> SHtml.ajaxForm(<div id="mainbody">
+				<b style='color:red;'>Hello</b><img src='http://www.baidu.com/img/bdlogo.gif' width='270' height='129' />
+			</div>
+			<span>正文:</span><textarea name="content_html" id="content" style="display:none"></textarea><br/>
+			<input type="submit" />, process, Alert("成功了"))*/
+		 
+		  S.param("content_html") match {
+		 	  case Full(content_html)  => {
+		 	 	  println("---------------------")
+		 	 	  println(content_html)
+		 	 	 <div>
+		 	 	  	{ XhtmlParser(Source.fromString(content_html.trim)) } 
+		 	 	  	<p style="color:red">奥迪现存的汽车外形设计风格是谁奠定的，其中又有何故事？</p>
+		 	 	 </div> 
+		 	  }
+		 	  case _  => <div>{ xhtml }</div>
+		  }
+		  
+	 }
+	
 	def jsonForm = {
 		// Script的含义可以理解为 在服务器端动态的生成 JS 函数
 		"#jsonForm" #> ( (ns: NodeSeq) => SHtml.jsonForm(MotoServer, ns)) &
