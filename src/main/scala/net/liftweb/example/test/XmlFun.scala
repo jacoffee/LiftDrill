@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.liftweb.example.view
+package net.liftweb.example.test
 
 import _root_.scala.xml.{Text, Node, NodeSeq}
 import _root_.net.liftweb.http._

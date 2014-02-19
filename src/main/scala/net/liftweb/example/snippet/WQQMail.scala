@@ -26,9 +26,8 @@ import org.jsoup.parser.Tag
 import org.jsoup.nodes.Attribute
 import net.liftweb.builtin.snippet.Surround
 import org.jsoup.Connection.Method
-import org.jsoup.safety.Whitelist
 
-object QQMail extends DispatchSnippet {
+object WQQMail extends DispatchSnippet {
 	
 	def dispatch = {
 		case "login" => login
@@ -38,13 +37,10 @@ object QQMail extends DispatchSnippet {
 	}
 
 	val loginPageUrl = "http://w.mail.qq.com/cgi-bin/login"
-		
 	val contactPageUrl = "http://w.mail.qq.com/cgi-bin/addr_listall?sid="
 	val sendToPageUrl = "http://w.mail.qq.com/cgi-bin/readtemplate?t=compose&"
 	val sendMailUrl = "http://w.mail.qq.com/cgi-bin/cgi_redirect"
 
-	
-	
 	object userCookies extends SessionVar[JMap[String, String]](new JHMap())
 	object qqAndPwd extends SessionVar(("", ""))
 
@@ -60,22 +56,21 @@ object QQMail extends DispatchSnippet {
 		execute
 
 	def login(xhtml: NodeSeq): NodeSeq = {
-		/*val qq = S.param("qq").openOr("")
+		val qq = S.param("qq").openOr("")
 		val pwd = S.param("pwd").openOr("")
 		qqAndPwd(qq, pwd)
 		val getLoginResp = mockLogIn(qq, pwd)
 		if (qq.nonEmpty && pwd.nonEmpty) {
 			if ( getLoginResp.cookies.get("msid") != null ) {
 				userCookies(getLoginResp.cookies)
-				getContactList
+				getContactList(userCookies.is)
 			} else {
 				// with verifycode, jump to fill in verify code page
 				S.redirectTo("/tencent/verifycode", () => S.notice("verifyCodeForm", getVerifyCodeForm(qq, pwd)))
 			}
 		} else {
 			xhtml
-		}*/
-		getVerifyCodeForm("1253246958", "aaaa2222")
+		}
 	}
 
 	// form to input verifycode
@@ -109,67 +104,18 @@ object QQMail extends DispatchSnippet {
 			S.request.map { req => req.params.filterNot(pair => pair._1 == "to").map { param => param._1 -> param._2.head} }.get
 		)
 	}
-	
-	
-	def writeMailForm = {
-		val writeMail = s"http://mail.qq.com/cgi-bin/readtemplate?sid=${userCookies.is.get("msid")}&t=compose&s=cnew&s=left"
-		val getWriteMailPage = Jsoup.connect(writeMail).cookies(userCookies.is).method(Method.GET).execute.parse
-		val getSendMailForm = getWriteMailPage.select("form#frm").first
-		getSendMailForm.removeAttr("enctype").removeAttr("target").attr("action", "/tencent/mail")
-		getSendMailForm.select("table.composetab").remove
-		getSendMailForm.select("div#toolbar").remove
-		getSendMailForm.select("div.clear").remove
-		//getSendMailForm.select("div#sendtimepadding").remove
-		// <textarea id="content" name="content__html" style="display:none;"></textarea>
-		getSendMailForm.appendElement("input").attr("type", "submit").attr("value", "发送")
-		getSendMailForm.outerHtml
-	}
-
 	def contact(xhtml: NodeSeq): NodeSeq  = {
 		val verifycode = S.param("verifycode").openOr("")
-		
 		S.param("verifycode") match {
 			case Full(verifycode)  =>  {
 				userCookies(Jsoup.connect(loginPageUrl).data(getFormDatas).execute.cookies)
-		
-		val qqPage = Jsoup.connect(s"http://mail.qq.com/cgi-bin/frame_html?sid=${userCookies.is.get("msid")}")
-		.cookies(userCookies.is)
-		.method(Method.GET).execute
-		
-		val qqContactPage = Jsoup.connect(s"http://mail.qq.com/cgi-bin/laddr_list?sid=${userCookies.is.get("msid")}&operate=view&t=contact&view=normal")
-		.header("Referer", s"http://mail.qq.com/cgi-bin/frame_html?sid=${userCookies.is.get("msid")}&r=${Math.random.toString}")
-		.cookies(userCookies.is)
-		.get
-		
-	/*	val writeMail = s"http://mail.qq.com/cgi-bin/readtemplate?sid=${userCookies.is.get("msid")}&t=compose&s=cnew&s=left"
-		val qqWrite = Jsoup.connect(writeMail)
-		.cookies(userCookies.is)
-		.method(Method.GET).execute*/
-		
-		//println(qqWrite.body)
-		
-		qqContactPage.select("script").remove
-		// println( qqContactPage.select("div#id").outerHtml)
-		val innerList = qqContactPage.select("#out").first.getElementsByAttributeValue("ui-type", "list")/*.select("div li")*/
-		// println("NNNNNNNNNNNNNNNNNNNNNNN")
-		// println(innerList.outerHtml)
-		val lis = innerList.select("div li")
-		// println("XXXXXXXXXXXXXXXXX")
-		// println(lis)
-		
-		val pairs = for( i <- 0 until innerList.size) yield (innerList.get(i).select("span.name").html, innerList.get(i).select("span.email").html)
-		
-		<div> {
-			XhtmlParser(
-				Source.fromString(writeMailForm)
-			)
-		}
-		</div> 
-		} case _ =>  xhtml
+				getContactList(userCookies.is)
+			}
+			case _ =>  xhtml
 		}
 	}
 
-	def getContactList = {
+	def getContactList(cookies: java.util.Map[String, String]) = {
 		val contactList = Jsoup.connect(s"${contactPageUrl}${userCookies.is.get("msid")}").cookies(userCookies.is).get
 		<div id="contact">{ parseMailBox(contactList) }</div>
 	}
@@ -216,11 +162,36 @@ object QQMail extends DispatchSnippet {
 
 	// form to send mail
 	def getSendMailForm(doc: Document) = {
+		/* val generatedForm =
+			"""
+				<label for="content">收件人 :</label><input name="to" type="text" class="to" /><br />
+				<label for="content">主题 :</label><input name="subject" type="text" class="subject" /><br />
+				<label for="content">正文 :</label><input name="content" type="textarea" class="mailbody" /><br />
+			""" */
+		val qqPage = Jsoup.connect(s"http://mail.qq.com/cgi-bin/frame_html?sid=${userCookies.is.get("msid")}")
+		.cookies(userCookies.is)
+		.method(Method.GET).execute
+		
+		val qqForm = Jsoup.connect(s"http://mail.qq.com/cgi-bin/laddr_list?sid=${userCookies.is.get("msid")}&operate=view&t=contact&view=normal")
+		.header("Referer", s"http://mail.qq.com/cgi-bin/frame_html?sid=${userCookies.is.get("msid")}&r=${Math.random.toString}")
+		.cookies(userCookies.is)
+		.method(Method.GET).execute
+		println("body is belima")
+		println(qqPage.body)
+		println(qqForm.body)
+		
 		try {
-			val sendMailForm = doc.select("form#frm").first
-			sendMailForm.removeAttr("enctype").removeAttr("target").attr("action", "/tencent/mail")
+			val sendMailForm = doc.getElementsByTag("form")
+			sendMailForm.select("form").removeAttr("action")
+			sendMailForm.select("form").attr("action", "/tencent/mail")
+			sendMailForm.select("form").removeAttr("name")
+			sendMailForm.first.getElementsByAttributeValue("class", "g").remove
+			// sendMailForm.first.select("input[name=content]").first.attr("type", "textarea")
+			val sendButton = sendMailForm.first.select("input[value=发送]").first
+			sendMailForm.first.select("input[type=submit]").remove
+			// sendMailForm.select("p.hr").get(0).empty.append(generatedForm)
+			sendMailForm.append(sendButton.outerHtml)
 			sendMailForm.outerHtml 
-			
 		} catch {
 			case e: Exception => "<div>邮件发送表单获取失败</div>"
 		}
@@ -233,28 +204,49 @@ object QQMail extends DispatchSnippet {
 		} else {
 			List(to)
 		}
-		println("Form Datas to Send")
+		println(s"http://mail.qq.com/cgi-bin/compose_send?sid=${userCookies.is.get("msid")}")
+		def result = Jsoup.connect(s"http://mail.qq.com/cgi-bin/compose_send?sid=${userCookies.is.get("msid")}").
+		data("bc35c02fa50912bb324026317f123e36", "fb920e8c24c90fd960844ef0267f4e7d").
+		data("sid", userCookies.is.get("msid")).
+		data("from_s", "crew").
+		data("to", "我自己的邮箱<361541673@qq.com>").
+		data("subject", "主题").
+		data("content__html", "%26nbsp; %26lt;img src=%22http://www.baidu.com/img/bdlogo.gif%22 width=%22270%22 height=%22129%22 /%26gt;").
+		data("sendmailname", "361541673@qq.com").
+		data("savesendbox", "1").
+		data("sendname", "周梦林").
+		data("acctid", "0").
+		data("s", "s=comm").
+		data("separatedcopy", "false").
+		data("hitaddrbook", "0").
+		data("selfdefinestation","-1").
+		data("domaincheck", "0").
+		data("cgitm", "1392776274082").
+		data("clitm", "1392776270106").  
+		data("comtm", "1392777396249").  
+		data("logattcnt", "0").  
+		data("logattsize", "0").
+		data("cginame", "compose_send").
+		data("ef", "js").
+		data("t", "compose_send.json").
+		data("resp_charset", "UTF8").method(Method.POST).execute
+		println(result.parse)
+		
+		
+		
 		println(getFormDatas)
-		
-		val issue = Jsoup.connect(s"http://mail.qq.com/cgi-bin/compose_send?sid=${userCookies.is.get("msid")}")
-		.data(getFormDatas)
-		.data("to", "我自己的邮箱<361541673@qq.com>")
-		.data("content__html", "<img src='http://www.baidu.com/img/bdlogo.gif' />")
-		.data("t", "compose_send.json")
-		/*.data("sendmailname", "361541673@qq.com")
-		.data("savesendbox", "1")
-		.data("sendname", "周梦林")*/
-		.data("resp_charset", "UTF8")
-		.cookies(userCookies.is)
-		.method(Method.POST).execute
-		
-		println(" ------issue------")
-		
 		S.param("content") match {
 			case Full(content)  =>  {
-				PassThru
+				mailList.map { mailBox =>
+					Jsoup.connect(sendMailUrl).header("enctype", "multipart/form-data").data(getFormDatas).
+					data("to", mailBox).
+					data("content_html", """<img src="http://www.baidu.com/img/bdlogo.gif" width="270" height="129" />""").
+					cookies(userCookies.is).post
+				}
+				userCookies.remove
+				S.redirectTo("/tencent/contact", () => S.notice("success", "成功发送邮件"))
 			}
-			case _ =>  S.redirectTo("/", () => S.notice("success", <p>{ issue.parse.outerHtml }</p>))
+			case _ =>  PassThru
 		}
 	}
 }
