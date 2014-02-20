@@ -27,6 +27,49 @@ import org.jsoup.nodes.Attribute
 import net.liftweb.builtin.snippet.Surround
 import org.jsoup.Connection.Method
 import org.jsoup.safety.Whitelist
+import scala.collection.JavaConversions.asScalaBuffer
+import net.liftweb.http.DispatchSnippet
+import scala.xml.NodeSeq
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
+import org.apache.lucene.analysis.cn.smart.SmartChineseAnalyzer
+import org.apache.lucene.util.Version
+import org.apache.lucene.analysis.WordlistLoader
+import org.apache.lucene.analysis.Analyzer
+import java.io.StringReader
+import org.apache.lucene.analysis.tokenattributes.CharTermAttribute
+import java.io.File
+import scala.util.Random
+import net.liftweb.util.PassThru
+import net.liftweb.util.Helpers._
+import net.liftweb.common.Full
+import net.liftweb.builtin.snippet.Form
+import net.liftweb.http.S
+import scala.xml.Text
+import net.liftweb.http.SHtml
+import net.liftweb.http.js.JsCmd
+import net.liftweb.http.JsonHandler
+import net.liftweb.http.js.JsCmds.Alert
+import net.liftweb.util.JsonCmd
+import net.liftweb.http.js.JsCmds.{SetHtml, Script, SetValById, Function}
+import net.liftweb.http.js.JE.JsVar
+import net.liftweb.http.js.JE.JsRaw
+import java.text.SimpleDateFormat
+import java.util.Date
+import net.liftweb.http.js.JsCmds.Run
+import net.liftmodules.widgets.autocomplete.AutoComplete
+import net.liftweb.common.Loggable
+import net.liftweb.http.js.JsExp
+import net.liftweb.http.js.JE
+import scala.xml.parsing.XhtmlParser
+import scala.io.Source
+import net.liftweb.http.SessionVar
+import net.liftweb.common.Empty
+import net.liftweb.common.Box
+import net.liftweb.builtin.snippet.Form
+import net.liftweb.http.RequestVar
+import net.liftweb.builtin.snippet.Tail
+
 
 object QQMail extends DispatchSnippet {
 	
@@ -35,6 +78,7 @@ object QQMail extends DispatchSnippet {
 		case "contact" => contact
 		case "write" => write
 		case "send" => send
+		case "reuse" => reuse
 	}
 
 	val loginPageUrl = "https://w.mail.qq.com/cgi-bin/login"
@@ -43,7 +87,18 @@ object QQMail extends DispatchSnippet {
 	val sendToPageUrl = "http://w.mail.qq.com/cgi-bin/readtemplate?t=compose&"
 	val sendMailUrl = "http://w.mail.qq.com/cgi-bin/cgi_redirect"
 
-	
+	def reuse = {
+		// <a id="writeMail" href="#"  data-lift="QQMail.reuse">Write Mail</a>
+		"#writeMail" #>  SHtml.a(
+			() => {
+				SHtml.ajaxInvoke(() => {
+					SetHtml("container", XhtmlParser(Source.fromString(writeMailForm)))
+				}).cmd
+			},
+			Text("Write Mail"),
+			"id"-> "rewrite"
+		)
+	}
 	
 	object userCookies extends SessionVar[JMap[String, String]](new JHMap())
 	object qqAndPwd extends SessionVar(("", ""))
@@ -80,22 +135,17 @@ object QQMail extends DispatchSnippet {
 
 	// form to input verifycode
 	def getVerifyCodeForm(qq: String, pwd: String) = {
-		try {
-			println("codes")
-			println(mockLogIn(qq, pwd).parse)
-			val redirectToUrl = mockLogIn(qq, pwd).parse.select("meta").last.attr("content").drop(6)
-			println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-			println(redirectToUrl)
-			val verifyCodePage = Jsoup.connect(redirectToUrl).timeout(0).
-			header("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:27.0) Gecko/20100101 Firefox/27.0").
-			execute
-			val verifyCodeForm = verifyCodePage.parse.getElementsByTag("form")
-			verifyCodeForm.select("form").removeAttr("action")
-			verifyCodeForm.select("form").attr("action", "/tencent/contact")
-			verifyCodeForm.select("p.tip").remove
-			verifyCodeForm.select("p a").remove
-			verifyCodeForm.select("p").get(2).remove
-			<div>
+			try {
+				val redirectToUrl = mockLogIn(qq, pwd).parse.select("meta").last.attr("content").drop(6)
+				println(redirectToUrl)
+				val verifyCodePage = Jsoup.connect(redirectToUrl).timeout(100000).execute
+				val verifyCodeForm = verifyCodePage.parse.getElementsByTag("form")
+				verifyCodeForm.select("form").removeAttr("action")
+				verifyCodeForm.select("form").attr("action", "/tencent/contact")
+				verifyCodeForm.select("p.tip").remove
+				verifyCodeForm.select("p a").remove
+				verifyCodeForm.select("p").get(2).remove
+				<div>
 				<div id="loginform">{ XhtmlParser(Source.fromString(verifyCodeForm.outerHtml)) }</div>
 				{
 						SHtml.a(
@@ -107,11 +157,11 @@ object QQMail extends DispatchSnippet {
 							Text("看不清, 换一张"),
 							"id"-> "refresh"
 						)
-				}
-			</div>
-		} catch {
-			case e: Exception => <p>错误</p>
-		}
+					}
+				</div> 
+			} catch {
+				case e: Exception => <div>{ println(e.getMessage) }</div>
+			}
 	}
 
 	def getFormDatas = {
@@ -272,4 +322,11 @@ object QQMail extends DispatchSnippet {
 			case _ =>  S.redirectTo("/", () => S.notice("success", <p>{ issue.parse.outerHtml }</p>))
 		}
 	}
+}
+
+object mm extends App {
+	val aa = Jsoup.connect("https://w.mail.qq.com/cgi-bin/loginpage?f=xhtmlmp&errtype=3&verify=true&clientuin=1253246958&t=&alias=&regalias=&aliastype=@qq.com&autologin=n&spcache=&folderid=&3g_sid=&g_key=&msg=&ppp=a2RzPWZhZBw%3D&autologin=n&mss=1&vurl=http://vc.gtimg.com/BO3MUT6HW51AYDKBSJ7H6DCSKNYYYGW5&vid=BO3MUT6HW51AYDKBSJ7H6DCSKNYYYGW5&vuin=gQRQPvQsqVmKHOkkOZSAHgv-szN87JCe-KWyGgTraak.&tfcont=22%20serialization%3A%3Aarchive%205%200%200%209%200%200%200%208%20authtype%201%208%209%20clientuin%2010%201253246958%209%20aliastype%207%20%40qq.com%206%20domain%206%20qq.com%201%20f%205%20xhtml%203%20uin%2010%201253246958%203%20mss%201%201%207%20btlogin%204%20%E7%99%BB%E5%BD%95%205%20https%204%20true&authtype=8")
+	.timeout(100000)
+	.execute
+	println(aa.parse)
 }

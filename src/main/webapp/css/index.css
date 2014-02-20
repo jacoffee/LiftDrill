@@ -308,7 +308,17 @@ p.logintips_error {
 
 
 .to, .subject, .mailbody {
-	width: 200px;
-	height: 500px;
-	border: 1px solid #222222;
+	width: 800px;
+	height: 21px;
+}
+
+div.mail_content {
+	border: 1px solid #FFFFFF;
+	padding: 0 100px;
+	margin: 0 10px;
+}
+
+#chooseAddr {
+	text-decoration: underline;
+	cursor: pointer;
 }

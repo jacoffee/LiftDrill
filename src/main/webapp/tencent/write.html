@@ -1,3 +1,34 @@
 <div data-lift="surround?with=default;at=content">
-	<div data-lift="QQMail.write"></div>
+<!--  <div data-lift="QQMail.write"></div> -->
+	
+	<div id="addrsDiv">
+		<table>
+			<tr>
+				<td><span>收件人:</span></td>
+				<td><input type="text" name="to" class="to" /></td>
+			</tr>
+			<tr>
+				<td colspan="2"><a id="chooseAddr" href="#">选择联系人</a></td>
+			</tr>
+			<tr>
+				<td><span>主题:</span></td>
+				<td><input type="text" name="subject" class="subject" value="积分分享计划" /></td>
+			</tr>
+			<tr>
+				<td><span>正文:</span></td>
+				<td style="margin: 0 auto">
+					<div class="mail_content">
+						<p style="color:red;">乔布简历积分分享计划</p>
+						<img src="http://cv.qiaobutang.com/uploads/article_images/2013/8/20/10/5212dad50cf2ad41bbceac08/big.jpg"  />
+					</div>
+					<textarea name="content__html" id="content" style="display:none"></textarea>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2"><input type="submit" value="发送" /></td>
+			</tr>
+		</table>
+	</div>
+	
+	
 </div>
