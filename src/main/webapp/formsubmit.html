@@ -1,5 +1,7 @@
 <!-- this html is to deeply study all kinds of form submit-->
 <div data-lift="surround?with=default&at=content">
+	<!--  noticeClass=notice_class使用默认的Class -->
+	<span data-lift="Msg?id=errorCode&noticeClass=notice_class" ></span>
 	<hr>
 	<h2>Pass Thru Example</h2>
 	<p> There's a 50:50 chance of seeing "Try again" or "Congratulations!":</p>
@@ -19,7 +21,10 @@
 	</div>
 
 	<hr>
-	
+	<input type="text" value="死神来了" class="sssssssssssssssssssssss" />
+	<div data-lift="FormSubmit.write">
+		<input type="text" value="死神来了" class="sssssssssssssssssssssss" />
+	</div>
 	
 	Old Form Submit
 	<div>
@@ -28,6 +33,7 @@
 	</div>
 	<form  data-lift="FormSubmit.plain"  method="POST" >
 		<input type="text" name="username" placeholder="what's your name" autocomplete="off"/>
+		<span id="action"></span>
 		<input type="submit" value="GO" />
 	</form>
 	<div data-lift="Msg?id=myError&noticeClass=notice_class"></div>
@@ -40,8 +46,9 @@
 	<hr>
 		<p> CheckBox will be disabled for 50 percent approximity</p>
 		<form data-lift="FormSubmit.likes">
-			<input type="checkbox" name="zml" value="Do you like turtles?" />Do you like turtles?
-			<input type="checkbox"  value="Do you like football?" />Do you like football?
+			<input type="checkbox" name="zml" value="Do you like turtles?" />
+				<label style="display:none" for="9">我自己的邮箱</label>
+			<input type="checkbox"  value="Do you like football?" /><label style="display:none" for="9">我自己的邮箱</label>
 			<input type="submit" id="send" value="发送"  />
 		</form>
 	
@@ -74,11 +81,11 @@
 			<span>正文:</span><textarea name="content_html" id="content" style="display:none">
 				<div id="mainbody">
 					<b style="color:red;">Hello</b>
-					<img src="http://www.baidu.com/img/bdlogo.gif" width="270" height="129"></img>
+					<p><img src="http://www.baidu.com/img/bdlogo.gif" width="270" height="129" /></p>
 				</div>
 			</textarea><br/>
-			<input type="submit"  id="mail_submit" />
-			<!-- <button id="submit" class="btn btn-primary btn-large"></button> -->
+			<input type="submit"  id="mail_submit" value="发邮件"/>
+			<button id="submit" class="btn btn-primary btn-large"></button>
 		</form>
 
 	<form data-lift="form.ajax"> 
@@ -140,10 +147,49 @@
 		<input type="text" id="autocomplete" /> the default behavior: will not send value that's not suggested
 		<input type="submit" />
 	</form> 
-	
+
+
+	<div id="addrList">
+		<div class="mui_li">
+			<div class="mui_li_con">
+				<div class="mui_nowrap m_title">
+					<a href="#">我自己的邮箱</a>
+				</div>
+				<div class="mui_nowrap m_summary">
+					361541673@qq.com
+				</div>
+			</div>
+			<div class="mui_li_front">
+				<div class="m_check" style="margin: 0 0 0 -20px;">
+					<input type="checkbox" value="我自己的邮箱<361541673@qq.com>" >
+				</div>
+			</div>
+		</div>
+		<div class="mui_li">
+			<div class="mui_li_con">
+				<div class="mui_nowrap m_title">
+					<a href="#">1253246958</a>
+				</div>
+				<div class="mui_nowrap m_summary">
+					1253246958@qq.com
+				</div>
+			</div>
+			<div class="mui_li_front">
+				<div class="m_check"  style="margin: 0 0 0 -20px;">
+					<input type="checkbox" value="1253246958<1253246958@qq.com>" >
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
 	<script type="text/javascript">
 		$(function(){
 			//	$("#content").text($("#mainbody").html());
+				$("#mail_submit").click(function(){
+					$("#content").text($("#mainbody").html());
+				});
+
 				$("#logo-type").click(function(){
 					alert("huhu");
 					alert($(":checkbox:checked").length);

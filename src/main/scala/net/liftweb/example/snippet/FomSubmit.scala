@@ -58,6 +58,8 @@ import net.liftweb.common.Box
 import net.liftweb.builtin.snippet.Form
 import net.liftweb.http.RequestVar
 import net.liftweb.builtin.snippet.Tail
+import net.liftweb.util.Helpers.strToCssBindPromoter
+import net.liftweb.util.BindPlus.nodeSeqToBindable
 
 /*
  * object BasicDispatchUsage extends RestHelper {
@@ -121,31 +123,25 @@ object FormSubmit extends DispatchSnippet with Loggable{
 
 	// plain old form process
 	// In the snippet, we can pick out the value of the field name with S.param("name"):
-	object user extends RequestVar[String]("")
+	object user extends RequestVar("sdasdddddddddddddd")
 	def plain = {
 		println(S.request.toList) //  List(Req(List(), Map(), ParsePath(List(formsubmit),,true,false), , GetRequest, Empty))
-		// check whether the form has some params
-		println(S.param("username").openOr(""))
-		println("88888888")
-		println(user.is)
-		println("88888888")
+	/*	// check whether the form has some params
 		val paramList = for {
 			req <- S.request.toList
 			params <- req.paramNames
-		} yield params
+		} yield params*/
 		// println(paramList) // List(username)
 		S.param("username") match {
 			case Full(username)  =>  {
+				println("  username  " + username)
 				user(username)
 				// S.notice("error", "hello" + username)
 				// http://stackoverflow.com/questions/6216964/why-doesn't-s-notice-show-up-after-redirect-in-lift-mvc-v2-3
 				// if in this format the message will not emerge on the redirected page cause
 				// it S object represent the state of current request
 				// The messages that you send are held by a RequestVar in the S object.
-				S.redirectTo("/formsubmit", () => {
 					//println(S.request) // a new request identified by assgined var lift_page
-					S.notice("myError", "hello" + username)
-				})
 				/* <ul>
 				 *   <li>Redirects the browser to a given URL<li>
 				 *   <li>url must be part of your web applcation</li>
@@ -153,8 +149,14 @@ object FormSubmit extends DispatchSnippet with Loggable{
 				 * </ul>
 				 */
 			}
-			case _ => PassThru
+			case _ => {
+				println(" 村子研究")
+				user("da sha bi")
+			}
 		}
+		// notice一般是用于表单提交的
+		val userValue = user.is
+		"#action" #> SHtml.hidden(() => S.notice("errorCode", user.is))
 	}
 
 	def plain2 = {

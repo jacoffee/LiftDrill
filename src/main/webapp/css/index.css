@@ -3,6 +3,7 @@
 		url("../images/stars-2.png") repeat-x fixed 40% 0px,
 		url("../images/space-bg.png") repeat-x fixed -80% 0px,
 		url("../images/clouds.png") repeat-x fixed 100% 0 #1A1A1A;
+	background-color: #333333;
 	color: #222222;
 	font-family: "Times New Roman", Helvetica, Arial, sans-serif;
 	font-size: 100%;
@@ -321,4 +322,35 @@ div.mail_content {
 #chooseAddr {
 	text-decoration: underline;
 	cursor: pointer;
+}
+
+
+#addrList {
+	background: none repeat scroll 0 0 #FFFFFF;
+	border-radius: 5px;
+	left: 400px;
+	min-height: 150px;
+	padding: 5px 0 15px 40px;
+	width: 304px;
+	position: relative;
+}
+
+
+div.toArea {
+	border: 1px solid #c3c3c3;
+	border-top: 1px solid #7c7c7c;
+	border-left: 1px solid #9a9a9a;
+	padding: 1px;
+	width: auto;
+	height: auto;
+	_height: 16px;
+	min-height: 18px;
+	font-family: Tahoma;
+	background: #fff repeat-x;
+}
+
+#errorCode {
+	border: 1px solid #deacb4;
+	background: #f2dede;
+	color: #b94a48;
 }

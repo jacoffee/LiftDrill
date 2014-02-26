@@ -2,9 +2,11 @@
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
 	<title data-lift="Menu.title">Programming Should Be Fun: %*%</title>
+	<link rel="stylesheet"  type="text/css" href="/css/default.css">
 	<link rel="stylesheet"  type="text/css" href="/css/index.css">
 	<script type="text/javascript" src="/scripts/jquery.min.js"></script>
 	<script type="text/javascript" src="http://code.jquery.com/ui/1.10.4/jquery-ui.js" ></script>
+	<script type="text/javascript" src="/scripts/default.js" ></script>
 	<link type="text/css" rel="stylesheet" href="http://code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css"></link>
 </head>
 <body>
@@ -20,7 +22,27 @@
 		<lift:bind name="content"></lift:bind>
 		</div>
 	</div>
-	<div id="container">用来重复使用的</div>
-	<div id="writeMail" data-lift="QQMail.reuse"></div>
+	<a href="/tencent/write" target="_blank">再去发邮件</a>
+	<script type="text/javascript">
+		$j(function(){
+			$j("body").delegate(".send", "click", function(){
+				alert($j(".mail_content").html());
+				$j("#content").val($j(".mail_content").html());
+			});
+			$j("body").delegate("#makesure", "click", function(){
+				var mailTo = []
+				if($j(":checkbox:checked").length > 1) {
+					$j(":checkbox:checked").each(function(){
+						mailTo.push($j(this).val())
+					});
+				} else {
+					mailTo.push($j(":checkbox:checked").val())
+				}
+				console.log(mailTo);
+				$j("div#sendtimepadding table .to").val(mailTo.join(";"));
+				OverlayPopup.hide
+			})
+		});
+	</script>
 </body>
 </html>
