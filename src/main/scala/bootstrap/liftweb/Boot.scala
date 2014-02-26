@@ -72,6 +72,7 @@ class Boot extends Bootable{
 		case "Mongo" => net.liftweb.example.snippet.Mongo
 		case "QQMail" => net.liftweb.example.snippet.QQMail
 		case "FormSubmit" => net.liftweb.example.snippet.FormSubmit
+		case "RenderNode" => net.liftweb.example.snippet.RenderNode
 	  }
   }
 
@@ -90,6 +91,7 @@ class Boot extends Bootable{
   object MenuInfo {
     def sitemap = SiteMap(
 		Menu("Home") / "index" >> Hidden,
+		Menu("Home") / "node" >> Hidden,
 		Menu("Scraper") / "scraper",
 		Menu("MongoOp") / "simple" / "index",
 		Menu("FormSubmit") / "formsubmit" >> Hidden,
