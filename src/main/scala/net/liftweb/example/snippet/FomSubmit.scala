@@ -1,179 +1,94 @@
-/*
- * Copyright 2010-2013 WorldWide Conferencing, LLC
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package net.liftweb.example.snippet
 
-import scala.collection.JavaConversions.asScalaBuffer
-import net.liftweb.http.DispatchSnippet
+import java.text.SimpleDateFormat
+import java.util.Date
 import scala.xml.NodeSeq
+import scala.xml.Text
+import scala.xml.parsing.XhtmlParser
+import scala.util.Random
+import scala.io.Source
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.apache.lucene.analysis.cn.smart.SmartChineseAnalyzer
 import org.apache.lucene.util.Version
 import org.apache.lucene.analysis.WordlistLoader
 import org.apache.lucene.analysis.Analyzer
-import java.io.StringReader
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute
-import java.io.File
-import scala.util.Random
-import net.liftweb.util.PassThru
-import net.liftweb.util.Helpers._
-import net.liftweb.common.Full
 import net.liftweb.builtin.snippet.Form
-import net.liftweb.http.S
-import scala.xml.Text
-import net.liftweb.http.SHtml
-import net.liftweb.http.js.JsCmd
-import net.liftweb.http.JsonHandler
-import net.liftweb.http.js.JsCmds.Alert
-import net.liftweb.util.JsonCmd
-import net.liftweb.http.js.JsCmds.{SetHtml, Script, SetValById, Function}
-import net.liftweb.http.js.JE.JsVar
-import net.liftweb.http.js.JE.JsRaw
-import java.text.SimpleDateFormat
-import java.util.Date
-import net.liftweb.http.js.JsCmds.Run
-import net.liftmodules.widgets.autocomplete.AutoComplete
-import net.liftweb.common.Loggable
-import net.liftweb.http.js.JsExp
-import net.liftweb.http.js.JE
-import scala.xml.parsing.XhtmlParser
-import scala.io.Source
-import net.liftweb.http.SessionVar
-import net.liftweb.common.Empty
-import net.liftweb.common.Box
-import net.liftweb.builtin.snippet.Form
-import net.liftweb.http.RequestVar
 import net.liftweb.builtin.snippet.Tail
+import net.liftweb.common.{ Full, Box, Empty, Loggable }
 import net.liftweb.util.Helpers.strToCssBindPromoter
 import net.liftweb.util.BindPlus.nodeSeqToBindable
+import net.liftweb.util.{ PassThru, Helpers, JsonCmd }
+import net.liftweb.http.{ S, SHtml, DispatchSnippet, RequestVar, SessionVar }
+import net.liftweb.http.js.{ JsCmd, JsExp}
+import net.liftweb.http.JsonHandler
+import net.liftweb.http.js.JsCmds.{SetHtml, Alert, Run, Script, SetValById, Function}
+import net.liftweb.http.js.JE.{ JsVar, JsRaw }
+import net.liftmodules.widgets.autocomplete.AutoComplete
 
-/*
- * object BasicDispatchUsage extends RestHelper {
-	serve {
-		// 在地址栏输入信息即可访问    thingToResp(b>Static</b>)
-		//case "my" :: "sample" :: _ Get _ => <b>Static</b>
-		//
-	  	case "sample" :: "one" :: _ XmlGet _ => <b>Static</b>
-	}
-}*/
-
-// 不要放到别的对象里面去了
 object LoggedIn extends SessionVar[Box[String]](Empty)
 
 object FormSubmit extends DispatchSnippet with Loggable{
 
 	def dispatch = {
-		case "checkLogIn"   =>  checkLogIn _
 		case "passThru" => passThru
 		case "plain" => plain
-		case "plain2" => plain2
+		case "ajax" => ajax
+		case "jsonForm" => jsonForm
 		case "likes" => likes
 		case "opts" => opts
 		case "dropdown" => dropdown
-		case "ajax" => ajax
-		case "sendMail" => sendMail
-		case "jsonForm" => jsonForm
 		case "jqDatePicker" => jqDatePicker
 		case "programmingLanguages" => programmingLanguages
-		case _  => render _
 	}
 
-	def checkLogIn(xhtml: NodeSeq): NodeSeq = {
-		 transfer(xhtml)
-	}
-
-	// The CSS selector functionality in Lift gives you a CssSelfunction, which is  NodeSeq => NodeSeq
-	 val transfer = "name=username"  #> SHtml.text("", username => LoggedIn(Box.!!(username))) & "type=submit"  #> SHtml.onSubmitUnit(process)
-
-	def process() = {
-		S.notice(<p>登陆成功</p>)
-		S.redirectTo("/index")
-	 }
-
-	def render(xhtml: NodeSeq): NodeSeq  =  {
-		<div>This snippet evaluated on  { Thread.currentThread.getName }  </div>
-	}
-
-	// 这个地方暗示 我们要灵活一点 不一定每一次都直接写  nodeseq => nodeseq
-	// 只要从本质上是 NodeSeq => NodeSeq 就行了
+	// please ignore the detail about the NodeSeq => NodeSeq
 	def passThru = {
 		val emerge_? = Random.nextBoolean
 		// knowplegde points  CSS Transformers
 		// * stands for all the child nodes of the passed xhtml
 		if(emerge_?) "*" #> Text("Congratulations, you won")
-
 		else PassThru
-		// ClearNodes 是来了就没有了
+		// ClearNodes
 		// def apply(in: NodeSeq): NodeSeq = NodeSeq.Empty
 	}
 
 	// plain old form process
 	// In the snippet, we can pick out the value of the field name with S.param("name"):
-	object user extends RequestVar("sdasdddddddddddddd")
+	object user extends RequestVar(None: Box[String])
 	def plain = {
-		println(S.request.toList) //  List(Req(List(), Map(), ParsePath(List(formsubmit),,true,false), , GetRequest, Empty))
-	/*	// check whether the form has some params
-		val paramList = for {
-			req <- S.request.toList
-			params <- req.paramNames
-		} yield params*/
-		// println(paramList) // List(username)
+		//S.request.toList)
 		S.param("username") match {
 			case Full(username)  =>  {
-				println("  username  " + username)
-				user(username)
-				// S.notice("error", "hello" + username)
-				// http://stackoverflow.com/questions/6216964/why-doesn't-s-notice-show-up-after-redirect-in-lift-mvc-v2-3
-				// if in this format the message will not emerge on the redirected page cause
-				// it S object represent the state of current request
-				// The messages that you send are held by a RequestVar in the S object.
-					//println(S.request) // a new request identified by assgined var lift_page
 				/* <ul>
 				 *   <li>Redirects the browser to a given URL<li>
 				 *   <li>url must be part of your web applcation</li>
 				 *   <li>registers a function that will be executed when the browser accesses the new URL</li>
 				 * </ul>
 				 */
+				println("  username  " + username)
+				user(Some(username))
 			}
 			case _ => {
-				println(" 村子研究")
-				user("da sha bi")
+				user(Some("用户没有输入姓名"))
 			}
 		}
-		// notice一般是用于表单提交的
+		// notice一般是用于表单提交 数据验证后返回结果提醒的
 		val userValue = user.is
-		"#action" #> SHtml.hidden(() => S.notice("errorCode", user.is))
+		"#action" #> SHtml.hidden(() => S.notice("errorCode", user.is.openOr("什么都没有")))
 	}
 
-	def plain2 = {
-		println("XXXXX")
-		println(user.is)  // can not fetch cause in different request
-		println("-----")
-		S.param("password") match {
-			case Full(password)  =>  {
-				S.redirectTo("/", () => {
-					println("UUUUUU")
-					println(user.is)  // can not fetch cause in different request
-					println("OOOOOOOOO")
-					S.notice("myError", "hello" + password)
-				})
-			}
-			case _ => PassThru
-		}
+	def ajax = {
+		var username = ""
+		def process: JsCmd = SetHtml("result", Text(username))
+		"@name" #> SHtml.text(username, u => {
+			println("hello "+ username)
+			username = u
+		}) &
+		"button *+" #> SHtml.hidden(() => process)
+		// *+ stands for append the content on the right of #> to the last child node of button elem
+		// 其实不用<input type="submit">也是可以的 就像以前一样用button照样可以提交
 	}
 
 	def likes = {
@@ -210,50 +125,6 @@ object FormSubmit extends DispatchSnippet with Loggable{
 		"type=submit"  #> SHtml.onSubmitUnit( logSelected )
 	}
 
-	def ajax = {
-		var username = ""
-		def process: JsCmd = SetHtml("result", Text(username))
-		"@name" #> SHtml.text(username, u => { 
-			println("hello "+ username) 
-			username = u
-		}) &
-		"button *+" #> SHtml.hidden(() => process)
-		// *+ stands for append the content on the right of #> to the last child node of button elem
-		// 其实不用<input type="submit">也是可以的 就像以前一样用button照样可以提交
-	}
-
-	 def sendMail(xhtml: NodeSeq): NodeSeq = {
-		 println("请求结果")
-		 println(S.request)
-		 var content = ""
-		 def process ={
-			 println("提交了")
-			 SetHtml("content", 
-				 <div id="mainbody">
-				 	<b style='color:red;'>Hello</b><img src='http://www.baidu.com/img/bdlogo.gif' width='270' height='129' />
-				 </div>
-			 )
-		 }
-		/* "#form" #> SHtml.ajaxForm(<div id="mainbody">
-				<b style='color:red;'>Hello</b><img src='http://www.baidu.com/img/bdlogo.gif' width='270' height='129' />
-			</div>
-			<span>正文:</span><textarea name="content_html" id="content" style="display:none"></textarea><br/>
-			<input type="submit" />, process, Alert("成功了"))*/
-		 
-		  S.param("content_html") match {
-		 	  case Full(content_html)  => {
-		 	 	  println("---------------------")
-		 	 	  println(content_html)
-		 	 	 <div>
-		 	 	  	{ XhtmlParser(Source.fromString(content_html.trim)) } 
-		 	 	  	<p style="color:red">奥迪现存的汽车外形设计风格是谁奠定的，其中又有何故事？</p>
-		 	 	 </div> 
-		 	  }
-		 	  case _  => <div>{ xhtml }</div>
-		  }
-		  
-	 }
-	
 	def jsonForm = {
 		// Script的含义可以理解为 在服务器端动态的生成 JS 函数
 		"#jsonForm" #> ( (ns: NodeSeq) => SHtml.jsonForm(MotoServer, ns)) &
@@ -264,7 +135,6 @@ object FormSubmit extends DispatchSnippet with Loggable{
 				JsRaw("$('#motto').val()")) // 获取motto的val 并且提交
 			)
 		)
-
 		/*
 			// <![CDATA[
 			function F368303627065RF34HS(obj) {liftAjax.lift_ajaxHandler('F368303627065RF34HS='+
