@@ -28,8 +28,6 @@ object Mongo extends DispatchSnippet {
 
 	private object selectedPerson extends RequestVar[Box[PersonModel]](Empty)
 
-	implicit def stringToNodeSeq(jString: String) = Text(jString)
-
 	case class JsHtml(node: NodeSeq) extends  JsExp with HtmlFixer {
 		def toJsCmd = fixHtmlAndJs("inline", node)._1
 	}
@@ -63,7 +61,7 @@ object Mongo extends DispatchSnippet {
 						<!--单击编辑 弹出框进行编辑-->
 						{
 							SHtml.a(
-								"edit",
+								Text("edit"),
 								Call("popupDiv.infoContent",
 									"修改Person信息",
 									JsHtml {
@@ -126,7 +124,7 @@ object Mongo extends DispatchSnippet {
 						<!-- { SHtml.link("/simple/delete", () => selectedPerson(Full(person)), Text("Delete")) } -->
 						<!-- ajaxOperation  -->
 						{
-							SHtml.a("delete",
+							SHtml.a(Text("delete"),
 								JsCmds.Confirm("确认要删除该记录吗",
 									SHtml.ajaxInvoke( () => {
 										//  数据删除操作

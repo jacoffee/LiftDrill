@@ -123,7 +123,7 @@ object QQMail extends DispatchSnippet {
 		} 
 		
 		try {
-			val verifyCodePageUrl = mockLogIn("1253246958", "aaaa2222").parse.select("meta").last.attr("content").drop(6)
+			val verifyCodePageUrl = mockLogIn("1253246958", "aaaa2222").parse.select("meta").last.attr("content")
 			
 			println(verifyCodePageUrl)
 			

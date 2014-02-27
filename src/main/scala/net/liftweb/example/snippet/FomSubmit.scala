@@ -182,7 +182,7 @@ object FormSubmit extends DispatchSnippet with Loggable{
 	}
 
 	def programmingLanguages = {
-		Script(
+		val judege = Script(
 			Run(""" if(5>3) window.alert("haha") else window.alert("xixi") """ )
 		)
 		val default = ""
@@ -199,9 +199,9 @@ object FormSubmit extends DispatchSnippet with Loggable{
 		S.appendJs(
 			Run(
 				"""
-				$('#autocomplete input[type=text]').bind('blur', function(){
-					$(this).next().val($(this).val());
-				});
+					$('#autocomplete input[type=text]').bind('blur', function(){
+						$(this).next().val($(this).val());
+					});
 				"""
 			)
 		)
