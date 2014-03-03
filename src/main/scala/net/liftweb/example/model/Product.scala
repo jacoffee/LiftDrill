@@ -20,24 +20,20 @@ import net.liftweb.mongodb.MongoDB
 import net.liftweb.mongodb.DefaultMongoIdentifier
 import com.mongodb.Mongo
 import net.liftweb.common.Box
+import net.liftweb.record.field.DoubleField
 
 
 // study database normailization && denormalization
 object Product extends Product with MongoMetaRecord[Product] {
 	override val mongoIdentifier = MongoConfig.DefaultMongoIdentifier
-	override def collectionName = "Product"
+	override def collectionName = "product"
 }
 
 class Product extends MongoRecord[Product] with ObjectIdPk[Product] {
 	def meta = Product
-	object flag extends BsonRecordField(this, Image) { // BsonRecordField used to embed document in existing 
-		override def defaultValue = Image.createRecord.url("http://www.google.com").width(200).height(400)
-	}
-	object nation extends BsonRecordField(this, Image) {
-		override def optional_? = true
-		// write in this way we can use like this in Lift val img: Box[Resume] = Product.flag.valueBox
-		// In fact, regardless of the setting of  optional_?, you can access the value using  valueBox.
-	}
+	object name extends StringField[Product](this, 100)
+	object price extends DoubleField[Product](this, 0.0)
+	object desc extends StringField[Product](this, 500)
 }
 
 
