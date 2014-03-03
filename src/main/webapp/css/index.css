@@ -3,24 +3,26 @@
 		url("../images/stars-2.png") repeat-x fixed 40% 0px,
 		url("../images/space-bg.png") repeat-x fixed -80% 0px,
 		url("../images/clouds.png") repeat-x fixed 100% 0 #1A1A1A;
-	background-color: #333333;
 	color: #222222;
-	font-family: "Times New Roman", Helvetica, Arial, sans-serif;
+	font: .875em 'Segoe UI','Lucida Grande',Verdana,Arial,Helvetica,sans-serif;
 	font-size: 100%;
-	width: 920px;
+	width: 800px;
 	height: 100%;
 	margin: 20px auto;
 }
+.mainbody {
+	width: 800px;
+	margin: 0 auto;
+}
 h2 {
-     color: #f43c12;
-     font-size: 2.375em;
-     -webkit-font-smoothing: antialiased;
-     -moz-font-smoothing: antialiased;
+	color: #f43c12;
+	font-size: 2.375em;
+	-webkit-font-smoothing: antialiased;
+	-moz-font-smoothing: antialiased;
 }
 a {
 	text-decoration: none;
 }
-
 #logo-type:hover {
 	opacity: 0.8;
 }
@@ -35,11 +37,16 @@ a {
 	-webkit-transition: all 0.6s ease-in-out;
 	transition: all 0.6s ease-in-out;
 }
-.mainbody {
-	text-indent: 10px;
-	padding: 3px;
-	word-wrap: break-word;
-	margin: 0 auto;
+/*好好研究  清除浮动的方案*/
+.group:after {
+	clear: both;
+	content: ".";
+	display: block;
+	height: 0;
+	visibility: hidden;
+}
+#logo-type {
+	margin-top: 10px;
 }
 .wikiTitle {
 	margin: 0 auto;
@@ -51,20 +58,6 @@ a {
 }
 .wikiTitle a:hover {
 	color: rgba(255, 255, 255, 0.6)
-}
-.group {
-      padding: 5px;
-}
-/*好好研究  清除浮动的方案*/
-.group:after {
-    clear: both;
-    content: ".";
-    display: block;
-    height: 0;
-    visibility: hidden;
-}
-#logo-type {
-	margin-top: 10px;
 }
 widget {
 	border:1px solid #ccc;

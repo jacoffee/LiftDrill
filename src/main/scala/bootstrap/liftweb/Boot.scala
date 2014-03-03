@@ -49,7 +49,7 @@ class Boot extends Bootable{
 
     // Use HTML5 for rendering
     LiftRules.htmlProperties.default.set((r: Req) => new Html5Properties(r.userAgent))
-    println("reload in action <>><><>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<")
+    println("》》》》》》》》》》reload in action《《《《《《《《《《《《《")
     LiftRules.setSiteMapFunc(() => MenuInfo.sitemap)
     requestDispatch
     initSnippetDisapatch
