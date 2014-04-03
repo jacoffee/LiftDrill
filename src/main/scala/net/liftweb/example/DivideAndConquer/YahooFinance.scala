@@ -1,4 +1,4 @@
-package com.jacoffee.example.DivideAndConquer
+package net.liftweb.example.DivideAndConquer
 
 import java.net.URL
 import java.io.{ InputStreamReader, BufferedReader }
@@ -91,13 +91,12 @@ class ConcurrentNAV extends StockInfo {
 		
 		// Callable 对象  由于NAV的计算值返回的是 Double 所以这个地方也需要返回Double
 		// Callable 可以形象的理解为 待执行的任务集合
-		val splitParts = ListBuffer[Callable[Double]]()
+		val partitions = ListBuffer[Callable[Double]]()
 		var netAssetValue = 0.0
 		// 原来是一个线程  一个股票一个股票去计算  现在改成 每一只股票 一个线程分别去计算 然后汇总在一起
 		stockMap.foreach { 
 			case (stockName, quantity) => { // division standard  stock symbol
-				splitParts.append{
-					// this is accordance with the principle of isolated mutability
+				partitions.append{
 					new Callable[Double]() {
 						println(" thread Name " + Thread.currentThread.getName )
 						override def call = {
@@ -112,7 +111,7 @@ class ConcurrentNAV extends StockInfo {
 		// execute all the  calculation tasks  together
 		// 把所有的计算任务分解成 若干个 然后将每一个任务计算的结果 进行汇总  因为Callble[Double]  
 		// val valueOfStock: java.util.List[java.util.concurrent.Future[Double]]
-		val valueOfStock = executorPool.invokeAll(splitParts.asJava, 10000, TimeUnit.SECONDS)
+		val valueOfStock = executorPool.invokeAll(partitions.asJava, 10000, TimeUnit.SECONDS)
 		netAssetValue = valueOfStock.map(_.get).sum
 		// 这个地方等到 全部计算完毕之后 才进行汇总 还可以继续优化
 		executorPool.shutdown

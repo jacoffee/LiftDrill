@@ -41,6 +41,7 @@ object FormSubmit extends DispatchSnippet with Loggable{
 		case "dropdown" => dropdown
 		case "jqDatePicker" => jqDatePicker
 		case "programmingLanguages" => programmingLanguages
+		case "ValTest" => ValTest
 	}
 
 	// please ignore the detail about the NodeSeq => NodeSeq
@@ -207,4 +208,15 @@ object FormSubmit extends DispatchSnippet with Loggable{
 		)
 		"#autocomplete" #> AutoComplete(default, suggest, submit)
 	}
+
+	def getParam = S.param("intention")
+	def param = getParam // val param = getParam
+	def ValTest = {
+		"data-bind=test" #> {
+			<p>http://localhost/formsubmit?intention=hr</p>
+			<p>{ param }</p> 
+		}
+	}
+
+
 }

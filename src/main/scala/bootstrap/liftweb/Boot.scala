@@ -49,7 +49,7 @@ class Boot extends Bootable{
 
     // Use HTML5 for rendering
     LiftRules.htmlProperties.default.set((r: Req) => new Html5Properties(r.userAgent))
-    println("》》》》》》》》》》reload in action《《《《《《《《《《《《《")
+    println("reload in action <>><><>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<")
     LiftRules.setSiteMapFunc(() => MenuInfo.sitemap)
     requestDispatch
     initSnippetDisapatch
@@ -78,12 +78,11 @@ class Boot extends Bootable{
 
   private def initConnect {
 	  // Properties.whereToLook = () => ((filename, () => Full(new FileInputStream(filename))) :: Nil)
-
 	  val mongoOptions = new MongoOptions
 	  mongoOptions.connectionsPerHost = MongoConfig.connectionsPerHost
 	  mongoOptions.threadsAllowedToBlockForConnectionMultiplier = MongoConfig.threadsAllowedToBlockForConnectionMultiplier
 	  MongoDB.defineDb(
-		MongoConfig.DefaultMongoIdentifier,
+		DefaultMongoIdentifier,
 		MongoAddress(MongoHost(MongoConfig.host, MongoConfig.port, mongoOptions), MongoConfig.db)
 	  )
   }

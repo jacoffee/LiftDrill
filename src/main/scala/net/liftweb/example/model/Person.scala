@@ -10,13 +10,16 @@ import net.liftweb.example.MongoConfig
 import net.liftweb.util.Helpers
 import java.util.{ Calendar, Date }
 import java.text.SimpleDateFormat
+import net.liftweb.mongodb.MongoDB
+import com.mongodb.gridfs.GridFS
+import net.liftweb.mongodb.DefaultMongoIdentifier
+import java.util.TreeMap
 
 
 object Person extends Person with MongoMetaRecord[Person] {
-	override val mongoIdentifier = MongoConfig.DefaultMongoIdentifier
+	//override val mongoIdentifier = MongoConfig.DefaultMongoIdentifier
 	// sort accroding firstname
 	def getAllSortByFirstName = findAll(JObject(Nil),(firstName.name, 1) )
-
 	def numOfPeople = count
 
 	// list all fields Name
@@ -51,14 +54,24 @@ object Person extends Person with MongoMetaRecord[Person] {
 		calendar
 	}
 	def dfltUser = {
-		Person.firstName("li").
-			lastName("lai").
-			email("ad212ad@163.com").
+		val personModel = Person.createRecord
+		println(" id  " + personModel.id.get)
+		personModel.firstName("changshi").
+			lastName("zhou yan").
+			email("361541163@121.com").
 			birthDate(setCalendar).
 			personalityType(Personality.rand).
-			password("121223").save
-	}
+			password("123456789").save
+/*		MongoDB.use(DefaultMongoIdentifier) { db =>
+			  val fs = new GridFS(db)
+			  val inputFile = fs.createFile(new java.io.File("E:/LiftDrill/src/main/webapp/bigdata/Account.scala"))
+			  inputFile.setId(personModel.id.get)
+			  inputFile.setContentType("text/plain")
+			  inputFile.setFilename("xishi")
+			  inputFile.save
+		}*/
 
+	}
 	def idValue = id.get.toString
 	def deleteUser(oid: String) = delete(id.name, oid)
 }

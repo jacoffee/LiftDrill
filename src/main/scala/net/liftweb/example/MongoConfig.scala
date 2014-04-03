@@ -31,7 +31,7 @@ object MongoConfig {
 	val threadsAllowedToBlockForConnectionMultiplier =
 		Props.getInt("mongo_threadsAllowedToBlockForConnectionMultiplier").openOr(5)
     
-    object DefaultMongoIdentifier extends MongoIdentifier {
+/*    object DefaultMongoIdentifier extends MongoIdentifier {
     	val jndiName = "default"
-    }
+    }*/
 }

@@ -1,3 +1,57 @@
 <div data-lift="surround?with=default&at=content">
 	<div data-lift="RenderNode.node"></div>
+	<!--  Button Click Server End-->
+	<button data-lift="RenderNode.button">
+	       Press Me !
+	</button>
+	<!--  onchange -->
+	<div data-lift="RenderNode.OnEvent">
+                <p>Problem appears here</p>
+                <input placeholder="Type your answer"></input>
+        </div>
+        <!--  ajaxCall -->
+        <div data-lift="RenderNode.ajaxCall">
+                <input id="num" value="41"></input>
+                <button>Increment</button>
+        </div>
+        <div data-lift="RenderNode.jsonCall">
+		<input id="x" /> +
+		<input id="y" /> =
+		<input id="z" />
+		<a href="#">add</a>
+        </div>
+        <div data-lift="RenderNode.company" data-bind="company"></div>
+        // 虽然客户端和服务器端 都有相同的操作
+        // 但是由于 服务器端绑定的时候生成的 行内 js 函数 所以优先级更高
+        // <button onclick="liftAjax.lift_ajaxHandler('F752928194637NMCD0T=' + encodeURIComponent((function() {if (document.getElementById(&quot;num&quot;)) {return document.getElementById(&quot;num&quot;).value;} else {return null;}})()), null, null, null)">Increment</button>
+        <tail>
+		<script type="text/javascript">
+		// <![CDATA[
+			function sendJsonValue() {
+				return {
+					"x": parseInt($("#x").val()),
+					"y": parseInt($("#y").val()),
+					"z": parseInt($("#z").val())
+				};
+			}
+		// ]]>
+		        $(function(){
+		                $("button").click(function(){
+		                	// 人们往往在编程的时候忘记了 自己的目的 而变成了 代码的奴隶
+		                	// always remember that programming languages just like natural languages
+		                	// they tools for communication -> the former communicates with computer 
+		                      // the latter communication with people - so  always override them
+		                        var currentVal = $("#num").val();
+		                        var numVal = parseInt(currentVal);
+		                        var finalVal; 
+		                        if (numVal != NaN) { finalVal = (numVal+1).toString(); } else { finalVal = currentVal }
+		                        $("#num").val(finalVal); 
+		                });
+		                $(".unfold, .fold").click(function(){
+		                	var $self = $(this)
+		                	$self.parents(".company").hide().siblings(".company").show();
+		                });
+		        });
+		</script>
+        </tail>
 </div>
