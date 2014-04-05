@@ -353,3 +353,8 @@ div.toArea {
 	background: #f2dede;
 	color: #b94a48;
 }
+
+/* Node Page Relevant */
+.workplace {
+	border: 1px solid red;
+}

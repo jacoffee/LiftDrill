@@ -1,4 +1,7 @@
 <div data-lift="surround?with=default&at=content">
+	<head>
+	
+	</head>
 	<div data-lift="RenderNode.node"></div>
 	<!--  Button Click Server End-->
 	<button data-lift="RenderNode.button">
@@ -21,9 +24,16 @@
 		<a href="#">add</a>
         </div>
         <div data-lift="RenderNode.company" data-bind="company"></div>
-        // 虽然客户端和服务器端 都有相同的操作
-        // 但是由于 服务器端绑定的时候生成的 行内 js 函数 所以优先级更高
-        // <button onclick="liftAjax.lift_ajaxHandler('F752928194637NMCD0T=' + encodeURIComponent((function() {if (document.getElementById(&quot;num&quot;)) {return document.getElementById(&quot;num&quot;).value;} else {return null;}})()), null, null, null)">Increment</button>
+        <!--   虽然客户端和服务器端 都有相同的操作
+        但是由于 服务器端绑定的时候生成的 行内 js 函数 所以优先级更高 -->
+         <div class="workplace">
+        	<input type="hidden"  id="city-data" value='[{"上海" : {"31_10": "杨浦", "31_11": "黄埔"},"北京" : {"21_14": "朝阳", "21_15": "丰庄"},"湖北" : {"11_10": "武汉", "11_11": "宜昌"}}]'  />
+        	<span class="state-city" id="cityname"></span>
+        	<input  type="hidden" name="city" id="city"  />
+        	<div class="province left" style="width: 300px;"></div>
+        	<div class="city right" style="width: 300px;"></div>
+        </div>
+        
         <tail>
 		<script type="text/javascript">
 		// <![CDATA[
@@ -51,6 +61,56 @@
 		                	var $self = $(this)
 		                	$self.parents(".company").hide().siblings(".company").show();
 		                });
+		                /* 读取State显示在左侧 State Div */
+		                // 解析Json
+		                var city_data =$.parseJSON($("#city-data").val());
+				// 默认省份设置 
+		                // 抽取省份 单击时动态的在右侧显示 城市
+		                $.each(city_data, function(key, cityObj) {
+		                	console.log(" key  " + key);
+		                	for (var i in cityObj) {
+		                		$(".province").append(
+			                		$("<a href='javascript:;'></a>").
+			                		text(i).
+			                		click(function(){ alert($(this).text()); displayCity($(this).text())})
+				                );
+		                	}
+		                });
+		                
+		                var displayCity = function(state) {
+		                	console.log("excecute ?????")
+		                	$.each(city_data, function(key, cityObj){
+		                		for (var i in cityObj) {
+		                			// 闭包变量？？
+		                			if ( i == state) {
+		    		                	var $city = $(".city").empty();
+		                				for (var j in cityObj[i]) {
+		                					// key j 对应的值是 什么
+		                					// 单击之后分别给span 和 文本框 赋值
+		                					var cityText =cityObj[i][j]
+		                					$city.append(
+	                							$("<a href='javascript:;'></a>").
+	                							text(cityText).
+	                							click(function(){
+	                								console.log(" 始终取的最后一个省份" + i);
+	                								setStateAndCity(state, j, cityText)
+	                							})
+		                					);
+		                				}
+		                			}
+		                		}
+		                	});
+		                }
+		                // 设值 // 隐藏 div
+		                var setStateAndCity = function(stateName, cityid, cityName) {
+		                	var $citySpan = $(".state-city");
+		                	var $cityInput = $("#city");
+		                	$citySpan.text(stateName + "-" +cityName);
+		                	$cityInput.val(cityid);
+		                	$(".province").hide();
+		                	$(".city").hide();
+		                }
+		                
 		        });
 		</script>
         </tail>
