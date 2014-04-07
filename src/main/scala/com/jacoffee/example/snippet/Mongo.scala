@@ -17,13 +17,13 @@ import net.liftweb.util.{ Helpers, ToJsCmd }
 import net.liftweb.http.js.HtmlFixer
 import net.liftweb.http.js.JE.ValById
 import org.bson.types.ObjectId
+import scala.util.Random
 
 object Mongo extends DispatchSnippet {
 
 	def dispatch = {
 		case "users" => users
 		case "add" => add
-		case "call" => call
 	}
 
 	private object selectedPerson extends RequestVar[Box[PersonModel]](Empty)
@@ -38,37 +38,34 @@ object Mongo extends DispatchSnippet {
 	def users(xhtml: NodeSeq): NodeSeq = {
 		// 查询出所有的Person按 姓氏 升序排列
 		// the header
+		val userId = "username"
+		val emailId = "email"
+		val personalityId = "personality"
 		<tr class="tblTitle">
-			{
-				PersonModel.listFieldsName.map { field =>
-					<th>{ field.toUpperCase }</th>
-				}
-			}
+			<th>姓名</th>
+			<th>邮箱</th>
+			<th>性格</th>
 			<th>EDIT</th>
 			<th>DELETE</th>
 		</tr> ++
 		{
-			PersonModel.getAllSortByFirstName.map { person =>
+			PersonModel.getAllSortByUsername.map { person =>
 				val idValue = person.id.get.toString
+				val personality = PersonModel.Personality.allTypes(person.personalityType.get).toString
 				<tr>
-					<td>{ person.firstName.get }</td>
-					<td>{ person.lastName.get }</td>
+					<td>{ person.username.get }</td>
 					<td>{ person.email.get }</td>
-					<td>{ PersonModel.formatDate( person.birthDate.get.getTime ) }</td>
-					<td>{ person.personalityType.get }</td>
+					<td>{ personality }</td>
 					<td>
-						<!-- { SHtml.link("/simple/edit", () => selectedPerson(Full(person)), Text("Edit")) }  -->
-						<!--单击编辑 弹出框进行编辑-->
 						{
 							SHtml.a(
 								Text("edit"),
 								Call("popupDiv.infoContent",
 									"修改Person信息",
 									JsHtml {
-										<input type="text" value= { person.firstName.get } id="firstName"></input>
-										<input type="text" value= { person.lastName.get } id="lastName"></input>
-										<input type="text" value= { person.email.get } id="email"></input>
-										<input type="text" value= { PersonModel.formatDate( person.birthDate.get.getTime )} id="date"></input>
+										<input type="text" value= { person.username.get } id={ userId }></input>
+										<input type="text" value= { person.email.get } id={ emailId }></input>
+										<input type="text" value= { personality } id={ personalityId }></input>
 									},
 									JsObj("确认修改" ->
 										AnonFunc(
@@ -78,25 +75,21 @@ object Mongo extends DispatchSnippet {
 											SHtml.jsonCall(
 												JsArray{
 													List(
-														ValById("firstName"),
-														ValById("lastName"),
-														ValById("email"),
-														ValById("date")
+														ValById(userId),
+														ValById(emailId)
 													)
 												},
 												{
 													_ match {
 														case JArray(
-															JString(firstName) :: JString(lastName) :: JString(email) :: JString(date) :: Nil
+															JString(username) :: JString(email) :: Nil
 														) => {
 															try {
 																//进行更新操作  先查询 然后再进行更新 验证
 																PersonModel.find(idValue) match {
 																	case Full(person) => {
-																		person.firstName(firstName)
-																			.lastName(lastName)
+																		person.username(username)
 																			.email(email)
-																			.birthDate(PersonModel.stringToCal(date))
 																			.save
 																	}
 																	case _ =>
@@ -140,60 +133,44 @@ object Mongo extends DispatchSnippet {
 			}
 		}
 	}
-
+		
 	object UserName extends RequestVar[String]("")
 	object Email extends RequestVar[String]("")
-	object Pass extends RequestVar[String]("")
-	object DateTime extends RequestVar[String]("")
-   /* Add a user */
+	object Password extends RequestVar[String]("")
+	object Personality extends RequestVar[String]("")
+	/* Add a user */
+	// "mycall" -> SHtml.a(Text("add Practice"),  Call("addUser.calculate",JsExp.intToJsExp(3), 4).cmd,  "id" -> "myadd")
 	def add(xhtml: NodeSeq): NodeSeq = {
-			xhtml.bind("input",
-				"username" -> SHtml.text(UserName.is, u => UserName(u.trim), "id"-> "username", "class"-> "text",
-						"placeholder" -> "请输入用户名"),
-				"email" -> SHtml.text(Email.is, e =>  Email(e.trim), "id" -> "email", "class" -> "text",
-						"placeholder" -> "请输入邮箱"),
-				"password" -> SHtml.password(Pass.is, p => Pass(p.trim), "id" -> "password", "class" -> "text",
-						"placeholder" -> "请输入密码"),
-				"datetime" -> SHtml.text(DateTime.is, d => DateTime(d.trim), "id" -> "dateTime", "class" -> "text",
-						"placeholder" -> "请输入日期"),
-				"mycall" -> SHtml.a(Text("add Practice"),  Call("addUser.calculate",JsExp.intToJsExp(3), 4).cmd,  "id" -> "myadd"),
-				"delete" -> {
-					SHtml.a(
-						() => JsCmds.Confirm(
-							"确定要删除吗？",
-							SHtml.ajaxInvoke(() =>
-								{
-									S.notice("Operation Completed")
-									JsCmds.After(Helpers.TimeSpan(3L), JsCmds.Reload)
-								}
-							).cmd
-						),
-						Text("to be deleted")
-					)
-				},
-				"autoExc" -> {
-					SHtml.a(
-						() => AnonFunc(Alert("ha ha ha")),
-						Text("auto exec")
-					)
-				},
-				"action" -> SHtml.hidden(createUser _)
-			)
-	}
-
-	def call(xhtml: NodeSeq): NodeSeq = {
-		SHtml.a(Text("加法练习"),  Call("addUser.calculate",3, 4).cmd,  "id" -> "myadd")
+		xhtml.bind("input",
+			"username" -> SHtml.text(UserName.is, u => UserName(u.trim), "id"-> "username", "class"-> "text", "placeholder" -> "请输入用户名"),
+			"email" -> SHtml.text(Email.is, e =>  Email(e.trim), "id" -> "email", "class" -> "text", "placeholder" -> "请输入邮箱"),
+			"password" -> SHtml.text(Password.is, p =>  Password(p.trim), "id" -> "password", "class" -> "text", "placeholder" -> "请输入密码"),
+			"personality" -> SHtml.text(Personality.is, p => Personality(p.trim), "id" -> "personality", "class" -> "text"),
+			"delete" -> {
+				SHtml.a(
+					() => JsCmds.Confirm(
+						"确定要删除吗？",
+						SHtml.ajaxInvoke(() =>
+							{
+								S.notice("Operation Completed")
+								JsCmds.After(Helpers.TimeSpan(3L), JsCmds.Reload)
+							}
+						).cmd
+					),
+					Text("to be deleted")
+				)
+			},
+			"action" -> SHtml.hidden(createUser _)
+		)
 	}
 
 	def createUser = {
-		import net.liftweb.mongodb.record.field.Password
 		//创建record
 		val person = PersonModel.createRecord
-		person.firstName(UserName.is)
-		person.lastName("haha")
+		person.username(UserName.is)
 		person.email(Email.is)
-		person.password(Pass.is)
-		person.birthDate(PersonModel.dateToCal(PersonModel.formatString(DateTime.is)))
+		person.password(Password.is)
+		person.personalityType(Random.nextInt(4)+1)
 		person.save
 		saveAndRedirect
 	}

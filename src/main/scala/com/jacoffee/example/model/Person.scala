@@ -10,18 +10,17 @@ import net.liftweb.example.MongoConfig
 import net.liftweb.util.Helpers
 import java.util.{ Calendar, Date }
 import java.text.SimpleDateFormat
+import net.liftweb.record.field.IntField
 
 
 object Person extends Person with MongoMetaRecord[Person] {
-	// override val mongoIdentifier = MongoConfig.DefaultMongoIdentifier
-	// sort accroding firstname
-	def getAllSortByFirstName = findAll(JObject(Nil),(firstName.name, 1) )
+	// override val mongoIdentifierhttp://localhost/simple/add = MongoConfig.DefaultMongoIdentifier
+	def getAllSortByUsername = findAll(JObject(Nil),(username.name, 1) )
 
 	def numOfPeople = count
-
 	// list all fields Name
-	def listFieldsName = List(firstName, lastName, email, birthDate, personalityType).map(_.name)
-	def getPersonAttrs(person: Person) =  List(firstName, lastName, email, birthDate, personalityType)
+	def listFieldsName = List(username, email, personalityType).map(_.name)
+	def getPersonAttrs(person: Person) =  List(username, email, personalityType)
 
 	def formatPattern = new SimpleDateFormat("yyyy-MM-dd HH:mm")
 	def formatDate(date: Date) = formatPattern.format(date)
@@ -50,35 +49,26 @@ object Person extends Person with MongoMetaRecord[Person] {
 		calendar.set(2015, 3, 12, 6, 25, 12)
 		calendar
 	}
-	def dfltUser = {
-		Person.firstName("li").
-			lastName("lai").
-			email("ad212ad@163.com").
-			birthDate(setCalendar).
-			personalityType(Personality.rand).
-			password("121223").save
-	}
 
 	def idValue = id.get.toString
 	def deleteUser(oid: String) = delete(id.name, oid)
+
+	// extends JsonObjectFi eld[OwnerType, Password](rec, Password)
+	object Personality extends Enumeration {
+		val TypeA = Value(1, "Type A")
+		val TypeB = Value(2, "Type B")
+		val ENTJ = Value(3, "ENTJ")
+		val INTJ = Value(4, "INTJ")
+		val allTypes = Array(TypeA, TypeB, ENTJ, INTJ)
+		def rand = allTypes(Helpers.randomInt(allTypes.length))
+	}
 }
 
 class Person extends MongoRecord[Person] with ObjectIdPk[Person] {
 	def meta = Person
-	object firstName extends StringField[Person](this, 100)
-	object lastName extends StringField[Person](this, 100)
+	object username extends StringField[Person](this, 100)
 	object password extends StringField[Person](this, 30)
 	object email extends StringField[Person](this, 100)
-	object birthDate extends DateTimeField(this)
-	object personalityType extends EnumField(this, Personality)
+	object personalityType extends IntField(this)
 }
 
-// extends JsonObjectFi eld[OwnerType, Password](rec, Password)
-object Personality extends Enumeration {
-	val TypeA = Value(1, "Type A")
-	val TypeB = Value(2, "Type B")
-	val ENTJ = Value(3, "ENTJ")
-	val INTJ = Value(4, "INTJ")
-	val allTypes = Array(TypeA, TypeB, ENTJ, INTJ)
-	def rand = allTypes(Helpers.randomInt(allTypes.length))
-}

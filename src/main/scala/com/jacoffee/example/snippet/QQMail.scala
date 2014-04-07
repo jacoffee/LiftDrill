@@ -83,7 +83,7 @@ object QQMail extends DispatchSnippet {
 		data("pwd", pwd).
 		execute
 
-	def login(xhtml: NodeSeq): NodeSeq = {
+		def login(xhtml: NodeSeq): NodeSeq = {
 		/*val qq = S.param("qq").openOr("")
 		val pwd = S.param("pwd").openOr("")
 		qqAndPwd(qq, pwd)

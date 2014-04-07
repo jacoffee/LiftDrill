@@ -1,16 +1,15 @@
-<lift:surround with="default" at="content">
+<div data-lift="surround?with=default;at=content">
 	<a href='/simple/add'>Add a User</a>
-	<table width="90%" style="text-align: center;margin: 0 auto;">
-		<tr data-lift="Mongo.users">
-			<td>test</td>
-		</tr>
+	<table style="text-align: center;margin: 0 auto;">
+		<tr data-lift="Mongo.users"><td>test</td></tr>
 	</table>
-	<tail>
+	<div data-lift="tail">
 		<script type="text/javascript">
 			var popupDiv = {
 				// actions actually an object in JavaScript key-value
 				// the essence of the following codes is to generate html snippets with some sort of action binding
 				infoContent: function(title, content, actionObject) {
+					var $container = $(".wrapper")
 					var titleElement = function(){
 						if (title === null || title === undefined) {
 							return $();
@@ -19,22 +18,22 @@
 						}
 					}();
 					titleElement.text(title);
-					var container = $("div class='infoContainer'></div>");
+
 					var personInfo = $("<div class='personInfo'></div>").html(content);
-					$(".mainbody").append( personInfo );
+					$container.append( personInfo );
 
 					// action bind
 					$.each(actionObject, function(val, action){
-							var btn = $("<button type='button'></button>").html(val).unbind("click").click(function(){
-								action();
-							});
-							var alink = $("<a href='javascript:;'></a>").text("取消").click(function(){
-								alert("hah");
-							});
-							$(".mainbody").append(btn).append(alink)
+						var btn = $("<button type='button'></button>").html(val).unbind("click").click(function(){
+							action();
+						});
+						var alink = $("<a href='javascript:;'></a>").text("取消").click(function(){
+							alert("hah"); 
+						});
+						$container.append(btn).append(alink)
 					});
 				}
 			}
 		</script>
-	</tail>
-</lift:surround>
+	</div>
+</div>

@@ -342,3 +342,6 @@ div.toArea {
 	background: #fff repeat-x;
 }
 
+.wrapper {
+	background: none repeat scroll 0 0 #efefef;
+}

@@ -93,6 +93,7 @@ class Boot extends Bootable{
 		Menu("Home") / "node" >> Hidden,
 		Menu("Scraper") / "scraper",
 		Menu("MongoOp") / "simple" / "index",
+		Menu("MongoOp") / "simple" / "add" >> Hidden,
 		Menu("FormSubmit") / "formsubmit" >> Hidden,
 		Menu("Login") / "tencent" / "login",
 		Menu("Contact") / "tencent" / "contact" >> Hidden,
