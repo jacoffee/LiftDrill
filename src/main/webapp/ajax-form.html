@@ -1,0 +1,15 @@
+<lift:surround with="default" at="content">
+  <center><b>AJAX Form Update</b></center>
+  <br >
+  Choose city and state:<br>
+  <div data-lift="AjaxForm?form=post">
+      State: <select id="state"></select>
+      City: <select id="city"></select>
+      <input type="submit">
+  </div>
+
+  <p>Here's the code:</p>
+
+  <div data-lift="github?file=net/liftweb/example/snippet/AjaxForm.scala&lines=30-54"></div>
+	
+</lift:surround>

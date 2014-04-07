@@ -1,0 +1,36 @@
+<lift:surround with="default" at="content">
+	<lift:bind-at name="second">
+		<p>Wow, I am going elsewhere!</p>
+	</lift:bind-at>
+	
+	<h2>JSON Form</h2>
+	<!-- 这个form  相当于<form id="myForm" method="POST">标签  -->
+	<div id="form" data-lift="JsonForm.show">
+	       <!--
+	                JsonForm 的转换流程  { "title" : xxx, "publisher": yyy }
+	               所以后台有 params("title")
+	        -->
+		<p>
+			Book Name: <br /> <input type="text" name="title" />
+		</p>
+		<p>
+			Publisher: <br /> <select name="publisher">
+			<option value="manning">Manning</option>
+			<option value="penguin">Penguin</option>
+			<option value="bbc">BBC</option>
+			</select>
+		</p>
+		<p>
+			<input type="submit" />
+		</p>
+	</div>
+	<hr />
+	<h2>JSON Result</h2>
+	<div id="json_result"></div>
+	<!--  Transition Practice  -->
+	<a  href="#"   class="foo">Transtition me!!</a>
+	<tail>
+                <script type="text/javascript" src="/classpath/jlift.js" ></script>
+                <div data-lift="JsonForm.head"></div>
+        </tail>
+</lift:surround>

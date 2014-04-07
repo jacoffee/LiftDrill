@@ -1,0 +1,120 @@
+<!-- this html is to deeply study all kinds of form submit-->
+<div data-lift="surround?with=default&at=content">
+	<!--  noticeClass=notice_class使用默认的Class -->
+	<span data-lift="Msg?id=errorCode&noticeClass=notice_class" ></span>
+	<hr>
+	<h2>Pass Thru Example</h2>
+	<p> There's a 50:50 chance of seeing "Try again" or "Congratulations!":</p>
+	<div data-lift="FormSubmit.passThru"> 
+		Try again - this is the template content.
+	</div>
+	<hr>
+
+	<!-- html page fragments jump  -->
+	<div id="nav">
+		<ul>
+		    <li><a href="#">Home</a></li>
+		    <li><a href="#">About</a></li>
+		    <li><a href="#projects">Projects</a></li>
+		    <li><a href="#feature">Feature</a></li>
+		</ul>
+	</div>
+
+	<hr>
+	Old Form Submit
+	<div>
+		<i>keys to know</i>
+		<p>contents in plain will be executed when loading the page</p>
+	</div>
+	<form  data-lift="FormSubmit.plain"  method="POST" >
+		<input type="text" name="username" placeholder="what's your name" autocomplete="off"/>
+		<span id="action"></span>
+		<input type="submit" value="GO" />
+	</form>
+	<div data-lift="Msg?id=myError&noticeClass=notice_class"></div>
+
+	<hr>
+		<p> CheckBox will be disabled for 50 percent approximity</p>
+		<form data-lift="FormSubmit.likes">
+			<input type="checkbox" name="zml" value="Do you like turtles?" />
+				<label style="display:none" for="9">我自己的邮箱</label>
+			<input type="checkbox"  value="Do you like football?" /><label style="display:none" for="9">我自己的邮箱</label>
+			<input type="submit" id="send" value="发送"  />
+		</form>
+	
+	<hr>
+		<i>Practice the usage of MultiSelectBox</i>
+		<form data-lift="FormSubmit.opts">
+			<div id="opts" ></div>
+			<input type="submit" id="send" value="发送"  />
+		</form>
+		<br>
+		<br>
+		<i>Practice the usage of MultiSelectBox with drpDownList</i>
+		<form data-lift="FormSubmit.dropdown">
+			<label for="dropdown">Select Guys you wanna send Mail</label><input id="dropdown" />
+			<input type="submit" id="send" value="发送"  />
+		</form>
+	
+	<hr>
+	<br>
+	<!--
+		Ajax Form Submit Without refreshing the page
+		Mark your form as an Ajax form with data-lift="form.ajax"and supply a function
+		to run on the server when the form is submitted.
+	-->
+	<form data-lift="form.ajax"> 
+		<div data-lift="FormSubmit.ajax">
+			<input type="text" name="name" placeholder="请输入用户名" />
+			<!--
+				使用Button的方式替代以前的Submit 就像jQuery中那样 提交的不一定是type=submit
+				实际上就是给Button绑定事件让其处理表单提交后的东西
+			-->
+			<button id="submit" class="btn btn-primary btn-large">
+				<i class="icon-white icon-ok"></i>Submit
+			</button>
+		</div>
+	</form>
+	<div id="result">Your name will be echoed here</div>
+	<!--
+		You want to process a form via Ajax, sending the data in JSON format. $.post("/loginAction", {"username": username})
+		Make use of Lift’s jlift.jsJavaScript library and JsonHandlerclass
+	-->
+	<hr>
+	
+	<h3>Json Form example: Required for JSON forms processing</h3>
+	<div data-lift="FormSubmit.jsonForm">
+		<script id="jsonScript" data-lift="tail"></script>
+		<button onclick="javascript:changeCase('upper')">Upper case the Motto</button>
+		<button onclick="javascript:changeCase('lower')">Lower case the Motto</button>
+		<!--上面的这两段 就相当于在以前的基础之上 给button 绑定了事件
+				$("#upper").click(function(){
+					val upperCaseValue = $("#motto").val().toUpperCase();
+					$("#motto").val(upperCaseValue);
+				});
+			替换成Script(MotoServer.jsCmd) 并且放在Body最后
+		-->
+		<div id="jsonForm">
+			<label for="name">
+				Institution
+				<input id="name" type="text" name="name" value="Royal Society" />
+			</label>
+			<label for="motto">
+				Motto
+				<input id="motto" type="text" name="motto" value="Nullius in verba" />
+			</label>
+			<input type="submit" value="Send" />
+		</div>
+		<div id="jsonResult"> Result will appear here.  </div>
+	</div>
+
+	<div data-lift="FormSubmit.jqDatePicker?form=Post">
+		<input type="text" name="birthday" id="birthday" />
+		<input type="submit" value="Submit">
+	</div>
+	<form data-lift="FormSubmit.programmingLanguages?form=post">
+		<input type="text" id="autocomplete" /> <!--  the default behavior: will not send value that's not suggested -->
+		<input type="submit" />
+	</form> 
+	<script src="/classpath/jlift.js" data-lift="tail"></script>
+</div>

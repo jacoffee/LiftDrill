@@ -1,0 +1,95 @@
+<lift:surround with="default" at="content">
+		<div class="lift:Mongo.add?form=post">
+			<table>
+				<tr>
+					<td><input:username /></td>
+				</tr>
+				<tr>
+					<td><input:email /></td>
+				</tr>
+				<tr>
+					<td><input:password /></td>
+				</tr>
+				<tr>
+					<td><input:datetime /></td>
+				</tr>
+				<tr>
+					<td><input:mycall /></td>
+				</tr>
+				<tr>
+					<td><input:delete /></td>
+				</tr>
+				<tr>
+					<td>
+						<a href="/simple/index.html">Cancel</a>
+					</td>
+					<td>
+						<input:action></input:action>
+						<input type="submit" value="Create"/>
+					</td>
+				</tr>
+			</table>
+			<span id="page_alert"></span>
+		</div>
+		<lift:snippet type="Mongo:call"></lift:snippet>
+		<div id="question-box" class="model-dialog">
+			<div class="banner">
+				提问
+			</div>
+			<div class="note-title">
+				<input type="text" placeholder="简述你的问题（100字符以内）" maxlength="100px"
+					id="question-header" />
+			</div>
+			<div class="note-content">
+				<div  class="zy-form-title">
+					问题说明(必填):
+				</div>
+				<div class="question-content"  contenteditable="true"  ></div>
+				<div class="zy-form-title">
+					选择话题(必填):
+				  <span style="margin-left:250px; color:#999999;font-size:11px">最多可以选择三个话题</span>
+				</div>
+				<input class="topic-selected"  type="text"  style="min-height:30px;"/>
+			</div>
+			<div id="process">
+				<a href="javascript:void(0)" id="question-cancel">取消</a>
+				<input type="button" value="发布" id="writeNote" />
+			</div>
+		</div>
+		<tail>
+			<script type="text/javascript">
+				var addUser = {
+					setText: function() {
+						$("#page_alert").text("ha ha shoot");
+					},
+					overPopup: function() {
+						$("#question-box").css("display", "block");
+						$("#fade").css("display", "block");
+					},
+					calculate: function(x, y) {
+						console.log(x+y);
+						return x + y;
+					}
+					auto: function(x, y) {
+						console.log(x-y);
+						return x-y;
+					}
+				}
+				$(function(){
+						// 单击提问按钮 弹出留言的对话框 并且出现遮幕层
+						$("#question").click(function() {
+							$("#question-box").css("display", "block");
+							$("#fade").css("display", "block");
+							// 默认的标题 和 主要内容都是空的
+							$("#header").val("");
+							$("#main_body").text("");
+						});
+						// 单击取消的话 遮罩层消失
+						$("#question-cancel").click(function() {
+								$("#question-box").css("display", "none");
+								$("#fade").css("display", "none");
+						});
+				});
+			</script>
+		</tail>
+</lift:surround>
