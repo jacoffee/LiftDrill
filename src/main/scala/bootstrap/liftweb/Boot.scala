@@ -68,11 +68,11 @@ class Boot extends Bootable{
 
   private def initSnippetDisapatch {
 	  LiftRules.snippetDispatch.append {
-		case "Scraper" => net.liftweb.example.snippet.Scraper
-		case "Mongo" => net.liftweb.example.snippet.Mongo
-		case "QQMail" => net.liftweb.example.snippet.QQMail
-		case "FormSubmit" => net.liftweb.example.snippet.FormSubmit
-		case "RenderNode" => net.liftweb.example.snippet.RenderNode
+		case "Scraper" => com.jacoffee.example.snippet.Scraper
+		case "Mongo" => com.jacoffee.example.snippet.Mongo
+		case "QQMail" => com.jacoffee.example.snippet.QQMail
+		case "FormSubmit" => com.jacoffee.example.snippet.FormSubmit
+		case "RenderNode" => com.jacoffee.example.snippet.RenderNode
 	  }
   }
 

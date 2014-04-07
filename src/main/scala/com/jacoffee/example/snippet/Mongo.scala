@@ -1,4 +1,4 @@
-package net.liftweb.example.snippet
+package com.jacoffee.example.snippet
 
 import scala.xml.{ Text, Group, NodeSeq, Elem }
 import net.liftweb.example.model.{ Person => PersonModel }

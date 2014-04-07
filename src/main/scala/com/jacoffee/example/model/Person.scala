@@ -13,7 +13,7 @@ import java.text.SimpleDateFormat
 
 
 object Person extends Person with MongoMetaRecord[Person] {
-	override val mongoIdentifier = MongoConfig.DefaultMongoIdentifier
+	// override val mongoIdentifier = MongoConfig.DefaultMongoIdentifier
 	// sort accroding firstname
 	def getAllSortByFirstName = findAll(JObject(Nil),(firstName.name, 1) )
 

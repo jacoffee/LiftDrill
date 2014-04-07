@@ -1,4 +1,4 @@
-package net.liftweb.example.snippet
+package com.jacoffee.example.snippet
 
 import java.text.SimpleDateFormat
 import java.util.Date

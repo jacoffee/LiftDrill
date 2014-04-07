@@ -1,4 +1,4 @@
-package net.liftweb.example.snippet
+package  com.jacoffee.example.snippet
 
 import scala.collection.JavaConversions.asScalaBuffer
 import net.liftweb.http.DispatchSnippet
