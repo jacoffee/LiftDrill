@@ -84,14 +84,14 @@ class  Indexable  {
 		val iWriter = getIndexWriter
 		for(i <- 0  until ids.length ) {
 			val doc = new Document()
+			val cityName = unindexedCity(i)
 			doc.add(new Field("id", ids(i), Store.YES, Index.NOT_ANALYZED))
 			doc.add(new Field("country", unindexedCountry(i), Store.YES, Index.NO))
-			doc.add(new Field("city", unindexedCity(i), Store.YES, Index.ANALYZED))
+			doc.add(new Field("city", cityName, Store.YES, Index.ANALYZED))
 			doc.add(new Field("contents", unstoredDesp(i), Store.NO, Index.ANALYZED))
+			if (cityName == "China") { doc.setBoost(1.5f) } else { doc.setBoost(1.0f) }
 			iWriter.addDocument(doc)
 		}
-		// 写入两个document
-		// 打印文档的ID
 		println(" 新增加的文档数: " + iWriter.numDocs() )
 		iWriter.close // commit changes to Directory
 	}
