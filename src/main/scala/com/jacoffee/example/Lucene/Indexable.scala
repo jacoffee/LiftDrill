@@ -1,22 +1,14 @@
 package com.jacoffee.example.Lucene
 
-import org.apache.lucene.store.Directory
-import org.apache.lucene.index.IndexWriter
-import org.apache.lucene.analysis.WhitespaceAnalyzer
-import org.apache.lucene.index.IndexWriterConfig
-import org.apache.lucene.store.RAMDirectory
-import org.apache.lucene.util.Version
-import org.apache.lucene.document.Document
-import org.apache.lucene.document.Field
-import org.apache.lucene.document.Field.Store
-import org.apache.lucene.document.Field.Index
-import org.apache.lucene.search.IndexSearcher
-import org.apache.lucene.search.TermQuery
-import org.apache.lucene.index.Term
-import org.apache.lucene.store.LockObtainFailedException
-import org.apache.lucene.store.FSDirectory
 import java.io.File
-import scala.collection.SeqLike
+import java.util.Calendar
+import org.apache.lucene.store.{ Directory, FSDirectory }
+import org.apache.lucene.index.{ Term, IndexWriter, IndexWriterConfig }
+import org.apache.lucene.analysis.WhitespaceAnalyzer
+import org.apache.lucene.util.Version
+import org.apache.lucene.document.{ Document, Field, NumericField }
+import org.apache.lucene.document.Field.{ Store, Index }
+import org.apache.lucene.search.{ IndexSearcher, TermQuery }
 
 // use Enumeration in Scala
 /** Creates a fresh value, part of this enumeration. */
@@ -60,6 +52,8 @@ class  Indexable  {
 	protected val unindexedCountry = Array( "Netherlands", "Italy", "China", "US")
 	protected val unindexedCity = Array("Amsterdam", "Venice", "Shanghai", "Los Angeles")
 	protected val unstoredDesp = Array("Amsterdam has lots of bridges", "Venice has lots of canals", "ShangHai is the Cultural&Education center of China",  "LA got a bunch of talented NBA stars")
+	protected val population = Array(100, 231, 245, 267)
+	protected val foundTime = Array(1913, 1867,1949, 1776)
 
 	// directory to write the index to
 	// XXX  Take Care When Storing Index in Memory, It will be cleared so you have to build Index iteratively
@@ -82,6 +76,12 @@ class  Indexable  {
 
 	 def  addDocuments {
 		val iWriter = getIndexWriter
+		def getCalendarTime(year: Int) = {
+			val cal = Calendar.getInstance
+			cal.set(Calendar.YEAR, year)
+			cal.getTimeInMillis
+		}
+
 		for(i <- 0  until ids.length ) {
 			val doc = new Document()
 			val cityName = unindexedCity(i)
@@ -89,6 +89,18 @@ class  Indexable  {
 			doc.add(new Field("country", unindexedCountry(i), Store.YES, Index.NO))
 			doc.add(new Field("city", cityName, Store.YES, Index.ANALYZED))
 			doc.add(new Field("contents", unstoredDesp(i), Store.NO, Index.ANALYZED))
+			// Index Numeric Value in Lucene
+				// -> pure number
+			val pop = new NumericField("population").setIntValue(population(i))
+			val found =new NumericField("foundTime").setLongValue(getCalendarTime(foundTime(i)))
+				// ->Date time String
+/*			val foundTime = new NumericField("foundTime").setLongValue{
+				setCalendar(-((i+1)*100)).getTimeInMillis
+			}
+*/			doc.add(pop)
+			doc.add(found)
+
+			// doc.add(new NumericField
 			if (cityName == "China") { doc.setBoost(1.5f) } else { doc.setBoost(1.0f) }
 			iWriter.addDocument(doc)
 		}
