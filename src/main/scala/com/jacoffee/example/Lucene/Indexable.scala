@@ -4,11 +4,12 @@ import java.io.File
 import java.util.Calendar
 import org.apache.lucene.store.{ Directory, FSDirectory }
 import org.apache.lucene.index.{ Term, IndexWriter, IndexWriterConfig }
-import org.apache.lucene.analysis.WhitespaceAnalyzer
+import org.apache.lucene.analysis.{ WhitespaceAnalyzer, SimpleAnalyzer }
 import org.apache.lucene.util.Version
 import org.apache.lucene.document.{ Document, Field, NumericField }
 import org.apache.lucene.document.Field.{ Store, Index }
-import org.apache.lucene.search.{ IndexSearcher, TermQuery }
+import org.apache.lucene.search.{ IndexSearcher, TermQuery, Filter }
+import org.apache.lucene.queryParser.QueryParser
 
 // use Enumeration in Scala
 /** Creates a fresh value, part of this enumeration. */
@@ -58,6 +59,7 @@ class  Indexable  {
 	// directory to write the index to
 	// XXX  Take Care When Storing Index in Memory, It will be cleared so you have to build Index iteratively
 	val indexedFilePosition = FSDirectory.open(new File("D:/Lucene/Country"))
+	val version = Version.LUCENE_34
 
 	// build  document and establish index
 	def getIndexWriter: IndexWriter =  {
@@ -66,7 +68,6 @@ class  Indexable  {
 		// IndexWriter会看相应的目录是否已经有了 索引相关的文件 如果有了, 就会直接往后面添加;这也就是为什么 在前一个程序中不断运行会不断添加新的索引文件
 
 		// config && analyzer
-		val version = Version.LUCENE_34
 		val config = new IndexWriterConfig(version, new WhitespaceAnalyzer(version))
 		// write to where  and how to write
 		/* About  IndexWriter的锁机制 */
@@ -110,8 +111,7 @@ class  Indexable  {
 
 	// query the index 《必须要给子类调用》
 	 def getHitCount(fieldName: String,  searchString: String) = {
-		// search from where  in the memory instead of FS
-		val iSearch = new IndexSearcher(indexedFilePosition)
+		 val iSearch = new IndexSearcher(indexedFilePosition)
 		// term Query -- equals to exact match In SQL
 		val termQuery = new TermQuery(new Term(fieldName, searchString))
 		val topDocs = iSearch.search(termQuery, 5)
@@ -119,6 +119,18 @@ class  Indexable  {
 		 println(" 所有命中的文档的Id " + topDocs.scoreDocs.toList.map(_.doc)) // docId starts from one
 		 println(" 所有命中的文档的Score " + topDocs.scoreDocs.toList.map(_.score))
 		topDocs.totalHits
+	}
+
+	def testQueryParser(fieldName: String,  searchString: String) = {
+		val iSearch = new IndexSearcher(indexedFilePosition)
+		// query parser translate user-enter query expression into query object for IndexSearcher to execute
+		// 确保和索引文档时所用的 分词器一致
+		val parser = new QueryParser(version, fieldName, new WhitespaceAnalyzer(version))
+		// "Amsterdam Or Shanghai"
+		val parsedQuery = parser.parse(searchString)
+		val topDocs = iSearch.search(parsedQuery, 5)
+		val docId = topDocs.scoreDocs.toList.map(_.doc)
+		println(" 命中的ID数 "  + docId)
 	}
 
 	// remove index
@@ -195,4 +207,6 @@ object LuceneTest extends Indexable with App {
 		Update Lucene Index
 		updateDocument 一句话 先删后更新 || 更新的
 	*/
+	//getHitCount("city", "Amsterdam")
+	testQueryParser("city", "Amsterdam Or Shanghai")
 }

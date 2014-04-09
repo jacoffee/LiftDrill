@@ -1,18 +1,24 @@
-﻿body {
-	background: url("../images/stars-1.png") repeat-x fixed -130% 0px,
+body {
+/* 	background: url("../images/stars-1.png") repeat-x fixed -130% 0px,
 		url("../images/stars-2.png") repeat-x fixed 40% 0px,
 		url("../images/space-bg.png") repeat-x fixed -80% 0px,
-		url("../images/clouds.png") repeat-x fixed 100% 0 #1A1A1A;
+		url("../images/clouds.png") repeat-x fixed 100% 0 #1A1A1A; */
+	background: url("../images/sunset.jpg") repeat scroll;
 	color: #222222;
 	font: .875em 'Segoe UI','Lucida Grande',Verdana,Arial,Helvetica,sans-serif;
-	font-size: 100%;
-	width: 800px;
 	height: 100%;
+	width: 100%;
 	margin: 20px auto;
+}
+.container {
+	margin: 10px auto;
 }
 .mainbody {
 	width: 800px;
 	margin: 0 auto;
+}
+.wrapper {
+	background: none repeat scroll 0 0 transparent;
 }
 h2 {
 	color: #f43c12;
@@ -340,8 +346,4 @@ div.toArea {
 	min-height: 18px;
 	font-family: Tahoma;
 	background: #fff repeat-x;
-}
-
-.wrapper {
-	background: none repeat scroll 0 0 #efefef;
 }
