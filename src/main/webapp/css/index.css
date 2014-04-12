@@ -3,7 +3,7 @@ body {
 		url("../images/stars-2.png") repeat-x fixed 40% 0px,
 		url("../images/space-bg.png") repeat-x fixed -80% 0px,
 		url("../images/clouds.png") repeat-x fixed 100% 0 #1A1A1A; */
-	background: url("../images/sunset.jpg") repeat scroll;
+	background: url("../images/texture1.jpg") repeat scroll;
 	color: #222222;
 	font: .875em 'Segoe UI','Lucida Grande',Verdana,Arial,Helvetica,sans-serif;
 	height: 100%;
@@ -18,7 +18,9 @@ body {
 	margin: 0 auto;
 }
 .wrapper {
-	background: none repeat scroll 0 0 transparent;
+	width:  800px;
+	margin: 0 auto;
+	background: none repeat scroll 0 0 rgba(255, 255, 255, 0.6);
 }
 h2 {
 	color: #f43c12;
@@ -44,6 +46,11 @@ a {
 	transition: all 0.6s ease-in-out;
 }
 /*好好研究  清除浮动的方案*/
+/* margin 的这个用法要配合宽度来使用 */
+.group {
+	width: 800px;
+	margin: 0 auto;
+}
 .group:after {
 	clear: both;
 	content: ".";
@@ -85,6 +92,9 @@ widget {
 	border-bottom:none;
 	float: left;
 }
+.sidebar ul li span {
+	color: #c59f6e;
+}
 .sidebar ul li a {
 	/*display: block 导致左右不一样宽*/
 	padding:3px 10px;
@@ -121,7 +131,7 @@ widget {
 	color: red;
 }
 .bg {
-	background-color: rgba(255, 255, 255, 0.9);
+	background-color: rgba(255, 255, 255, 0.6);
 }
 .logo {
 	-moz-transform: rotate(360deg);
@@ -346,4 +356,32 @@ div.toArea {
 	min-height: 18px;
 	font-family: Tahoma;
 	background: #fff repeat-x;
+}
+
+/* city */
+.workplace {
+	border: 1px solid red;
+	height: 436px;
+	overflow: auto;
+}
+.province {
+	float: left;
+}
+.city {
+	float: right;
+}
+.province a,
+.city a {
+	display: block;
+	height: 34px;
+	line-height: 34px;
+	padding-left: 20px;
+	text-decoration: none;
+}
+.state-city {
+	display: block;
+	padding: 0 10px;
+	height: 36px;
+	line-height: 34px;
+	background: #fff;
 }

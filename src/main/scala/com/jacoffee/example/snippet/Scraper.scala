@@ -41,11 +41,9 @@ import scala.io.Source
 
 object Scraper extends DispatchSnippet with Loggable {
 	def dispatch = {
-		case "wiki"  =>  wiki
 		case "stringToHtml"  => stringToHtml 
 		case "extractAttr"  => extractAttr
 		case "htCity" => htCity
-		case "wordsParser" => wordsParser
 	}
 	val baseUrlOfXJH = "http://xjh.haitou.cc"
 	val defaultTimeout = 5000

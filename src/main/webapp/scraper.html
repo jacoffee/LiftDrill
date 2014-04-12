@@ -1,6 +1,6 @@
 <lift:surround with="default" at="content">
-	!-- info scrape with JSoup -->
-	<lift:snippet type="Scraper:wiki"></lift:snippet>
+	<!-- info scrape with JSoup -->
+	<!--  <lift:snippet type="Scraper:wiki"></lift:snippet> -->
 	<hr>  
 	<lift:snippet type="Scraper:stringToHtml"></lift:snippet>
 	<hr>
@@ -8,20 +8,11 @@
 	<hr>
 	<lift:snippet type="Scraper:htCity"></lift:snippet>
 	<hr>
-	<lift:snippet type="Scraper:wordsParser"></lift:snippet> -->
+	<!-- <lift:snippet type="Scraper:wordsParser"></lift:snippet> -->
 	<script type="text/javascript">
 		var obj = {x:1, y:2}  // 字符串化  将对象转换成 字符串
-		alert( typeof JSON.stringify(obj)  )
+		//alert( typeof JSON.stringify(obj)  )
 		var stringToJson = "{'x':3, 'y':4}"
-		alert( typeof JSON.parse(stringToJson) )
-	</script>
-
-	<script type="text/javascript">
-		$(function(){
-			$("#submitBtn").click(function(){
-				alert($("#p").val());
-			});
-			
-		})
+		//alert( typeof JSON.parse(stringToJson) )
 	</script>
 </lift:surround>
