@@ -51,7 +51,7 @@ object Mongo extends DispatchSnippet {
 		{
 			PersonModel.getAllSortByUsername.map { person =>
 				val idValue = person.id.get.toString
-				val personality = PersonModel.Personality.allTypes(person.personalityType.get).toString
+				val personality = PersonModel.Personality.allTypes(Random.nextInt(3)+1).toString
 				<tr>
 					<td>{ person.username.get }</td>
 					<td>{ person.email.get }</td>
@@ -170,13 +170,8 @@ object Mongo extends DispatchSnippet {
 		person.username(UserName.is)
 		person.email(Email.is)
 		person.password(Password.is)
-		person.personalityType(Random.nextInt(4)+1)
+		person.personalityType(Random.nextInt(3)+1)
 		person.save
-		saveAndRedirect
-	}
-
-	def saveAndRedirect =  {
-		S.notice("page_alert", <span>恭喜您， 成功注册</span>)
-		S.redirectTo("/mongo/index.html")
+		S.redirectTo("/mongo/index", () => S.notice("page_alert", <span>恭喜您， 成功注册</span>))
 	}
 }
