@@ -8,7 +8,7 @@ import org.apache.lucene.analysis.{ WhitespaceAnalyzer, SimpleAnalyzer }
 import org.apache.lucene.util.Version
 import org.apache.lucene.document.{ Document, Field, NumericField }
 import org.apache.lucene.document.Field.{ Store, Index }
-import org.apache.lucene.search.{ IndexSearcher, TermQuery, Filter }
+import org.apache.lucene.search.{ IndexSearcher, TermQuery, Filter, NumericRangeQuery, PrefixQuery, BooleanQuery, BooleanClause, MatchAllDocsQuery }
 import org.apache.lucene.queryParser.QueryParser
 
 // use Enumeration in Scala
@@ -49,12 +49,18 @@ object myMkString  {
 // 学习如何建立 index
 class  Indexable  {
 	// prepare materials for indexing
-	protected val ids = Array("1", "2", "3", "4")
-	protected val unindexedCountry = Array( "Netherlands", "Italy", "China", "US")
-	protected val unindexedCity = Array("Amsterdam", "Venice", "Shanghai", "Los Angeles")
-	protected val unstoredDesp = Array("Amsterdam has lots of bridges", "Venice has lots of canals", "ShangHai is the Cultural&Education center of China",  "LA got a bunch of talented NBA stars")
-	protected val population = Array(100, 231, 245, 267)
-	protected val foundTime = Array(1913, 1867,1949, 1776)
+	protected val ids = Array("1", "2", "3", "4", "5")
+	protected val unindexedCountry = Array( "Netherlands", "Italy", "China", "US", "Chile")
+	protected val unindexedCity = Array("Amsterdam", "Venice", "Shanghai", "Los Angeles", "Santiago")
+	protected val unstoredDesp = Array(
+		"Amsterdam has lots of bridges",
+		"Venice has lots of canals",
+		"ShangHai is the Cultural&Education center of China",
+		"LA got a bunch of talented NBA stars",
+		"Chile is world-renowned for football"
+	)
+	protected val population = Array(100, 231, 245, 267, 120)
+	protected val foundTime = Array(1913, 1867,1949, 1776, 1345)
 
 	// directory to write the index to
 	// XXX  Take Care When Storing Index in Memory, It will be cleared so you have to build Index iteratively
@@ -118,6 +124,14 @@ class  Indexable  {
 		// 看看文档ID到底是什么样的
 		 println(" 所有命中的文档的Id " + topDocs.scoreDocs.toList.map(_.doc)) // docId starts from one
 		 println(" 所有命中的文档的Score " + topDocs.scoreDocs.toList.map(_.score))
+
+
+		// Explaination  -- get all the whistles and bells of scoring
+		val scoreTexts = topDocs.scoreDocs.toList.map { macthed =>
+			iSearch.explain(termQuery, macthed.doc)
+		}
+		println( scoreTexts.map(_.toHtml) )
+
 		topDocs.totalHits
 	}
 
@@ -133,6 +147,33 @@ class  Indexable  {
 		println(" 命中的ID数 "  + docId)
 	}
 
+	def testNumericRangeQuery(fieldName: String) = {
+		val iSearch = new IndexSearcher(indexedFilePosition)
+		val query = NumericRangeQuery.newIntRange(fieldName, 100, 250, true, true)
+		val topDocs = iSearch.search(query, 10)
+		println(" 人口在 100 -250的城市有几个 ")
+		println(topDocs.totalHits)
+	}
+
+	def testBooleanQuery = {
+		val iSearch = new IndexSearcher(indexedFilePosition)
+		val booleanQuery = new BooleanQuery
+		val rangeQuery = NumericRangeQuery.newIntRange("population", 100, 250, true, true)
+		val prefixQuery = new PrefixQuery(new Term("city", "S"))
+		// 查询城市名中以S开头并且人口在100-250的文档
+		booleanQuery.add(rangeQuery, BooleanClause.Occur.MUST)
+		booleanQuery.add(prefixQuery, BooleanClause.Occur.MUST)
+		val topDocs = iSearch.search(booleanQuery, 5)
+		println("查询城市名中以S开头并且人口在100-250的文档数目")
+		println(" 总数 " + topDocs.totalHits)
+		println(" 命中文档编号" + topDocs.scoreDocs.toList.map(_.doc))
+		println(" 命中文档城市名" +
+			topDocs.scoreDocs.toList.map(_.doc).map { docId =>
+				iSearch.doc(docId).get("city")
+			}
+		)
+		println("all the document " +iSearch.search(new MatchAllDocsQuery, 5).totalHits )
+	}
 	// remove index
 	// conditon For instance, a newspaper publisher may want to keep only the last week’s worth of news in its searchable indexes.
 
@@ -191,7 +232,7 @@ class  Indexable  {
 
 
 object LuceneTest extends Indexable with App {
-	// Index Document -- addDocuments
+	// Index Document -- addDocuments 反复添加会不断的出现
 	/*
 		Query Document
 		println(" Query The City " + getHitCount("city", "Amsterdam"))
@@ -207,6 +248,9 @@ object LuceneTest extends Indexable with App {
 		Update Lucene Index
 		updateDocument 一句话 先删后更新 || 更新的
 	*/
-	//getHitCount("city", "Amsterdam")
-	testQueryParser("city", "Amsterdam Or Shanghai")
+	//AMSTERDAM
+	// getHitCount("city", "Amsterdam")  // case incentive
+	// testQueryParser("city", "Amsterdam Or Shanghai")
+	// testNumericRangeQuery("population")
+	testBooleanQuery
 }
