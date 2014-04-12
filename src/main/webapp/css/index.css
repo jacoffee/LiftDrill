@@ -25,6 +25,7 @@ body {
 h2 {
 	color: #f43c12;
 	font-size: 2.375em;
+	text-align: center;
 	-webkit-font-smoothing: antialiased;
 	-moz-font-smoothing: antialiased;
 }

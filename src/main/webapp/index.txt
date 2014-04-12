@@ -1,0 +1,7 @@
+网站练习列表
+1、Scraper.scala
+记录一切与爬虫有关的练习
+2、Mongo.scala
+记录一切与数据库相关的练习
+3、Ajax.scala
+记录一切与Lift Ajax // JS Ajax 相关的操作

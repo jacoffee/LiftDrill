@@ -44,6 +44,7 @@ object Scraper extends DispatchSnippet with Loggable {
 		case "stringToHtml"  => stringToHtml 
 		case "extractAttr"  => extractAttr
 		case "htCity" => htCity
+		case "jobApply" => jobApply
 	}
 	val baseUrlOfXJH = "http://xjh.haitou.cc"
 	val defaultTimeout = 5000
@@ -76,10 +77,10 @@ object Scraper extends DispatchSnippet with Loggable {
 	}
 
 	def stringToHtml(xhtml: NodeSeq): NodeSeq = {
-		val html = "<html><head><title>First parse</title></head><body><p>Parsed HTML into a doc.</p></body></html>"
+		val html = "<p>Parsed HTML into Using XhtmlParser</p>"
 		val document = Jsoup.parse(html)
 		<div>
-			{ document }
+			{ XhtmlParser(Source.fromString(document.outerHtml)) }
 		</div>
 	}
 
@@ -142,5 +143,9 @@ object Scraper extends DispatchSnippet with Loggable {
 			analyzer.getTerms(fileSrc.text).toList.mkString("\r\n")
 		}
 		</div>
+	}
+
+	def jobApply = {
+		"*" #> <p></p>
 	}
 }

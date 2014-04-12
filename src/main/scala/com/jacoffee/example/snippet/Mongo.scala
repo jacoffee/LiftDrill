@@ -177,6 +177,6 @@ object Mongo extends DispatchSnippet {
 
 	def saveAndRedirect =  {
 		S.notice("page_alert", <span>恭喜您， 成功注册</span>)
-		S.redirectTo("/simple/index.html")
+		S.redirectTo("/mongo/index.html")
 	}
 }

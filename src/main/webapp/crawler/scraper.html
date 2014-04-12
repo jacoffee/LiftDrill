@@ -1,18 +1,16 @@
-<lift:surround with="default" at="content">
+<div data-lift="surround?with=default;at=content">
 	<!-- info scrape with JSoup -->
 	<!--  <lift:snippet type="Scraper:wiki"></lift:snippet> -->
-	<hr>  
-	<lift:snippet type="Scraper:stringToHtml"></lift:snippet>
-	<hr>
-	<lift:snippet type="Scraper:extractAttr"></lift:snippet>
-	<hr>
-	<lift:snippet type="Scraper:htCity"></lift:snippet>
-	<hr>
+	<!-- <lift:snippet type="Scraper:stringToHtml"></lift:snippet> -->
+	<!-- <lift:snippet type="Scraper:extractAttr"></lift:snippet> -->
+	<!--<div data-lift ="Scraper.htCity"></div> -->
 	<!-- <lift:snippet type="Scraper:wordsParser"></lift:snippet> -->
+	<!--  单击投递简历 判断Person表中的字段时候齐全  如果不齐全则进行补齐 然后投递-->
+	<span id="page_alert"></span>
 	<script type="text/javascript">
 		var obj = {x:1, y:2}  // 字符串化  将对象转换成 字符串
 		//alert( typeof JSON.stringify(obj)  )
 		var stringToJson = "{'x':3, 'y':4}"
 		//alert( typeof JSON.parse(stringToJson) )
 	</script>
-</lift:surround>
+</div>
