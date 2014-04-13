@@ -87,16 +87,15 @@ class Boot extends Bootable{
 	  )
   }
 
-  object MenuInfo {
-    def sitemap = SiteMap(
-		Menu("Home") / "index" >> Hidden,
-		// Link的第一个参数和第二个参数 结合就可以打开 整个文件下的文件   最后是当单击菜单上的Crawler时 会跳到哪个菜单
-		Menu(Loc("Scraper", Link("crawler" :: Nil, true, "/crawler/scraper"), "Crawler")),
-		Menu(Loc("DataBase", Link("mongo" :: Nil, true, "/mongo/"), "DataBase")),
-		Menu(Loc("Ajax", Link("ajax" :: Nil, true, "/ajax/formsubmit.html"), "Ajax"))
-	)
-  }
-
+	object MenuInfo {
+		def sitemap = SiteMap(
+			Menu("Home") / "index" >> Hidden,
+			// Link的第一个参数和第二个参数 结合就可以打开 整个文件下的文件   最后是当单击菜单上的Crawler时 会跳到哪个菜单
+			Menu(Loc("Scraper", Link("crawler" :: Nil, true, "/crawler/scraper"), "Crawler")),
+			Menu(Loc("DataBase", Link("mongo" :: Nil, true, "/mongo/"), "DataBase")) ,
+			Menu(Loc("Ajax", Link("ajax" :: Nil, true, "/ajax/formsubmit.html"), "Ajax"))
+		)
+	}
 }
 /*
 

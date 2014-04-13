@@ -23,7 +23,6 @@ object Mongo extends DispatchSnippet {
 
 	def dispatch = {
 		case "users" => users
-		case "add" => add
 	}
 
 	private object selectedPerson extends RequestVar[Box[PersonModel]](Empty)
