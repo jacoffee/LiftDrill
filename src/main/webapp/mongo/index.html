@@ -19,8 +19,7 @@
 					}();
 					titleElement.text(title);
 
-					var personInfo = $("<div class='personInfo'></div>").html(content);
-					$container.append( personInfo );
+					var $personInfo = $("<div class='personInfo'></div>").html(content);
 
 					// action bind
 					$.each(actionObject, function(val, action){
@@ -28,10 +27,11 @@
 							action();
 						});
 						var alink = $("<a href='javascript:;'></a>").text("取消").click(function(){
-							alert("hah"); 
+							$(this).parent(".personInfo").hide();
 						});
-						$container.append(btn).append(alink)
+						$personInfo.append(btn).append(alink)
 					});
+					$container.append($personInfo);
 				}
 			}
 		</script>
