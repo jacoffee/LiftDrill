@@ -6,3 +6,10 @@ var PageAlert = function() {
 			$("<div class='msg_container'></div").html($msg.text()).fadeIn(3000).fadeOut("slow")
 	);
 }
+
+var blackOverLayPop = function(title, content, action) {
+
+
+
+
+}
