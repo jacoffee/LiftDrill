@@ -130,8 +130,8 @@ object Mongo extends DispatchSnippet {
 								Call("popupDiv.infoContent",
 									"修改Person信息",
 									JsHtml {
-										<input type="text" value= { person.username.get } name={ person.username.name }></input>
-										<input type="text" value= { person.email.get } name={ person.email.name }></input>
+										<input type="text" value= { person.username.get } id={userId} name={ person.username.name }></input>
+										<input type="text" value= { person.email.get } id={emailId} name={ person.email.name }></input>
 										<input type="text" value= { personality } ></input>
 									},
 									JsObj("确认修改" ->
@@ -203,7 +203,7 @@ object Mongo extends DispatchSnippet {
 									JsHtml {
 										<div class="zy-inbox-receiver">
 											<label for="username">发给: </label>
-											<input type="text" class="zy-form-input" id="to"  name="to"  />
+											<input type="text" class="zy-form-input" id="to"  name="to" value= { person.username.get }/>
 										</div>
 										<div class="zy-inbox-content">
 											<label for="content">内容: </label>
@@ -221,7 +221,7 @@ object Mongo extends DispatchSnippet {
 											{
 												_ match {
 													case JArray(JString(to) :: JString(content) :: Nil) =>{
-														Noop
+														Call("window.location.reload")
 													}
 													case _ => Noop
 												}
