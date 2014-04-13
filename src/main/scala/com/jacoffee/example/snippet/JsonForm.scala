@@ -42,7 +42,7 @@ class JsonForm {
 		object json extends JsonHandler {
 				def apply(in: Any): JsCmd =
 						SetHtml("json_result", in match {
-							case JsonCmd("processForm", _, params: Map[String, _], _) => 
+							case JsonCmd("processForm", _, params: Map[String, _] @unchecked, _) =>
 							  	<p>Publisher: { params("publisher") },  Title: { params("title") }</p>
 							case x =>
 								<span class="error">Unknown error: {x}</span>
