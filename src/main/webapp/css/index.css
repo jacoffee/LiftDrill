@@ -305,6 +305,27 @@ div.personInfo {
 	margin: 0 auto;
 }
 
+/*
+	person
+*/
+.add {
+	float: right;
+	margin-top: -20px;
+}
+
+.msg_container {
+	margin: 0 auto;
+	border: 1px solid #efefef;
+	border-radius: 1px;
+
+	position: relative;
+
+	background: none repeat scroll 0 0 #EEE;
+	width: 800px;
+	text-align:center;
+	line-height:30px;
+	font-size: 16px;
+}
 
 p.logintips_error {
 	border: 1px solid #deacb4;
