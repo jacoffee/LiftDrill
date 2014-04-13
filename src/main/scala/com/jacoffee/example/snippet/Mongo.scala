@@ -22,6 +22,7 @@ import scala.util.Random
 object Mongo extends DispatchSnippet {
 
 	def dispatch = {
+		case "add" => add
 		case "users" => users
 	}
 
@@ -31,10 +32,54 @@ object Mongo extends DispatchSnippet {
 		def toJsCmd = fixHtmlAndJs("inline", node)._1
 	}
 
+	object UserName extends RequestVar[String]("")
+	object Email extends RequestVar[String]("")
+	object Password extends RequestVar[String]("")
+	object Personality extends RequestVar[String]("")
+	/* Add a user */
+	// "mycall" -> SHtml.a(Text("add Practice"),  Call("addUser.calculate",JsExp.intToJsExp(3), 4).cmd,  "id" -> "myadd")
+	def add(xhtml: NodeSeq): NodeSeq = {
+		xhtml.bind("input",
+			"username" -> SHtml.text(UserName.is, u => UserName(u.trim), "id"-> "username", "class"-> "text", "placeholder" -> "请输入用户名"),
+			"email" -> SHtml.text(Email.is, e =>  Email(e.trim), "id" -> "email", "class" -> "text", "placeholder" -> "请输入邮箱"),
+			"password" -> SHtml.text(Password.is, p =>  Password(p.trim), "id" -> "password", "class" -> "text", "placeholder" -> "请输入密码"),
+			"personality" -> SHtml.text(Personality.is, p => Personality(p.trim), "id" -> "personality", "class" -> "text"),
+			"delete" -> {
+				SHtml.a(
+					() => JsCmds.Confirm(
+						"确定要删除吗？",
+						SHtml.ajaxInvoke(() =>
+						{
+							S.notice("Operation Completed")
+							JsCmds.After(Helpers.TimeSpan(3L), JsCmds.Reload)
+						}
+						)
+					),
+					Text("to be deleted")
+				)
+			},
+			"action" -> SHtml.hidden(createUser _)
+		)
+	}
+
+	def createUser = {
+		//创建record
+		val person = PersonModel.createRecord
+		person.username(UserName.is)
+		person.email(Email.is)
+		person.password(Password.is)
+		person.personalityType(Random.nextInt(3)+1)
+		person.save
+		S.redirectTo("/mongo/index", () => S.notice("page_alert", <span>恭喜您， 成功注册</span>))
+	}
 	/**
 	 * Get the XHTML containing a list of users
 	 */
 	def users(xhtml: NodeSeq): NodeSeq = {
+		import net.liftweb.json.DefaultFormats
+		implicit val formats = DefaultFormats
+
+		case class MyPerson(username: String, email: String)
 		// 查询出所有的Person按 姓氏 升序排列
 		// the header
 		val userId = "username"
@@ -51,6 +96,29 @@ object Mongo extends DispatchSnippet {
 			PersonModel.getAllSortByUsername.map { person =>
 				val idValue = person.id.get.toString
 				val personality = PersonModel.Personality.allTypes(Random.nextInt(3)+1).toString
+				val reload = Call("window.location.reload").cmd
+				//需要前提传递Json格式的数据
+				def validateAndUpdate(jvalue: JValue): JsCmd = {
+					println(" jvalue " + jvalue)
+					println(jvalue.extractOpt[MyPerson].isEmpty)
+					jvalue.extractOpt[MyPerson].map { p =>
+						try {
+							//进行更新操作  先查询 然后再进行更新 验证
+							PersonModel.find(idValue) match {
+								case Full(person) => {
+									person.username(p.username).email(p.email).save
+								}
+								case _ =>
+							}
+							Call("window.location.reload").cmd
+						} catch {
+							case e: Exception =>  {
+								Call("window.location.reload").cmd
+							}
+						}
+					}.getOrElse(Call("window.location.reload").cmd)
+				}
+
 				<tr>
 					<td>{ person.username.get }</td>
 					<td>{ person.email.get }</td>
@@ -62,8 +130,8 @@ object Mongo extends DispatchSnippet {
 								Call("popupDiv.infoContent",
 									"修改Person信息",
 									JsHtml {
-										<input type="text" value= { person.username.get } id={ userId }></input>
-										<input type="text" value= { person.email.get } id={ emailId }></input>
+										<input type="text" value= { person.username.get } id={ userId } name={ person.username.name }></input>
+										<input type="text" value= { person.email.get } id={ emailId } name={ person.email.name }></input>
 										<input type="text" value= { personality } id={ personalityId }></input>
 									},
 									JsObj("确认修改" ->
@@ -113,7 +181,6 @@ object Mongo extends DispatchSnippet {
 						}
 					</td>
 					<td>
-						<!-- { SHtml.link("/simple/delete", () => selectedPerson(Full(person)), Text("Delete")) } -->
 						<!-- ajaxOperation  -->
 						{
 							SHtml.a(Text("delete"),
@@ -132,45 +199,5 @@ object Mongo extends DispatchSnippet {
 			}
 		}
 	}
-		
-	object UserName extends RequestVar[String]("")
-	object Email extends RequestVar[String]("")
-	object Password extends RequestVar[String]("")
-	object Personality extends RequestVar[String]("")
-	/* Add a user */
-	// "mycall" -> SHtml.a(Text("add Practice"),  Call("addUser.calculate",JsExp.intToJsExp(3), 4).cmd,  "id" -> "myadd")
-	def add(xhtml: NodeSeq): NodeSeq = {
-		xhtml.bind("input",
-			"username" -> SHtml.text(UserName.is, u => UserName(u.trim), "id"-> "username", "class"-> "text", "placeholder" -> "请输入用户名"),
-			"email" -> SHtml.text(Email.is, e =>  Email(e.trim), "id" -> "email", "class" -> "text", "placeholder" -> "请输入邮箱"),
-			"password" -> SHtml.text(Password.is, p =>  Password(p.trim), "id" -> "password", "class" -> "text", "placeholder" -> "请输入密码"),
-			"personality" -> SHtml.text(Personality.is, p => Personality(p.trim), "id" -> "personality", "class" -> "text"),
-			"delete" -> {
-				SHtml.a(
-					() => JsCmds.Confirm(
-						"确定要删除吗？",
-						SHtml.ajaxInvoke(() =>
-							{
-								S.notice("Operation Completed")
-								JsCmds.After(Helpers.TimeSpan(3L), JsCmds.Reload)
-							}
-						).cmd
-					),
-					Text("to be deleted")
-				)
-			},
-			"action" -> SHtml.hidden(createUser _)
-		)
-	}
 
-	def createUser = {
-		//创建record
-		val person = PersonModel.createRecord
-		person.username(UserName.is)
-		person.email(Email.is)
-		person.password(Password.is)
-		person.personalityType(Random.nextInt(3)+1)
-		person.save
-		S.redirectTo("/mongo/index", () => S.notice("page_alert", <span>恭喜您， 成功注册</span>))
-	}
 }
