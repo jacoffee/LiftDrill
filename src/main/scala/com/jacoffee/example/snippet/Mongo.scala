@@ -84,13 +84,13 @@ object Mongo extends DispatchSnippet {
 		// the header
 		val userId = "username"
 		val emailId = "email"
-		val personalityId = "personality"
 		<tr class="tblTitle">
 			<th>姓名</th>
 			<th>邮箱</th>
 			<th>性格</th>
 			<th>EDIT</th>
 			<th>DELETE</th>
+			<th>Mail</th>
 		</tr> ++
 		{
 			PersonModel.getAllSortByUsername.map { person =>
@@ -130,9 +130,9 @@ object Mongo extends DispatchSnippet {
 								Call("popupDiv.infoContent",
 									"修改Person信息",
 									JsHtml {
-										<input type="text" value= { person.username.get } id={ userId } name={ person.username.name }></input>
-										<input type="text" value= { person.email.get } id={ emailId } name={ person.email.name }></input>
-										<input type="text" value= { personality } id={ personalityId }></input>
+										<input type="text" value= { person.username.get } name={ person.username.name }></input>
+										<input type="text" value= { person.email.get } name={ person.email.name }></input>
+										<input type="text" value= { personality } ></input>
 									},
 									JsObj("确认修改" ->
 										AnonFunc(
@@ -181,7 +181,6 @@ object Mongo extends DispatchSnippet {
 						}
 					</td>
 					<td>
-						<!-- ajaxOperation  -->
 						{
 							SHtml.a(Text("delete"),
 								JsCmds.Confirm("确认要删除该记录吗",
@@ -191,6 +190,44 @@ object Mongo extends DispatchSnippet {
 											Call("window.location.reload")     // jsExpToJsCmd(Call("window.location.reload"))
 										}
 									).exp
+								)
+							)
+						}
+					</td>
+					<td>
+						{
+							SHtml.a(
+								Text("发送站内信"),
+								Call("innerMailPopup",
+									"发送站内信",
+									JsHtml {
+										<div class="zy-inbox-receiver">
+											<label for="username">发给: </label>
+											<input type="text" class="zy-form-input" id="to"  name="to"  />
+										</div>
+										<div class="zy-inbox-content">
+											<label for="content">内容: </label>
+											<div class="main-body-wrap">
+												<textarea class="send-content" id="content" name="content"></textarea>
+											</div>
+										</div>
+									},
+									JsObj("发送" -> AnonFunc(
+										SHtml.jsonCall(
+											JsArray(
+												ValById("to"),
+												ValById("content")
+											),
+											{
+												_ match {
+													case JArray(JString(to) :: JString(content) :: Nil) =>{
+														Noop
+													}
+													case _ => Noop
+												}
+											}: (JValue => JsCmd)
+										)
+									))
 								)
 							)
 						}
