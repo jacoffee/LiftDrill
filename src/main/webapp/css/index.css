@@ -447,3 +447,19 @@ div.toArea {
 	line-height: 34px;
 	background: #fff;
 }
+
+.mc-item-css-image {
+	-webkit-transition: -webkit-transform 0.3s linear;
+	-moz-transition: -moz-transform 0.3s linear;
+	-o-transition: -o-transform 0.3s linear;
+	transition: transform 0.3s linear;
+}
+
+.mc-item-img-lnk {
+	width: 100%;
+	height: 225px;
+	overflow: hidden;
+	display: block;
+	position: relative;
+	z-index: 1;
+}
