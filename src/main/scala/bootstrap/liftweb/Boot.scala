@@ -88,8 +88,9 @@ class Boot extends Bootable{
   }
 
 	object MenuInfo {
+		Menu("Static", "Static Content") / "static" / * >> LocGroup("main")
 		def sitemap = SiteMap(
-			Menu("Home") / "index" >> Hidden,
+			Menu("Home", S ? "Home") / "index" >> Hidden,
 			// Link的第一个参数和第二个参数 结合就可以打开 整个文件下的文件   最后是当单击菜单上的Crawler时 会跳到哪个菜单
 			Menu(Loc("Scraper", Link("crawler" :: Nil, true, "/crawler/scraper"), "Crawler")),
 			Menu(Loc("DataBase", Link("mongo" :: Nil, true, "/mongo/"), "DataBase")) ,
@@ -98,8 +99,17 @@ class Boot extends Bootable{
 	}
 }
 /*
+	上面那种写法 放开目录的方式
+	Menu("Static", "Static Content") / "static" / ** >> LocGroup("main") >> loggedIn
 
- 
+The ** method at the end of that definition says that  this definition is applicable for every item below the static directory,
+ even for subdirectories.
+ **  就是 static 下面的都可以访问 并且static里面的 文件夹的文件夹也可以访问
+ If you only want to grant access to one directory level, use *instead.
+   static 下面的都可以访问
+
+
+
      Menu("Interactive Stuff") / "interactive" submenus(
         Menu("Comet Chat") / "chat",
         Menu("Ajax Samples") / "ajax",
