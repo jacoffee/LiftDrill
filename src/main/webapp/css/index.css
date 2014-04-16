@@ -448,13 +448,40 @@ div.toArea {
 	background: #fff;
 }
 
-.mc-item-css-image {
-	-webkit-transition: -webkit-transform 0.3s linear;
-	-moz-transition: -moz-transform 0.3s linear;
-	-o-transition: -o-transform 0.3s linear;
-	transition: transform 0.3s linear;
+.c-logo  {
+	border: 2px solid #94e7e8;
+	border-radius: 2px;
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	-ms-border-radius: 2px;
+	background: #fff;
+	height: 88px;
+	line-height: 82px;
+	width: 164px;
+	text-align: center;
+	overflow: hidden;
+}
+.c-logo:hover img {
+	-moz-transform: scale(1.1);
+	-ms-transform: scale(1.1);
+	-webkit-transform: scale(1.1);
+	transform: scale(1.1);
 }
 
+.mc-item-css-image {
+	/*-webkit-transition: -webkit-transform 0.3s linear;
+	-moz-transition: -moz-transform 0.3s linear;
+	-o-transition: -o-transform 0.3s linear;
+	transition: transform 0.3s linear*/;
+	width: 100px;
+	max-width: 140px;
+	max-height: 100%;
+	vertical-align: middle;
+	transition: all .2s ease;
+	-webkit-transition: all .2s ease;
+}
+
+/*
 .mc-item-img-lnk {
 	width: 100%;
 	height: 225px;
@@ -462,4 +489,4 @@ div.toArea {
 	display: block;
 	position: relative;
 	z-index: 1;
-}
+}*/
