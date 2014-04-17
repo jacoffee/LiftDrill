@@ -1,4 +1,4 @@
-package com.jacoffee.example.DivideAndConquer
+package com.jacoffee.example.divide_conquer
 
 import java.net.URL
 import java.io.{ InputStreamReader, BufferedReader }
