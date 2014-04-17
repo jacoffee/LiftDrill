@@ -34,6 +34,9 @@ object  AnalyzerDemo extends App  {
 			val tokens = AnalyzerUtils(analyzer, new StringReader(text))
 			println(" Tokens Produced " + tokens)
 		}
+		println(" &&&&&&&&&&&&&&&&&&&&&&& ")
+		println(" &&&&&&&&&&&&&&&&&&&&&&& ")
+		println("")
 	}
 
 	def AnalyzerUtils(analyzer: Analyzer, reader: Reader) = {
