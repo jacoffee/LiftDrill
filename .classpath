@@ -6,10 +6,10 @@
 	<classpathentry kind="src" output="target/scala-2.10/test-classes" path="src/test/java"/>
 	<classpathentry kind="con" path="org.scala-ide.sdt.launching.SCALA_CONTAINER"/>
 	<classpathentry kind="lib" path="C:/Users/qbt-allen/.ivy2/cache/net.liftweb/lift-webkit_2.10/jars/lift-webkit_2.10-2.5.jar" sourcepath="C:/Users/qbt-allen/.ivy2/cache/net.liftweb/lift-webkit_2.10/srcs/lift-webkit_2.10-2.5-sources.jar"/>
-	<classpathentry kind="lib" path="C:/Users/qbt-allen/.ivy2/cache/net.liftweb/lift-util_2.10/jars/lift-util_2.10-2.5.jar"/>
+	<classpathentry kind="lib" path="C:/Users/qbt-allen/.ivy2/cache/net.liftweb/lift-util_2.10/jars/lift-util_2.10-2.5.jar" sourcepath="C:/Users/qbt-allen/.ivy2/cache/net.liftweb/lift-util_2.10/srcs/lift-util_2.10-2.5-sources.jar"/>
 	<classpathentry kind="lib" path="C:/Users/qbt-allen/.ivy2/cache/net.liftweb/lift-actor_2.10/jars/lift-actor_2.10-2.5.jar"/>
 	<classpathentry kind="lib" path="C:/Users/qbt-allen/.ivy2/cache/net.liftweb/lift-common_2.10/jars/lift-common_2.10-2.5.jar"/>
-	<classpathentry kind="lib" path="C:/Users/qbt-allen/.ivy2/cache/net.liftweb/lift-json_2.10/jars/lift-json_2.10-2.5.jar"/>
+	<classpathentry kind="lib" path="C:/Users/qbt-allen/.ivy2/cache/net.liftweb/lift-json_2.10/jars/lift-json_2.10-2.5.jar" sourcepath="C:/Users/qbt-allen/.ivy2/cache/net.liftweb/lift-json_2.10/srcs/lift-json_2.10-2.5-sources.jar"/>
 	<classpathentry kind="lib" path="C:/Users/qbt-allen/.ivy2/cache/org.scala-lang/scalap/jars/scalap-2.10.0.jar"/>
 	<classpathentry kind="con" path="org.scala-ide.sdt.launching.SCALA_COMPILER_CONTAINER"/>
 	<classpathentry kind="lib" path="C:/Users/qbt-allen/.ivy2/cache/org.scala-lang/scala-reflect/jars/scala-reflect-2.10.2.jar"/>
