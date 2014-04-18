@@ -6,6 +6,8 @@ import org.apache.lucene.analysis._
 import org.apache.lucene.analysis.standard.StandardAnalyzer
 import org.apache.lucene.util.Version
 import org.apache.lucene.analysis.tokenattributes.{ TypeAttribute, OffsetAttribute, PositionIncrementAttribute, CharTermAttribute}
+import org.apache.lucene.analysis.cn.smart.SmartChineseAnalyzer
+import org.apache.lucene.analysis.cjk.CJKAnalyzer
 
 /**
  * Created by qbt-allen on 14-4-17.
@@ -13,15 +15,17 @@ import org.apache.lucene.analysis.tokenattributes.{ TypeAttribute, OffsetAttribu
 // use this simple example to see the visual effect of all kinds of Analyzed Norms
 object  AnalyzerDemo extends App  {
 	val version = Version.LUCENE_34
-	val textToAnalyzed = Array("The quick brown fox 1jumped 2over the lazy dog", "XY&Z Corporation34 - xyz@example.com")
+	val textToAnalyzed = Array("The quick brown fox 1jumped 2over the lazy dog", "XY&Z Corporation34 - xyz@example.com", "道德经")
 
 	val stopWordsSet = Source.fromInputStream(this.getClass.getClassLoader.getResourceAsStream("props/stopwords.txt")).toSet
 	val possibleAnalyzers = {
 		List(
-			new WhitespaceAnalyzer(version),
+/*			new WhitespaceAnalyzer(version),
 			new SimpleAnalyzer(version),
 			new StopAnalyzer(version),
-			new StandardAnalyzer(version)
+			new StandardAnalyzer(version),*/
+			new SmartChineseAnalyzer(version),
+			new CJKAnalyzer(version)
 		)
 	}
 	// AnalyzerUtils.displayTokens(analyzer, text);
@@ -52,12 +56,13 @@ object  AnalyzerDemo extends App  {
 			(stream.incrementToken, term.toString, position, offset, typeInfo)
 		).takeWhile(_._1).map {
 			val increment = position.getPositionIncrement
-			println("增长的涨幅" + increment)
+			//println("增长的涨幅" + increment)
 			if (increment > 0) {
 				pos = pos + increment
-				println(" Position " + pos)
+				//println(" Position " + pos)
 			}
-			t =>s"[ ${t._2} ] || positon: ${ offset.startOffset } —— ${ offset.endOffset } || ${ typeInfo.`type` } "
+			// t =>s"[ ${t._2} ] || positon: ${ offset.startOffset } —— ${ offset.endOffset } || ${ typeInfo.`type` } "
+			t =>s"[ ${t._2} ]"
 		}.toList
 
 		//Stream.continually((stream.incrementToken, term.toString)).takeWhile(_._1).map(t =>s"[${t._2}]").toList
