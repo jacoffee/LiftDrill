@@ -171,16 +171,18 @@ a.city {
 
 /* question box */
 /*这个地方如果设置了 overflow的为hidden div的内容就会网上顶*/
-.model-dialog, .zy-inbox-wrap {
-	left: 100px;
+.model-dialog {
+	position: absolute; /* 弹窗 要脱离文档流 */
+	left: 610px;
+
 	margin: 0 auto;
 	border-radius: 5px 5px 5px 5px;
 	box-shadow: 0 0 80px 0 rgba(0, 0, 0, 0.6);
 
 	background: none repeat scroll 0 0 white;
-	width: 500px;
+	width: 700px;
 	display: none;
-	z-index: 1000;
+	z-index: 99999;
 }
 
 .question-form .create,

@@ -14,11 +14,12 @@
 				<a href="/mongo/index.html">Cancel</a>
 				<input:action></input:action>
 				<input type="submit" value="Create" class="create"/>
-				<button class="ask">提问</button>
+				<a class="ask" href="javascript:;">提问</a>
 			</td>
 		</tr>
 	</table>
 
+	<div class="black-overlay"></div>
 	<div class="model-dialog">
 		<div class="title">提问</div>
 		<div class="mail-body">
@@ -36,7 +37,6 @@
 			<input type="button" value="发布" id="writeNote" />
 		</div>
 	</div>
-	<div class="black-overlay"></div>
 	<tail>
 		<script type="text/javascript">
 			var addUser = {
@@ -56,20 +56,14 @@
 					return x-y;
 				}
 			}
-			$(function(){
-					// 单击提问按钮 弹出留言的对话框 并且出现遮幕层
-					$("#question").click(function() {
-						$("#question-box").css("display", "block");
-						$("#fade").css("display", "block");
-						// 默认的标题 和 主要内容都是空的
-						$("#header").val("");
-						$("#main_body").text("");
-					});
-					// 单击取消的话 遮罩层消失
-					$("#cancel").click(function() {
-						$(".model-dialog").css("display", "none");
-						$(".black-overlay").css("display", "none");
-					});
+			$(".ask").click(function() {
+				$(".model-dialog").fadeIn(2000);
+				$(".black-overlay").show();
+			});
+			// 单击取消的话 遮罩层消失
+			$("#cancel").click(function() {
+				$(".model-dialog").css("display", "none");
+				$(".black-overlay").css("display", "none");
 			});
 		</script>
 	</tail>
