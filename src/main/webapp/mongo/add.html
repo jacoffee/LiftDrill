@@ -1,5 +1,5 @@
 <div data-lift="surround?with=default;at=content" class="wrapper">
-	<table data-lift="lift:Mongo.add?form=post">
+	<table data-lift="lift:Mongo.add?form=post" class="question-form">
 		<tr>
 			<td><input:username /></td>
 		</tr>
@@ -13,7 +13,8 @@
 			<td>
 				<a href="/mongo/index.html">Cancel</a>
 				<input:action></input:action>
-				<input type="submit" value="Create"/>
+				<input type="submit" value="Create" class="create"/>
+				<button class="ask">提问</button>
 			</td>
 		</tr>
 	</table>
@@ -24,10 +25,10 @@
 			您好!
 			<p>首先感谢你在百忙之中垂询我的自荐材料，为一位满腔热情的大学生开启一扇希望之门，给我一个迈向成功的机会。</p>
 			<p>我是长江大学管理学院人力资源管理专业的的一名应届毕业生，即将面临毕业。 四年来，在师友的严格教益及个人的努力下，我具备了一定的专业基础知识，系统地掌握了人力资源管理、绩效管理、财务管理等相关的专业理论;熟悉涉外工作常用礼仪;能熟练操作计算机办公软件。，我利用课余时间广泛地涉猎了大量书籍，不但充实了自己，也培养了自己多方面的技能。更重要的是，严谨的学风和端正的学习态度塑造了我朴实、稳重、创新的性格特点。</p>
-			<span>
+<!--			<span>
 				pre 元素可定义预格式化的文本。被包围在 pre 元素中的文本通常会保留空格和换行符。而文本也会呈现为等宽字;
 				基于上述属性  所以在pre中的文字最好都写在 一行  这样才不会出现 因为 代码的格式而改变样式
-			</span>
+			</span>-->
 			<pre>在大学期间，对个人能力的锻炼也是我很看重的一个的方面。我积极参加文体和社会活动，如青年志愿者，文学社等。同时，为了理论和实际更好的联系起来，一方面培养了我的组织协调能力和人际交往的能力，另一方面培养了我的逻辑思维能力和处理各项事务的能力。我不断加强思想政治学习，积极向党组织靠拢。建立合理的知识结构，以适应社会发展对人才的需要。四年的大学深造使我成为了一名具有较为扎实的基础知识和专业知识、一定组织能力和社交能力的大学生。</pre>
 		</div>
 		<div class="process">
@@ -65,9 +66,9 @@
 						$("#main_body").text("");
 					});
 					// 单击取消的话 遮罩层消失
-					$("#question-cancel").click(function() {
-							$("#question-box").css("display", "none");
-							$("#fade").css("display", "none");
+					$("#cancel").click(function() {
+						$(".model-dialog").css("display", "none");
+						$(".black-overlay").css("display", "none");
 					});
 			});
 		</script>
