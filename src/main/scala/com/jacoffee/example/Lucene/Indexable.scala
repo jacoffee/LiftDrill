@@ -53,11 +53,11 @@ class  Indexable  {
 	protected val unindexedCountry = Array( "Netherlands", "Italy", "China", "US", "Chile")
 	protected val unindexedCity = Array("Amsterdam", "Venice", "Shanghai", "Los Angeles", "Santiago")
 	protected val unstoredDesp = Array(
-		"Amsterdam has lots of bridges",
-		"Venice has lots of canals",
-		"ShangHai is the Cultural&Education center of China",
-		"LA got a bunch of talented NBA stars",
-		"Chile is world-renowned for football"
+		"阿姆斯特丹是个优美的地方",
+		"威尼斯是个水上城市",
+		"上海是中国的文化和政治中心",
+		"洛杉矶有很多的NBA球星",
+		"智利的足球世界闻名"
 	)
 	protected val population = Array(100, 231, 245, 267, 120)
 	protected val foundTime = Array(1913, 1867,1949, 1776, 1345)
@@ -252,5 +252,6 @@ object LuceneTest extends Indexable with App {
 	// getHitCount("city", "Amsterdam")  // case incentive
 	// testQueryParser("city", "Amsterdam Or Shanghai")
 	// testNumericRangeQuery("population")
-	testBooleanQuery
+	// testBooleanQuery
+	addDocuments
 }

@@ -2,10 +2,10 @@ package com.jacoffee.example.Lucene
 
 import java.io.{StringReader, Reader}
 import scala.io.Source
-import org.apache.lucene.analysis.{ Analyzer, StopAnalyzer, SimpleAnalyzer, WhitespaceAnalyzer }
+import org.apache.lucene.analysis._
 import org.apache.lucene.analysis.standard.StandardAnalyzer
 import org.apache.lucene.util.Version
-import org.apache.lucene.analysis.tokenattributes.CharTermAttribute
+import org.apache.lucene.analysis.tokenattributes.{ TypeAttribute, OffsetAttribute, PositionIncrementAttribute, CharTermAttribute}
 
 /**
  * Created by qbt-allen on 14-4-17.
@@ -24,7 +24,6 @@ object  AnalyzerDemo extends App  {
 			new StandardAnalyzer(version)
 		)
 	}
-
 	// AnalyzerUtils.displayTokens(analyzer, text);
 	possibleAnalyzers.foreach { analyzer =>
 		println(" Analyzer: " + analyzer.getClass.getSimpleName)
@@ -39,9 +38,28 @@ object  AnalyzerDemo extends App  {
 		println("")
 	}
 
+	var pos = 0;
 	def AnalyzerUtils(analyzer: Analyzer, reader: Reader) = {
 		val stream = analyzer.reusableTokenStream("", reader)
+
 		val term = stream.addAttribute(classOf[CharTermAttribute])
-		Stream.continually((stream.incrementToken, term.toString)).takeWhile(_._1).map(t =>s"[${t._2}]").toList
+		// add extra infomation for Tokenizer
+		val position = stream.addAttribute(classOf[PositionIncrementAttribute])
+		val offset = stream.addAttribute(classOf[OffsetAttribute])
+		val typeInfo = stream.addAttribute(classOf[TypeAttribute])
+
+		Stream.continually(
+			(stream.incrementToken, term.toString, position, offset, typeInfo)
+		).takeWhile(_._1).map {
+			val increment = position.getPositionIncrement
+			println("增长的涨幅" + increment)
+			if (increment > 0) {
+				pos = pos + increment
+				println(" Position " + pos)
+			}
+			t =>s"[ ${t._2} ] || positon: ${ offset.startOffset } —— ${ offset.endOffset } || ${ typeInfo.`type` } "
+		}.toList
+
+		//Stream.continually((stream.incrementToken, term.toString)).takeWhile(_._1).map(t =>s"[${t._2}]").toList
 	}
 }
