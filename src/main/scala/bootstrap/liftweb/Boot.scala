@@ -73,6 +73,7 @@ class Boot extends Bootable{
 		case "QQMail" => com.jacoffee.example.snippet.QQMail
 		case "FormSubmit" => com.jacoffee.example.snippet.FormSubmit
 		case "RenderNode" => com.jacoffee.example.snippet.RenderNode
+		case "Article" => com.jacoffee.example.snippet.Article
 	  }
   }
 

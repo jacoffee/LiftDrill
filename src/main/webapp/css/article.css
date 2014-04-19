@@ -194,6 +194,7 @@ h1, h2, h3, h4, h5 {
 	text-decoration: none;
 }
 
-
-
-
+/* 新建文章 */
+.new-article {
+	margin-top: 150px;
+}
