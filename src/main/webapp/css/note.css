@@ -1,0 +1,199 @@
+@CHARSET "UTF-8";
+
+body, input, textarea, select, button {
+    font-family: 'Helvetica Neue',Helvetica,Arial,Sans-serif;
+    word-wrap: break-word;
+    font-size:13px;
+}
+    
+a {
+	color: #225599;
+	text-decoration: none;
+	font-size:13px;
+}
+
+a:hover{
+	 text-decoration: underline;
+	 color:#225599;
+	 cursor:poiner;
+}
+
+
+h1, h2, h3, h4, h5 {
+    font-size: 14px;
+    font-weight: 700;
+}
+
+
+.navigation {
+	position: fixed;
+	top: 0;
+	left: 0;
+	float: none;
+	margin:  0 auto;
+	border-radius: 3px 3px 3px 3px;
+	width: 100%;
+	height: 45px;
+	overflow: hidden;
+	background: url("../images/header-bg.png") repeat-x scroll 0 0 transparent;
+	z-index: 1999;
+	font-family: '微软雅黑';
+}
+
+.navigation-inner {
+	margin: 0 auto;
+	width: 960px;
+	height: inherit; /*继承了最原始的  inherit the original attribute */
+}
+
+.logo {
+	float: left;
+	display: block;
+	background: url("../images/zhihu.png") no-repeat 0 8px;
+	height: 100%;
+	width: 60px;
+	text-indent:  -9999px;
+	color: #fff;
+	cursor: pointer;
+}
+
+#searchbox {
+	float: left;
+}
+
+#searchbox  #q {
+	border: 1px solid #1672B9;
+	background: none repeat scroll 0 0 #E7F1F8;
+	border-radius: 5px 5px 5px 5px;
+	color: #555555;
+	font-size: 15px;
+	font-family: Arial;
+	line-height: 17px;
+	padding: 8px 10px;
+	height: 100%;
+	width: 380px;
+	box-shadow: 0 1px 2px rgba(15, 82, 135, 0.25) inset;
+	margin-top: 5px;
+	margin-left: 20px;
+}
+/*
+	顶部的li变化 单击添加背景以告诉user正在访问哪个页面
+	background:#FFFFFF repeat;
+*/
+	
+#searchbox img {
+	width: 20px;
+	height: 20px;
+	position: relative;
+	top: 5px;
+	left: -30px;
+	cursor: pointer;
+}
+
+
+
+#searchbox ul {
+    cursor: pointer;
+    font-size: 13px;
+    height: 46px;
+    line-height: 30px;
+    list-style-type: none;
+    margin: -39px 0 0 480px;
+}
+
+#searchbox ul li{
+	float:left;
+}
+
+
+
+#searchbox ul a {
+	display: block;
+	line-height: 40px;
+	width: 50px;
+	color: #FFFFFF;
+	text-align: center;
+	text-decoration: none;
+	text-shadow: 0 1px 1px rgba(0, 0, 0, 0.57);
+}
+
+.click-bg{
+	background-color:#0674C3;
+}
+
+#question {
+    background: url("../images/add-button.png") repeat scroll 0 0 transparent;
+    border: thin none;
+    border-radius: 5px 5px 5px 5px;
+    color: #EEEEEE;
+    cursor: pointer;
+    font-family: "微软雅黑";
+    font-size: 13px;
+    font-weight: 700;
+    height: 32px;
+    line-height: 32px;
+    margin: 0 0 0 -15px;
+    vertical-align: 1px;
+    width: 68px;
+}
+
+.info {
+	position: absolute;
+	right: 100px;
+	width: 100px;
+	height: 30px;
+}
+
+.info a {
+	position: relative;
+	height: 45px;
+	line-height: 45px;
+	text-indent: 46px;
+	color: #fff;
+	text-decoration: none;
+	box-shadow: none;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
+
+.info .name {
+	left: 30px;
+	top: 15px;
+	color: white;
+	font-size: 15px;
+}
+
+.info .avatar {
+	position: relative;
+	left: 0px;
+	top: 8px;
+	width: 25px;
+	height: 25px;
+	border: 1px solid rgba(0,0,0,.1);
+	box-shadow: 0 1px 0 rgba(255,255,255,.1);
+}
+
+#top-nav-profile-dropdown {
+    background-color: #006BBF;
+    border: 1px solid black;
+    font-size: 14px;
+    height: 100px;
+    list-style: none outside none;
+    margin-left: 960px;
+    margin-top: 48px;
+    width: 65px;
+}
+
+
+#info a:link {
+	text-decoration: none;
+}
+
+#info a:hover {
+	text-decoration: none;
+}
+
+
+
+
