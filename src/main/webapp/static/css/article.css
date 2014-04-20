@@ -1,11 +1,16 @@
 @CHARSET "UTF-8";
 
-body, input, textarea, select, button {
-    font-family: 'Helvetica Neue',Helvetica,Arial,Sans-serif;
-    word-wrap: break-word;
-    font-size:13px;
+body {
+	background: #f6f6f6 url("../images/article/main-bg.png") repeat top left;
+	font-family: Arial,sans-serif;
 }
-    
+
+input, textarea, select, button {
+	font-family: 'Helvetica Neue',Helvetica,Arial,Sans-serif;
+	word-wrap: break-word;
+	font-size:13px;
+}
+
 a {
 	color: #225599;
 	text-decoration: none;
@@ -15,7 +20,7 @@ a {
 a:hover{
 	 text-decoration: underline;
 	 color:#225599;
-	 cursor:poiner;
+	 cursor:pointer;
 }
 
 
@@ -35,9 +40,8 @@ h1, h2, h3, h4, h5 {
 	width: 100%;
 	height: 45px;
 	overflow: hidden;
-	background: url("../images/header-bg.png") repeat-x scroll 0 0 transparent;
+	background: url("../images/article/header-bg.png") repeat-x scroll 0 0 transparent;
 	z-index: 1999;
-	font-family: '微软雅黑';
 }
 
 .navigation-inner {
@@ -49,7 +53,7 @@ h1, h2, h3, h4, h5 {
 .logo {
 	float: left;
 	display: block;
-	background: url("../images/zhihu.png") no-repeat 0 8px;
+	background: url("../images/zhihu/zhihu.png") no-repeat 0 8px;
 	height: 100%;
 	width: 60px;
 	text-indent:  -9999px;
@@ -67,7 +71,6 @@ h1, h2, h3, h4, h5 {
 	border-radius: 5px 5px 5px 5px;
 	color: #555555;
 	font-size: 15px;
-	font-family: Arial;
 	line-height: 17px;
 	padding: 8px 10px;
 	height: 100%;
@@ -90,8 +93,6 @@ h1, h2, h3, h4, h5 {
 	cursor: pointer;
 }
 
-
-
 #searchbox ul {
     cursor: pointer;
     font-size: 13px;
@@ -104,8 +105,6 @@ h1, h2, h3, h4, h5 {
 #searchbox ul li{
 	float:left;
 }
-
-
 
 #searchbox ul a {
 	display: block;
@@ -122,12 +121,11 @@ h1, h2, h3, h4, h5 {
 }
 
 #question {
-    background: url("../images/add-button.png") repeat scroll 0 0 transparent;
+    background: url("../images/zhihu/add-button.png") repeat scroll 0 0 transparent;
     border: thin none;
     border-radius: 5px 5px 5px 5px;
     color: #EEEEEE;
     cursor: pointer;
-    font-family: "微软雅黑";
     font-size: 13px;
     font-weight: 700;
     height: 32px;
@@ -185,7 +183,6 @@ h1, h2, h3, h4, h5 {
     width: 65px;
 }
 
-
 #info a:link {
 	text-decoration: none;
 }
@@ -194,7 +191,34 @@ h1, h2, h3, h4, h5 {
 	text-decoration: none;
 }
 
+/* 文章主体的背景 */
+.article-container {
+	margin: 100px auto;
+	background: #f6f6f6 url("../images/article/main-bg.png") repeat top left;
+	width: 960px;
+	height: auto;
+}
+/* 文章列表  */
+.body.articles {
+	margin: 10px auto;
+	border: 1px solid #222222;
+	padding: 5px;
+
+}
+.articles .article-item {
+	border-bottom: 1px solid red;
+	background: #1e1e1e url("../images/article/darker-noise.png") repeat top left;
+	color: #dcdcdc;
+}
+.articles .article-title {
+}
+.articles .article-content p {
+	text-indent: 10px;
+	text-overflow: ellipsis;
+}
+
 /* 新建文章 */
 .new-article {
 	margin-top: 150px;
 }
+

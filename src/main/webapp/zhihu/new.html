@@ -2,7 +2,22 @@
 
 	<div data-lift="Article.create" class="new-article">
 		<form method="post">
-				<div data-bind="article-field"></div>
+				<div class="form-item">
+					<label>作者</label>
+					<span data-bind="author"></span>
+				</div>
+				<div class="form-item">
+					<label>标题</label>
+					<span data-bind="title"></span>
+				</div>
+				<div class="form-item">
+					<label>内容</label>
+					<span data-bind="content"></span>
+				</div>
+				<div class="form-item">
+					<label>评论</label>
+					<span data-bind="comment"></span>
+				</div>
 				<div class="item">
 					<span data-bind="submit-action"></span>
 					<button type="submit" class="submit_btn">

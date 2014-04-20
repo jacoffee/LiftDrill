@@ -1,17 +1,16 @@
 package com.jacoffee.example.model
 
+import java.text.SimpleDateFormat
+import java.util.Calendar
 import org.bson.types.ObjectId
 import net.liftweb.mongodb.record.{MongoRecord, MongoMetaRecord}
 import net.liftweb.mongodb.record.field.{MongoListField, ObjectIdPk}
 import net.liftweb.record.Field
 import net.liftweb.record.field.{ StringField => LiftStringField }
 
-
-
 /**
  * Created by qbt-allen on 20114-4-19.
  */
-
 trait LabelField {
 	def fieldLabel: String
 }
@@ -25,6 +24,12 @@ object Article extends Article with MongoModelMeta[Article] {
 	def getFields = fields.flatMap {
 		case field: StringField[Article] =>Some(field)
 		case _ => None
+	}
+
+	def getPublishDate(cal: Calendar) = {
+		// 2014年09月10日 09:19
+		val d = new SimpleDateFormat("yyyy年MM月dd日 HH:MM")
+		d.format(cal.getTime)
 	}
 
 }
