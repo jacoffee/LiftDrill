@@ -17,7 +17,7 @@ object  AnalyzerDemo extends App  {
 	val version = Version.LUCENE_34
 	val textToAnalyzed = Array("The quick brown fox 1jumped 2over the lazy dog", "XY&Z Corporation34 - xyz@example.com", "道德经")
 
-	val stopWordsSet = Source.fromInputStream(this.getClass.getClassLoader.getResourceAsStream("props/stopwords.txt")).toSet
+	val stopWordsSet = Source.fromInputStream(this.getClass.getClassLoader.getResourceAsStream("lucene/stopwords.txt")).toSet
 	val possibleAnalyzers = {
 		List(
 /*			new WhitespaceAnalyzer(version),

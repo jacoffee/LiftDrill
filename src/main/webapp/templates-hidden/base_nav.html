@@ -9,11 +9,15 @@
 		<div class="navigation">
 			<div class="page-loading"><div></div></div>
 			<div class="navigation-inner">
-				<a href="/index" class="logo">知乎</a>
+				<a href="/zhihu/new" class="logo">知乎</a>
 				<div id="searchbox">
-					<form id="searchform" action="/search" method="post">
-						<input type="text" placeholder="搜索留言或人..." name="q" id="q" />
+					<form method="get">
+						<input type="text" placeholder="搜索留言或人..." name="search" id="q" />
 						<img src="/images/find.png" alt="find" />
+						<button type="submit">
+							<i class="search-icon"></i><!-- em -->
+							<span class="hide-text">搜索</span>
+						</button>
 						<input id="question" type="button" value="提问" />
 					</form>
 					<ul>

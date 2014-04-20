@@ -15,6 +15,9 @@ object Article  extends DispatchSnippet {
 	}
 
 	def list = {
+
+		val result = ArticleModel.searchArticle("author", S.param("search").openOr(""))
+		println(" result " + result)
 		"data-bind=article-records" #> {
 			(xhtml: NodeSeq) => {
 				ArticleModel.findAll.map { article =>
@@ -43,6 +46,9 @@ object Article  extends DispatchSnippet {
 			article.comment(articleInReq.comment.get)
 			article.tags(List("政治", "文化", "教育"))
 			article.save(true)
+
+			// index the article
+			ArticleModel.indexArticle(article)
 			S.redirectTo("/zhihu/article")
 		}
 		val initilaArticle = articleToSave.is

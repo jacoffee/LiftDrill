@@ -2,11 +2,23 @@ package com.jacoffee.example.model
 
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import scala.io.{Codec, Source}
+import scala.collection.JavaConversions.setAsJavaSet
+import org.apache.lucene.document.{ Field, Document }
+import org.apache.lucene.document.Field.{ TermVector, Index, Store }
+import org.apache.lucene.index.{Term, IndexWriterConfig, IndexWriter}
 import org.bson.types.ObjectId
 import net.liftweb.mongodb.record.{MongoRecord, MongoMetaRecord}
 import net.liftweb.mongodb.record.field.{MongoListField, ObjectIdPk}
-import net.liftweb.record.Field
 import net.liftweb.record.field.{ StringField => LiftStringField }
+import org.apache.lucene.store.FSDirectory
+import java.io.{Reader, File}
+import org.apache.lucene.util.Version
+import org.apache.lucene.analysis.cn.smart.SmartChineseAnalyzer
+import org.apache.lucene.analysis.{WhitespaceAnalyzer, WordlistLoader, Analyzer}
+import org.apache.lucene.analysis.tokenattributes.{TypeAttribute, OffsetAttribute, PositionIncrementAttribute, CharTermAttribute}
+import org.apache.lucene.queryParser.QueryParser
+import org.apache.lucene.search.{TermQuery, IndexSearcher}
 
 /**
  * Created by qbt-allen on 20114-4-19.
@@ -32,6 +44,69 @@ object Article extends Article with MongoModelMeta[Article] {
 		d.format(cal.getTime)
 	}
 
+	val version = Version.LUCENE_34
+	val indexedFilePosition = "D:/LiftDrill/src/main/resources/lucene/article"
+	def indexArticle(article: Article) = {
+		// 要养成关闭流的习惯 就像查询数据库一样敏感
+		def getStopWordsSet = {
+			 //Source.fromInputStream(this.getClass.getClassLoader.getResourceAsStream("lucene/stopwords.txt"))(Codec.UTF8).getLines.toSet
+			val stopWordSrc = Source.fromInputStream(this.getClass.getClassLoader.getResourceAsStream("lucene/stopwords.txt"))(Codec.UTF8)
+			// println("Orginal Ones" +stopWordSrc.getLines.toList)
+			try {
+				WordlistLoader.getWordSet(classOf[Article], "/lucene/stopwords.txt", "//")
+			} finally {
+				stopWordSrc.close
+			}
+
+		}
+
+		// where to save the index
+		val directory = FSDirectory.open(new File(indexedFilePosition))
+
+		val analyzer = new SmartChineseAnalyzer(version, getStopWordsSet)
+		val config = new IndexWriterConfig(version, analyzer)
+		 val indexWriter = new IndexWriter(directory, config)
+
+		val doc = new Document
+		// idValue is ObjectId[]
+		doc.add(new Field(article.id.name, article.idValue.toString, Store.YES, Index.NOT_ANALYZED_NO_NORMS, Field.TermVector.NO))
+		doc.add(new Field(article.author.name, article.author.get, Store.YES, Index.NOT_ANALYZED))
+		doc.add(new Field(article.title.name, article.title.get, Store.NO, Index.ANALYZED))
+		doc.add(new Field(article.content.name, article.content.get, Store.NO, Index.ANALYZED_NO_NORMS))
+		doc.add(new Field(article.comment.name, article.comment.get, Store.NO, Index.ANALYZED))
+
+		indexWriter.addDocument(doc)
+		try {
+			indexWriter.close
+		} finally {
+			if (IndexWriter.isLocked(directory)) {
+				IndexWriter.unlock(directory)
+			}
+		}
+
+	}
+
+	def searchArticle(fieldName: String,  searchString: String) = {
+		// 获取命中文档ID
+		println("ZXX " + indexedFilePosition)
+		val iSearch = new IndexSearcher(FSDirectory.open(new File(indexedFilePosition)))
+		// val parser = new QueryParser(version, fieldName, new SmartChineseAnalyzer(version))
+		val termQuery = new TermQuery(new Term("author", searchString))
+		//val parsedQuery = parser.parse(searchString)
+		val topDocs = iSearch.search(termQuery, 5)
+		val objectIds =topDocs.scoreDocs.toList.map(_.doc).map { docId =>
+			iSearch.doc(docId).get(Article.id.name)
+		}
+		// 根据ID 再次查询
+		findAll( objectIds.flatMap{ oid => this.toObjectIdOption(oid) })
+	}
+
+	def AnalyzerUtils(analyzer: Analyzer, reader: Reader) = {
+		val stream = analyzer.reusableTokenStream("", reader)
+		val term = stream.addAttribute(classOf[CharTermAttribute])
+		Stream.continually((stream.incrementToken, term.toString)).takeWhile(_._1).map(t =>s"[${t._2}]")
+	}
+
 }
 
 class Article extends MongoModel[Article] {
@@ -43,7 +118,6 @@ class Article extends MongoModel[Article] {
 		val fieldLabel = "标题"
 	}
 	object tags extends MongoListField[Article, String](this) {
-
 		val fieldLabel = "标签"
 	}
 	object content extends StringField[Article](this, 2000) {
