@@ -7,6 +7,7 @@
 	</head>
 	<body>
 		<div class="navigation">
+			<div class="page-loading"><div></div></div>
 			<div class="navigation-inner">
 				<a href="/index" class="logo">知乎</a>
 				<div id="searchbox">
@@ -21,7 +22,6 @@
 						<li id="notice"><a href="javascript:;">消息</a></li>
 					</ul>
 				</div>
-
 				<div class="info">
 					<a href="javascript:void(0)">
 						<img class="avatar" alt="头像" src="/images/dog.png" />
@@ -31,5 +31,15 @@
 			</div>
 		</div>
 		<lift:bind name="content"></lift:bind>
+		<script type="text/javascript">
+			// < ![CDATA[
+			$(document).ready(function(){
+				$(".page-loading div").animate({width:"100%"},800,
+					function(){
+						 $(".page-loading div").fadeOut(500);
+					});
+			});
+			// ]]>
+		</script>
 	</body>
 </html>

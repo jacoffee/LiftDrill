@@ -32,7 +32,7 @@ h1, h2, h3, h4, h5 {
 
 .navigation {
 	position: fixed;
-	top: 0;
+	top: 0px;
 	left: 0;
 	float: none;
 	margin:  0 auto;
@@ -189,6 +189,23 @@ h1, h2, h3, h4, h5 {
 
 #info a:hover {
 	text-decoration: none;
+}
+
+/* 页面加载 */
+.page-loading {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	margin-bottom: 2px;
+	z-index: 19999;
+	width: 100%; /* inherit father's width, in this place, body */
+	height: 2px;
+}
+
+.page-loading div {
+	width: 0px;
+	height: 3px;
+	background: #FF9F15;
 }
 
 /* 文章主体的背景 */
