@@ -2,7 +2,7 @@
 
 body {
 	background: #f6f6f6 url("../images/article/main-bg.png") repeat top left;
-	font-family: Arial,sans-serif;
+	font-family: "微软雅黑";
 }
 
 input, textarea, select, button {

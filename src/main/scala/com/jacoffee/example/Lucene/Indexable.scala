@@ -11,6 +11,7 @@ import org.apache.lucene.document.Field.{ Store, Index }
 import org.apache.lucene.search.{ IndexSearcher, TermQuery, Filter, NumericRangeQuery, PrefixQuery, BooleanQuery, BooleanClause, MatchAllDocsQuery }
 import org.apache.lucene.queryParser.QueryParser
 import org.apache.lucene.analysis.standard.StandardAnalyzer
+import org.apache.lucene.search.highlight.{SimpleHTMLFormatter, Highlighter, SimpleSpanFragmenter, QueryScorer}
 
 // use Enumeration in Scala
 /** Creates a fresh value, part of this enumeration. */

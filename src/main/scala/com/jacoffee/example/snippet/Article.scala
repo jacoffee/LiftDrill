@@ -18,8 +18,10 @@ object Article  extends DispatchSnippet {
 	object search extends RequestVar(S.param("search").openOr(""))
 	def searchBox = "*" #> SHtml.text(search.is, s => search(s), "placeholder" ->"搜索留言或人...", "name" ->"search", "id" ->"q")
 	def list = {
-		val searchedArticles = ArticleModel.searchArticle("author", search.is)
-		println(" result " + searchedArticles)
+		val searchedArticles = {
+			val q = search.is.trim
+			if (q.nonEmpty) ArticleModel.search("content", search.is) else ArticleModel.findAll
+		}
 		"data-bind=article-records" #> {
 			(xhtml: NodeSeq) => {
 				searchedArticles.map { article =>

@@ -19,6 +19,8 @@ import org.apache.lucene.analysis.{WhitespaceAnalyzer, WordlistLoader, Analyzer}
 import org.apache.lucene.analysis.tokenattributes.{TypeAttribute, OffsetAttribute, PositionIncrementAttribute, CharTermAttribute}
 import org.apache.lucene.queryParser.QueryParser
 import org.apache.lucene.search.{TermQuery, IndexSearcher}
+import org.apache.lucene.search.highlight._
+import scala.Some
 
 /**
  * Created by qbt-allen on 20114-4-19.
@@ -46,32 +48,32 @@ object Article extends Article with MongoModelMeta[Article] {
 
 	val version = Version.LUCENE_34
 	val indexedFilePosition = "D:/LiftDrill/src/main/resources/lucene/article"
+	val analyzer = new SmartChineseAnalyzer(version, getStopWordsSet)
+	def getStopWordsSet = {
+		//Source.fromInputStream(this.getClass.getClassLoader.getResourceAsStream("lucene/stopwords.txt"))(Codec.UTF8).getLines.toSet
+		val stopWordSrc = Source.fromInputStream(this.getClass.getClassLoader.getResourceAsStream("lucene/stopwords.txt"))(Codec.UTF8)
+		// println("Orginal Ones" +stopWordSrc.getLines.toList)
+		try {
+			WordlistLoader.getWordSet(classOf[Article], "/lucene/stopwords.txt", "//")
+		} finally {
+			stopWordSrc.close
+		}
+	}
+
 	def indexArticle(article: Article) = {
 		// 要养成关闭流的习惯 就像查询数据库一样敏感
-		def getStopWordsSet = {
-			 //Source.fromInputStream(this.getClass.getClassLoader.getResourceAsStream("lucene/stopwords.txt"))(Codec.UTF8).getLines.toSet
-			val stopWordSrc = Source.fromInputStream(this.getClass.getClassLoader.getResourceAsStream("lucene/stopwords.txt"))(Codec.UTF8)
-			// println("Orginal Ones" +stopWordSrc.getLines.toList)
-			try {
-				WordlistLoader.getWordSet(classOf[Article], "/lucene/stopwords.txt", "//")
-			} finally {
-				stopWordSrc.close
-			}
-		}
-
 		// where to save the index
 		val directory = FSDirectory.open(new File(indexedFilePosition))
-
-		val analyzer = new SmartChineseAnalyzer(version, getStopWordsSet)
 		val config = new IndexWriterConfig(version, analyzer)
 		 val indexWriter = new IndexWriter(directory, config)
 
 		val doc = new Document
 		// idValue is ObjectId[]
+		// if Index.NO is specified for a field,you must also specify TermVector.NO
 		doc.add(new Field(article.id.name, article.idValue.toString, Store.YES, Index.NOT_ANALYZED_NO_NORMS, Field.TermVector.NO))
 		doc.add(new Field(article.author.name, article.author.get, Store.YES, Index.NOT_ANALYZED))
-		doc.add(new Field(article.title.name, article.title.get, Store.NO, Index.ANALYZED))
-		doc.add(new Field(article.content.name, article.content.get, Store.NO, Index.ANALYZED_NO_NORMS))
+		doc.add(new Field(article.title.name, article.title.get, Store.YES, Index.ANALYZED))
+		doc.add(new Field(article.content.name, article.content.get, Store.YES, Index.ANALYZED_NO_NORMS, Field.TermVector.YES))
 		doc.add(new Field(article.comment.name, article.comment.get, Store.NO, Index.ANALYZED))
 
 		indexWriter.addDocument(doc)
@@ -85,17 +87,44 @@ object Article extends Article with MongoModelMeta[Article] {
 
 	}
 
-	def searchArticle(fieldName: String,  searchString: String) = {
+	def search(fieldName: String,  searchString: String) = {
 		// 获取命中文档ID
-		println("ZXX " + indexedFilePosition)
 		val iSearch = new IndexSearcher(FSDirectory.open(new File(indexedFilePosition)))
 		// val parser = new QueryParser(version, fieldName, new SmartChineseAnalyzer(version))
-		val termQuery = new TermQuery(new Term("author", searchString))
+		val termQuery = new TermQuery(new Term("content", searchString))
 		//val parsedQuery = parser.parse(searchString)
 		val topDocs = iSearch.search(termQuery, 5)
-		val objectIds =topDocs.scoreDocs.toList.map(_.doc).map { docId =>
-			iSearch.doc(docId).get(Article.id.name)
+		val objectIds =topDocs.scoreDocs.toList.map {hitDoc =>
+			val actualDoc = iSearch.doc(hitDoc.doc)
+
+			// 然后发现这种方式是走不通的 因为我根本就没有 Store Content Field 所以
+			// Otherwise, the analyzer you pass in is used to reanalyze the text. in no way can happen
+			// Field content in document is not stored and cannot be analyzed
+/*			val tokenStream = TokenSources.getAnyTokenStream(iSearch.getIndexReader, hitDoc.doc, "content", actualDoc, analyzer)
+			val term = tokenStream.addAttribute(classOf[CharTermAttribute])
+			val analyzedContentList = Stream.continually((tokenStream.incrementToken, term.toString)).takeWhile(_._1).map(t =>s"[${t._2}]").toList
+			println(" hit record's tokenStream ")
+			println(analyzedContentList)*/
+			println(" Term Vector And Freq ")
+			val termVectorAndFreq = iSearch.getIndexReader.getTermFreqVector(hitDoc.doc, "content")
+			// println(termVectorAndFreq.getTerms)
+			println(termVectorAndFreq)
+
+			// highlight process
+			val scorer = new QueryScorer(termQuery, "content")
+			// highlight score rules  || highlight style textFragmenter
+			val formatter = new SimpleHTMLFormatter("<span class='highlight'>", "</span>")
+			val highlighter = new Highlighter(formatter, scorer)
+			val tokenStream = TokenSources.getAnyTokenStream(iSearch.getIndexReader, hitDoc.doc, "content", actualDoc, analyzer)
+			highlighter.setTextFragmenter(new SimpleSpanFragmenter(scorer))
+			highlighter.setMaxDocCharsToAnalyze(1000)
+			val fragment = highlighter.getBestFragment(tokenStream, actualDoc.get(content.name))
+			println(" highlighted fragment ")
+			println(fragment)
+			actualDoc.get(id.name)
 		}
+		// obtain tokenStream after indexing without setting TermVector
+		// (IndexReader reader, int docId, String field, Document doc, Analyzer analyzer)
 		// 根据ID 再次查询
 		findAll( objectIds.flatMap{ oid => this.toObjectIdOption(oid) })
 	}

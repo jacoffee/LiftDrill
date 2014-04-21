@@ -68,6 +68,7 @@ class Boot extends Bootable{
 
   private def initSnippetDisapatch {
 	  LiftRules.snippetDispatch.append {
+		case "Default" => com.jacoffee.example.snippet.Default
 		case "Scraper" => com.jacoffee.example.snippet.Scraper
 		case "Mongo" => com.jacoffee.example.snippet.Mongo
 		case "QQMail" => com.jacoffee.example.snippet.QQMail
