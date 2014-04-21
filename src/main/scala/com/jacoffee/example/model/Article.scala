@@ -12,7 +12,7 @@ import net.liftweb.mongodb.record.{MongoRecord, MongoMetaRecord}
 import net.liftweb.mongodb.record.field.{MongoListField, ObjectIdPk}
 import net.liftweb.record.field.{ StringField => LiftStringField }
 import org.apache.lucene.store.FSDirectory
-import java.io.{Reader, File}
+import java.io.{StringReader, Reader, File}
 import org.apache.lucene.util.Version
 import org.apache.lucene.analysis.cn.smart.SmartChineseAnalyzer
 import org.apache.lucene.analysis.{WhitespaceAnalyzer, WordlistLoader, Analyzer}
@@ -105,28 +105,29 @@ object Article extends Article with MongoModelMeta[Article] {
 			val analyzedContentList = Stream.continually((tokenStream.incrementToken, term.toString)).takeWhile(_._1).map(t =>s"[${t._2}]").toList
 			println(" hit record's tokenStream ")
 			println(analyzedContentList)*/
-			println(" Term Vector And Freq ")
 			val termVectorAndFreq = iSearch.getIndexReader.getTermFreqVector(hitDoc.doc, "content")
 			// println(termVectorAndFreq.getTerms)
-			println(termVectorAndFreq)
-
-			// highlight process
-			val scorer = new QueryScorer(termQuery, "content")
-			// highlight score rules  || highlight style textFragmenter
-			val formatter = new SimpleHTMLFormatter("<span class='highlight'>", "</span>")
-			val highlighter = new Highlighter(formatter, scorer)
-			val tokenStream = TokenSources.getAnyTokenStream(iSearch.getIndexReader, hitDoc.doc, "content", actualDoc, analyzer)
-			highlighter.setTextFragmenter(new SimpleSpanFragmenter(scorer))
-			highlighter.setMaxDocCharsToAnalyze(1000)
-			val fragment = highlighter.getBestFragment(tokenStream, actualDoc.get(content.name))
-			println(" highlighted fragment ")
-			println(fragment)
+			// println(termVectorAndFreq)
 			actualDoc.get(id.name)
 		}
 		// obtain tokenStream after indexing without setting TermVector
 		// (IndexReader reader, int docId, String field, Document doc, Analyzer analyzer)
 		// 根据ID 再次查询
 		findAll( objectIds.flatMap{ oid => this.toObjectIdOption(oid) })
+	}
+
+	def highlightText(search: String, fieldName:String, textToDivide: String) = {
+		// val tokenStream = TokenSources.getAnyTokenStream(iSearch.getIndexReader, hitDoc.doc, "content", actualDoc, analyzer)
+		val termQuery = new TermQuery(new Term(fieldName, search))
+		val scorer = new QueryScorer(termQuery, fieldName)
+		val formatter = new SimpleHTMLFormatter("""<span class="highlight">""", """</span>""")
+
+		val highlighter = new Highlighter(formatter, scorer)
+		val tokenStream = analyzer.tokenStream("f", new StringReader(textToDivide))
+
+		highlighter.setTextFragmenter(new SimpleSpanFragmenter(scorer))
+		highlighter.setMaxDocCharsToAnalyze(1000)
+		highlighter.getBestFragment(tokenStream, textToDivide)
 	}
 
 	def AnalyzerUtils(analyzer: Analyzer, reader: Reader) = {

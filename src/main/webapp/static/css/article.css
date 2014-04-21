@@ -23,12 +23,14 @@ a:hover{
 	 cursor:pointer;
 }
 
-
 h1, h2, h3, h4, h5 {
-    font-size: 14px;
-    font-weight: 700;
+	font-size: 14px;
+	font-weight: 700;
 }
 
+.highlight {
+	color: #C20A0A;
+}
 
 .navigation {
 	position: fixed;

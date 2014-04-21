@@ -1,9 +1,11 @@
 package com.jacoffee.example.snippet
 
+import scala.xml.{Xhtml, NodeSeq}
+import scala.xml.parsing.XhtmlParser
+import scala.io.Source
 import net.liftweb.http.{S, RequestVar, SHtml, DispatchSnippet}
 import net.liftweb.util.Helpers.strToCssBindPromoter
 import com.jacoffee.example.model.{ Article => ArticleModel }
-import scala.xml.NodeSeq
 
 /**
  * Created by qbt-allen on 14-4-19.
@@ -29,7 +31,11 @@ object Article  extends DispatchSnippet {
 						"data-bind=article-title *" #>  { article.title.get } &
 						"data-bind=article-author *" #>  { article.author.get } &
 						"data-bind=article-time *" #>  { ArticleModel.getPublishDate(article.created_at.get) } &
-						"data-bind=article-content" #> { article.content.get }
+						"data-bind=article-content *" #> {
+							val articleContent = article.content.get
+							if (search.is.isEmpty) { <div>{ articleContent }</div> }
+							else { XhtmlParser(Source.fromString("<div>"+ArticleModel.highlightText(search.is, "content", articleContent) + "</div>")) }
+						}
 					)(xhtml)
 				}
 			}
