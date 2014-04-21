@@ -57,7 +57,6 @@ object Article extends Article with MongoModelMeta[Article] {
 			} finally {
 				stopWordSrc.close
 			}
-
 		}
 
 		// where to save the index

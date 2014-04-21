@@ -10,17 +10,19 @@ import scala.xml.NodeSeq
  */
 object Article  extends DispatchSnippet {
 	def dispatch = {
+		case "searchBox" => searchBox
 		case "create" => create
 		case "list" => list
 	}
 
+	object search extends RequestVar(S.param("search").openOr(""))
+	def searchBox = "*" #> SHtml.text(search.is, s => search(s), "placeholder" ->"搜索留言或人...", "name" ->"search", "id" ->"q")
 	def list = {
-
-		val result = ArticleModel.searchArticle("author", S.param("search").openOr(""))
-		println(" result " + result)
+		val searchedArticles = ArticleModel.searchArticle("author", search.is)
+		println(" result " + searchedArticles)
 		"data-bind=article-records" #> {
 			(xhtml: NodeSeq) => {
-				ArticleModel.findAll.map { article =>
+				searchedArticles.map { article =>
 					(
 						"data-bind=article-title *" #>  { article.title.get } &
 						"data-bind=article-author *" #>  { article.author.get } &
