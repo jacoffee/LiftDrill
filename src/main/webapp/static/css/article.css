@@ -238,9 +238,19 @@ h1, h2, h3, h4, h5 {
 
 }
 .articles .article-item {
+	position: relative;
 	border-bottom: 1px solid red;
-	background: #1e1e1e url("../images/article/darker-noise.png") repeat top left;
-	color: #dcdcdc;
+	 /* background: #1e1e1e url("../images/article/darker-noise.png") repeat top left; */
+	padding-left: 30px;
+	padding-top: 10px;
+	background: #cbb6a3;
+}
+.articles .article-item:before {
+	content: url("../images/article/bird.png");
+	display: block;
+	position: absolute;
+	top: 10px;
+	left: 5px;
 }
 .articles .article-title {
 }

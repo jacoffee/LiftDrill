@@ -3,12 +3,11 @@ var PageAlert = function() {
 
 	// dynamical add a div in the top and then fade away
 	$(body).append(
-			$("<div class='msg_container'></div").html($msg.text()).fadeIn(3000).fadeOut("slow")
+			$("<div class='msg_container'></div>").html($msg.text()).fadeIn(3000).fadeOut("slow")
 	);
 }
 
 var blackOverLayPop = function(title, content, action) {
-
 
 
 
@@ -41,3 +40,18 @@ var innerMailPopup = function (title, content, actionObj) {
 	$mailbox.append($actionContainer);
 	$("body").append($mailbox);
 }
+
+/*  recommended jQuery Writing Style */
+
+// If the method changes the context, an extra level of indentation must be used.
+var elements = $(".send-mail").
+				addClass(".active")
+				.children()
+					.html( "hello")
+				.end()
+				.appendTo( "body" );
+
+//  Declarations that don't have an assignment must be listed together at the start of the declaration
+var a, b, c,
+	foo = true,
+	bar = false;
