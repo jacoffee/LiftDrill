@@ -81,6 +81,20 @@ h1, h2, h3, h4, h5 {
 	margin-top: 5px;
 	margin-left: 20px;
 }
+
+.search-btn {
+	background: url("../images/sprites.png") repeat scroll -238px -59px #E7F1F8;
+	border: medium none;
+	cursor: pointer;
+	height: 17px;
+	width: 16px;
+	z-index: 200px;
+}
+
+.hide-text {
+	color: transparent;
+	background-color: transparent;
+}
 /*
 	顶部的li变化 单击添加背景以告诉user正在访问哪个页面
 	background:#FFFFFF repeat;
@@ -132,7 +146,6 @@ h1, h2, h3, h4, h5 {
     font-weight: 700;
     height: 32px;
     line-height: 32px;
-    margin: 0 0 0 -15px;
     vertical-align: 1px;
     width: 68px;
 }

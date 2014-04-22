@@ -121,7 +121,8 @@
 	<form method="post" action="" class="preview-form">
 		<input type="text" name="user-id" />
 		<input type="text" name="cover-letter" />
-		<input type="submit" value="发送" class="send-letter" />
+		<!--<input type="submit" value="发送" class="send-letter" />-->
+		<button class="send-letter">提交</button>
 	</form>
 	<script type="text/javascript" data-lift="tail">
 		$(function(){
@@ -129,12 +130,28 @@
 				alert("阻止默认的提交机制");
 				event.preventDefault();
 			};*/
-			$("form").submit(function(){
+/*			$("form").submit(function(){
 				alert("阻止默认的提交机制");
 				console.log($(".send-letter"))
 				event.preventDefault();
+			});*/
+			$(".send-letter").bind("click", function(){
+				alert(" binding events ");
 			});
-
+			var boundEvent = $(".send-letter").data("events"); // 查询由jQuery绑定的事件
+			console.log(boundEvent)
+			$.each(jQuery(".send-letter").data('events'), function(i, event){
+				$.each(event, function(i, eventHandler){
+					console.log("The handler is " + eventHandler.toString() );
+				});
+			});
 		});
+	</script>
+	<script>
+		document.write("<p>Document title: " + document.title);
+		document.write("<br>URL: " + document.URL);
+		document.write("<br>Referred by: " + document.referrer);
+		document.write("<br>Modified on: " + document.lastModified);
+		document.write("<br>Accessed on: " + new Date());
 	</script>
 </div>
