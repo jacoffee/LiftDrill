@@ -29,6 +29,7 @@ h1, h2, h3, h4, h5 {
 }
 
 .highlight {
+	font-weight: bold;
 	color: #C20A0A;
 }
 
@@ -251,6 +252,14 @@ h1, h2, h3, h4, h5 {
 	position: absolute;
 	top: 10px;
 	left: 5px;
+}
+.articles .article-item pre {
+	text-indent: 10px;
+	white-space: pre-wrap;
+	white-space: -moz-pre-wrap;
+	white-space: -pre-wrap;
+	white-space: -o-pre-wrap;
+	word-wrap: break-word;
 }
 .articles .article-title {
 }

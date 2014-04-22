@@ -31,10 +31,10 @@ object Article  extends DispatchSnippet {
 						"data-bind=article-title *" #>  { article.title.get } &
 						"data-bind=article-author *" #>  { article.author.get } &
 						"data-bind=article-time *" #>  { ArticleModel.getPublishDate(article.created_at.get) } &
-						"data-bind=article-content *" #> {
+						"data-bind=article-content" #> {
 							val articleContent = article.content.get
-							if (search.is.isEmpty) { <div>{ articleContent }</div> }
-							else { XhtmlParser(Source.fromString("<div>"+ArticleModel.highlightText(search.is, "content", articleContent) + "</div>")) }
+							if (search.is.isEmpty) { <pre>{ articleContent }</pre> }
+							else { XhtmlParser(Source.fromString("<pre>"+ArticleModel.highlightText(search.is, "content", articleContent) + "</pre>")) }
 						}
 					)(xhtml)
 				}
