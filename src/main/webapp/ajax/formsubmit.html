@@ -37,23 +37,23 @@
 		<p> CheckBox will be disabled for 50 percent approximity</p>
 		<form data-lift="FormSubmit.likes">
 			<input type="checkbox" name="zml" value="Do you like turtles?" />
-				<label style="display:none" for="9">我自己的邮箱</label>
-			<input type="checkbox"  value="Do you like football?" /><label style="display:none" for="9">我自己的邮箱</label>
-			<input type="submit" id="send" value="发送"  />
+				<label style="display:none" >我自己的邮箱</label>
+			<input type="checkbox"  value="Do you like football?" /><label style="display:none">我自己的邮箱</label>
+			<input type="submit" value="发送"  />
 		</form>
 	
 	<hr>
 		<i>Practice the usage of MultiSelectBox</i>
 		<form data-lift="FormSubmit.opts">
 			<div id="opts" ></div>
-			<input type="submit" id="send" value="发送"  />
+			<input type="submit" value="发送"  />
 		</form>
 		<br>
 		<br>
 		<i>Practice the usage of MultiSelectBox with drpDownList</i>
 		<form data-lift="FormSubmit.dropdown">
 			<label for="dropdown">Select Guys you wanna send Mail</label><input id="dropdown" />
-			<input type="submit" id="send" value="发送"  />
+			<input type="submit" value="发送"  />
 		</form>
 	
 	<hr>
@@ -85,8 +85,8 @@
 	<h3>Json Form example: Required for JSON forms processing</h3>
 	<div data-lift="FormSubmit.jsonForm">
 		<script id="jsonScript" data-lift="tail"></script>
-		<button onclick="javascript:changeCase('upper')">Upper case the Motto</button>
-		<button onclick="javascript:changeCase('lower')">Lower case the Motto</button>
+	<!--	<button onclick="javascript:changeCase('upper')">Upper case the Motto</button>
+		<button onclick="javascript:changeCase('lower')">Lower case the Motto</button>-->
 		<!--上面的这两段 就相当于在以前的基础之上 给button 绑定了事件
 				$("#upper").click(function(){
 					val upperCaseValue = $("#motto").val().toUpperCase();
@@ -108,13 +108,33 @@
 		<div id="jsonResult"> Result will appear here.  </div>
 	</div>
 
-	<div data-lift="FormSubmit.jqDatePicker?form=Post">
+<!--	<div data-lift="FormSubmit.jqDatePicker?form=Post">
 		<input type="text" name="birthday" id="birthday" />
 		<input type="submit" value="Submit">
-	</div>
+	</div>-->
 	<form data-lift="FormSubmit.programmingLanguages?form=post">
 		<input type="text" id="autocomplete" /> <!--  the default behavior: will not send value that's not suggested -->
 		<input type="submit" />
 	</form>
 	<script src="/classpath/jlift.js" data-lift="tail"></script>
+
+	<form method="post" action="" class="preview-form">
+		<input type="text" name="user-id" />
+		<input type="text" name="cover-letter" />
+		<input type="submit" value="发送" class="send-letter" />
+	</form>
+	<script type="text/javascript" data-lift="tail">
+		$(function(){
+/*			document.getElementById("send-letter").onclick = function(event) {
+				alert("阻止默认的提交机制");
+				event.preventDefault();
+			};*/
+			$("form").submit(function(){
+				alert("阻止默认的提交机制");
+				console.log($(".send-letter"))
+				event.preventDefault();
+			});
+
+		});
+	</script>
 </div>

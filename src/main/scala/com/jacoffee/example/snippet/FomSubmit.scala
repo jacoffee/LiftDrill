@@ -39,7 +39,6 @@ object FormSubmit extends DispatchSnippet with Loggable{
 		case "likes" => likes
 		case "opts" => opts
 		case "dropdown" => dropdown
-		case "jqDatePicker" => jqDatePicker
 		case "programmingLanguages" => programmingLanguages
 	}
 
@@ -173,13 +172,13 @@ object FormSubmit extends DispatchSnippet with Loggable{
 	*/
 	private def dateFormat = new SimpleDateFormat("yyyy-MM-dd")
 	private def stringToDate(dateLike: String) = dateFormat.parse(dateLike)
-	def jqDatePicker = {
+/*	def jqDatePicker = {
 		// 页面加载的时候 会执行这个东西 也就是相当于绑定了 datePicker插件
 		val addDatePicker = Run("$('#birthday').datepicker({dateFormat: 'yy-mm-dd'});")
 		val default = dateFormat.format(new Date())
 		S.appendJs(addDatePicker)
 		"#birthday" #> SHtml.text("", u => u )
-	}
+	}*/
 
 	def programmingLanguages = {
 		val judege = Script(
