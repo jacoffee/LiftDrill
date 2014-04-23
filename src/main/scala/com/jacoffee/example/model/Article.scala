@@ -7,20 +7,18 @@ import scala.collection.JavaConversions.setAsJavaSet
 import org.apache.lucene.document.{ Field, Document }
 import org.apache.lucene.document.Field.{ TermVector, Index, Store }
 import org.apache.lucene.index.{Term, IndexWriterConfig, IndexWriter}
-import org.bson.types.ObjectId
 import net.liftweb.mongodb.record.{MongoRecord, MongoMetaRecord}
 import net.liftweb.mongodb.record.field.{MongoListField, ObjectIdPk}
 import net.liftweb.record.field.{ StringField => LiftStringField }
 import org.apache.lucene.store.FSDirectory
 import java.io.{StringReader, Reader, File}
-import org.apache.lucene.util.Version
 import org.apache.lucene.analysis.cn.smart.SmartChineseAnalyzer
 import org.apache.lucene.analysis.{WhitespaceAnalyzer, WordlistLoader, Analyzer}
 import org.apache.lucene.analysis.tokenattributes.{TypeAttribute, OffsetAttribute, PositionIncrementAttribute, CharTermAttribute}
 import org.apache.lucene.queryParser.QueryParser
 import org.apache.lucene.search.{TermQuery, IndexSearcher}
 import org.apache.lucene.search.highlight._
-import scala.Some
+import com.jacoffee.example.util.Config
 
 /**
  * Created by qbt-allen on 20114-4-19.
@@ -42,7 +40,7 @@ object Article extends Article with MongoModelMeta[Article] {
 		d.format(cal.getTime)
 	}
 
-	val version = Version.LUCENE_34
+	val version = Config.Lucene.version
 	val indexedFilePosition = "D:/LiftDrill/src/main/resources/lucene/article"
 	val analyzer = new SmartChineseAnalyzer(version, getStopWordsSet)
 	def getStopWordsSet = {
@@ -83,6 +81,9 @@ object Article extends Article with MongoModelMeta[Article] {
 	}
 
 	def search(fieldName: String,  searchString: String) = {
+
+		println("Lucene Path")
+		println(Config.Lucene.path)
 		// 获取命中文档ID
 		val iSearch = new IndexSearcher(FSDirectory.open(new File(indexedFilePosition)))
 		// val parser = new QueryParser(version, fieldName, new SmartChineseAnalyzer(version))

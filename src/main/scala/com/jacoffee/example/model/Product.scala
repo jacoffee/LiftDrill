@@ -21,11 +21,12 @@ import net.liftweb.mongodb.DefaultMongoIdentifier
 import com.mongodb.Mongo
 import net.liftweb.common.Box
 import net.liftweb.record.field.DoubleField
+import com.jacoffee.example.util.Config
 
 
 // study database normailization && denormalization
 object Product extends Product with MongoMetaRecord[Product] {
-	override val mongoIdentifier = MongoConfig.DefaultMongoIdentifier
+	override val mongoIdentifier = Config.Mongo.DefaultMongoIdentifier
 	override def collectionName = "product"
 }
 

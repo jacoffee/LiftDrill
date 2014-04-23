@@ -23,10 +23,11 @@ import net.liftweb.mongodb.record.field.MongoJsonObjectListField
 import net.liftweb.json.Formats
 import net.liftweb.json.Extraction._
 import net.liftweb.json.JDouble
+import com.jacoffee.example.util.Config
 
 // use Denormalization to speed up read
 object Food extends Food with MongoMetaRecord[Food] {
-	override val mongoIdentifier = MongoConfig.DefaultMongoIdentifier
+	override val mongoIdentifier = Config.Mongo.DefaultMongoIdentifier
 	override def collectionName = "Food"
 }
 

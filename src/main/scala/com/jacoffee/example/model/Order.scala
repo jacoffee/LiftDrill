@@ -16,9 +16,10 @@ import net.liftweb.mongodb.record.field.BsonRecordField
 import net.liftweb.mongodb.DefaultMongoIdentifier
 import net.liftweb.mongodb.record.field.MongoListField
 import org.bson.types.ObjectId
+import com.jacoffee.example.util.Config
 
 object Order extends Order with MongoMetaRecord[Order] {
-	override val mongoIdentifier = MongoConfig.DefaultMongoIdentifier
+	override val mongoIdentifier = Config.Mongo.DefaultMongoIdentifier
 	override def collectionName = "order"
 }
 
