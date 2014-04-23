@@ -1,11 +1,6 @@
-package net.liftweb.example.test
+package com.jacoffee.example.test
 
-import net.liftweb.example.model.{ Order, Product }
-import net.liftweb.json.JsonDSL._
-import net.liftweb.json.JsonAST.{ JObject, JField, JString }
-
-import bootstrap.liftweb.Boot
-
+import com.jacoffee.example.model.Order
 
 object SaveReceipt extends App {
 	// new Boot().initConnect
@@ -14,7 +9,7 @@ object SaveReceipt extends App {
 	// Order.user("zml").items(itemObjectIds).save
 
 	
-	val getOrder = Order.find((Order.user.name, "zml")).map {
+/*	val getOrder = Order.find((Order.user.name, "zml")).map {
 		order => order.items.get
 	}.map{
 		objectids => Product.findAll(objectids)
@@ -25,5 +20,5 @@ object SaveReceipt extends App {
 		println(" 产品名称 " + product.name.get)
 		println(" 产品价格 " + product.price.get)
 		println(" 产品描述 " + product.desc.get)
-	}
+	}*/
 }

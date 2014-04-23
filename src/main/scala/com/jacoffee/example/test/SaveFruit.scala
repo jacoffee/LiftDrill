@@ -1,12 +1,9 @@
 package com.jacoffee.example.test
 
-import bootstrap.liftweb.Boot
-import net.liftweb.example.model.{ Food, Fruit }
-import net.liftweb.common.Full
+import com.jacoffee.example.model.{ Food, Fruit }
 import net.liftweb.mongodb.Upsert
 import net.liftweb.json.JsonDSL.string2jvalue
 import net.liftweb.json.JsonDSL.pair2jvalue
-import net.liftweb.json.Formats
 import net.liftweb.json.JsonAST.JObject
 import net.liftweb.json.JsonAST.JField
 

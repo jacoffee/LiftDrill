@@ -1,4 +1,4 @@
-path_shared = ../lucene/article
+path_shared = ./shared
 
 mongo_host = 127.0.0.1
 mongo_port = 27017

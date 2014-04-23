@@ -9,11 +9,17 @@ import net.liftweb.mongodb.MongoIdentifier
  * for Project  Config
  */
 object Config {
-	object Lucene {
-		val version = Version.LUCENE_34
-		val path = Props.get("path_shared").openOrThrowException {
+
+
+	object Path {
+		val path_shared = Props.get("path_shared").openOrThrowException {
 			"lucene_path must define in default.props"
 		}
+	}
+
+	object Lucene {
+		val version = Version.LUCENE_34
+		val path = "lucene"
 	}
 
 	object Mongo {
