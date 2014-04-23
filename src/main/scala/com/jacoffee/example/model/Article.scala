@@ -111,9 +111,9 @@ object Article extends Article with MongoModelMeta[Article] {
 		val formatter = new SimpleHTMLFormatter("""<span class="highlight">""", """</span>""")
 
 		val highlighter = new Highlighter(formatter, scorer)
-		val tokenStream = analyzer.tokenStream("f", new StringReader(textToDivide))
+		val tokenStream = analyzer.tokenStream(fieldName, new StringReader(textToDivide))
 
-		highlighter.setTextFragmenter(new SimpleSpanFragmenter(scorer))
+		highlighter.setTextFragmenter(new SimpleSpanFragmenter(scorer,1000))
 		highlighter.getBestFragment(tokenStream, textToDivide)
 	}
 
