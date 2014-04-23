@@ -2,37 +2,32 @@ package com.jacoffee.example.model
 
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.io.{StringReader, Reader, File}
 import scala.io.{Codec, Source}
 import scala.collection.JavaConversions.setAsJavaSet
 import org.apache.lucene.document.{ Field, Document }
 import org.apache.lucene.document.Field.{ TermVector, Index, Store }
 import org.apache.lucene.index.{Term, IndexWriterConfig, IndexWriter}
-import net.liftweb.mongodb.record.{MongoRecord, MongoMetaRecord}
-import net.liftweb.mongodb.record.field.{MongoListField, ObjectIdPk}
-import net.liftweb.record.field.{ StringField => LiftStringField }
 import org.apache.lucene.store.FSDirectory
-import java.io.{StringReader, Reader, File}
 import org.apache.lucene.analysis.cn.smart.SmartChineseAnalyzer
 import org.apache.lucene.analysis.{WhitespaceAnalyzer, WordlistLoader, Analyzer}
 import org.apache.lucene.analysis.tokenattributes.{TypeAttribute, OffsetAttribute, PositionIncrementAttribute, CharTermAttribute}
 import org.apache.lucene.queryParser.QueryParser
 import org.apache.lucene.search.{TermQuery, IndexSearcher}
 import org.apache.lucene.search.highlight._
+import net.liftweb.record.field.StringField
+import net.liftweb.mongodb.record.field.{MongoListField, ObjectIdPk}
+import net.liftweb.mongodb.record.{MongoRecord, MongoMetaRecord}
 import com.jacoffee.example.util.Config
 
 /**
  * Created by qbt-allen on 20114-4-19.
  */
 
-abstract class StringField[OwnerType <: MongoModel[OwnerType]](rec: OwnerType, maxLength: Int) extends LiftStringField[OwnerType](rec, maxLength) {}
+//abstract class StringField[OwnerType <: MongoModel[OwnerType]](rec: OwnerType, maxLength: Int) extends LiftStringField[OwnerType](rec, maxLength) {}
 
 object Article extends Article with MongoModelMeta[Article] {
 	override def collectionName = "articles"
-
-	def getFields = fields.flatMap {
-		case field: StringField[Article] =>Some(field)
-		case _ => None
-	}
 
 	def getPublishDate(cal: Calendar) = {
 		// 2014年09月10日 09:19
@@ -41,7 +36,7 @@ object Article extends Article with MongoModelMeta[Article] {
 	}
 
 	val version = Config.Lucene.version
-	val indexedFilePosition = "D:/LiftDrill/src/main/resources/lucene/article"
+	val indexedFilePosition = (Config.Path.path_shared :: Config.Lucene.path :: "article" :: Nil).mkString("\\")
 	val analyzer = new SmartChineseAnalyzer(version, getStopWordsSet)
 	def getStopWordsSet = {
 		//Source.fromInputStream(this.getClass.getClassLoader.getResourceAsStream("lucene/stopwords.txt"))(Codec.UTF8).getLines.toSet
@@ -81,9 +76,6 @@ object Article extends Article with MongoModelMeta[Article] {
 	}
 
 	def search(fieldName: String,  searchString: String) = {
-
-		println("Lucene Path")
-		println(Config.Lucene.path)
 		// 获取命中文档ID
 		val iSearch = new IndexSearcher(FSDirectory.open(new File(indexedFilePosition)))
 		// val parser = new QueryParser(version, fieldName, new SmartChineseAnalyzer(version))
@@ -122,7 +114,6 @@ object Article extends Article with MongoModelMeta[Article] {
 		val tokenStream = analyzer.tokenStream("f", new StringReader(textToDivide))
 
 		highlighter.setTextFragmenter(new SimpleSpanFragmenter(scorer))
-		highlighter.setMaxDocCharsToAnalyze(1000)
 		highlighter.getBestFragment(tokenStream, textToDivide)
 	}
 
