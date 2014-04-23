@@ -1,2 +1,8 @@
 github.author=kjozsa
 github.repo=LiftDrill
+
+mongo_host = 127.0.0.1
+mongo_port = 27017
+mongo_db = LiftDrill
+mongo_connectionsPerHost = 10
+mongo_threadsAllowedToBlockForConnectionMultiplier  = 5

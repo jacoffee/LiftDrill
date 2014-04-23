@@ -5,19 +5,17 @@ import java.io.FileInputStream
 import net.liftweb.common.Full
 import net.liftweb.mongodb.MongoIdentifier
 
-
-
 // settings for Mongo
 object MongoConfig {
-	// D:\LiftDrill\src\main\resources\props\mongo.props
 	val filename = System.getProperty("user.dir") + System.getProperty("file.separator") + "src\\main\\resources\\props\\mongo.props"
-	//   @volatile var whereToLook: () => List[(String, () => Box[InputStream])] = () => Nil
+	// @volatile var whereToLook: () => List[(String, () => Box[InputStream])] = () => Nil
+
 	Props.whereToLook = () => 
 		(
 			filename, 
 			() => Full(new FileInputStream(filename)) 
 	):: Nil
-	println(filename)
+
 	val host = Props.get("mongo_host").openOrThrowException {
 		"the mongo host MUST be defined in props"
 	}
@@ -30,8 +28,8 @@ object MongoConfig {
 	val connectionsPerHost = Props.getInt("mongo_connectionsPerHost").openOr(10)
 	val threadsAllowedToBlockForConnectionMultiplier =
 		Props.getInt("mongo_threadsAllowedToBlockForConnectionMultiplier").openOr(5)
-    
-    object DefaultMongoIdentifier extends MongoIdentifier {
-    	val jndiName = "default"
-    }
+
+	object DefaultMongoIdentifier extends MongoIdentifier {
+		val jndiName = "default"
+	}
 }

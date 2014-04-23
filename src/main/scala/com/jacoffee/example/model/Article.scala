@@ -25,12 +25,8 @@ import scala.Some
 /**
  * Created by qbt-allen on 20114-4-19.
  */
-trait LabelField {
-	def fieldLabel: String
-}
 
-// (rec: OwnerType, val maxLength: Int)
-abstract class StringField[OwnerType <: MongoModel[OwnerType]](rec: OwnerType, maxLength: Int) extends LiftStringField[OwnerType](rec, maxLength) with LabelField {}
+abstract class StringField[OwnerType <: MongoModel[OwnerType]](rec: OwnerType, maxLength: Int) extends LiftStringField[OwnerType](rec, maxLength) {}
 
 object Article extends Article with MongoModelMeta[Article] {
 	override def collectionName = "articles"
@@ -84,7 +80,6 @@ object Article extends Article with MongoModelMeta[Article] {
 				IndexWriter.unlock(directory)
 			}
 		}
-
 	}
 
 	def search(fieldName: String,  searchString: String) = {
