@@ -18,10 +18,12 @@ body {
 	margin: 0 auto;
 }
 .wrapper {
+	position: relative;
+        margin: 0 auto;
+        background: none repeat scroll 0 0 rgba(255, 255, 255, 0.6);
 	width:  800px;
-	margin: 0 auto;
-	background: none repeat scroll 0 0 rgba(255, 255, 255, 0.6);
 }
+
 h2 {
 	color: #fff;
 	font-size: 2.375em;
@@ -173,7 +175,7 @@ a.city {
 /*这个地方如果设置了 overflow的为hidden div的内容就会网上顶*/
 .model-dialog {
 	position: absolute; /* 弹窗 要脱离文档流 */
-	left: 610px;
+	left: 50px;
 
 	margin: 0 auto;
 	border-radius: 5px 5px 5px 5px;
@@ -181,7 +183,6 @@ a.city {
 
 	background: none repeat scroll 0 0 white;
 	width: 700px;
-	display: none;
 	z-index: 99999;
 }
 
@@ -226,6 +227,7 @@ a.city {
 	text-decoration: none;
 }
 
+
 /*私信以及提问的title*/
 .title{
 	border-radius: 5px 5px 0 0;
@@ -246,6 +248,29 @@ a.city {
     width: 470px;
 }
 
+.topic-content {
+	border: 1px solid #999;
+	padding: 3px;
+	width: 500px;
+}
+.topic-content  .add-topic {
+	border: 0 none;
+	width: 100px;
+	height: 40px;
+	line-height: 18px;
+}
+.topic-content .topic-block {
+	display: inline-block;
+	border-radius: 2px;
+	background-color: #E7F1F8;
+	line-height: 27px;
+}
+.topic-content .topic-remove-btn {
+	background:  transparent url("../images/sprites.png") no-repeat scroll -264px -141px;
+	width: 15px;
+	height: 15px;
+	cursor: pointer;
+}
 /*新增问题的主界面 outline: none;  可以去除点击div时的虚框 */
 .notice_class {
     border: 1px solid #CCCCCC;
