@@ -18,13 +18,13 @@
 	<div class="category-list">
 		<div class="category-header">
 			<ul class="category-labels">
-				<li><a href="http://sports.sina.com.cn/" target="_blank">体育</a></li>
+				<li><a href="http://sports.sina.com.cn/" target="_blank" class="hover">体育</a></li>
 				<li><a href="http://ent.sina.com.cn/" target="_blank">娱乐</a></li>
 				<li><a href="http://health.sina.com.cn/" target="_blank">健康</a></li>
 			</ul>
 		</div>
 		<div class="category-body">
-			<ul>
+			<ul class="category-article-list">
 				<li  class="float--left">
 					<p class="p1">
 						<a href="/recruitment/detail/53354afae4b07feb37f90ebd" target="_blank">
@@ -50,6 +50,58 @@
 					<p class="p2">
 						浏览人数：182   发布时间：2014-03-28
 					</p>
+				</li>
+			</ul>
+			<ul class="category-article-list" style="display: none">
+				<li class="float--left">
+					<p class="p1">
+						<a href="/campus-talk/detail/53563ffde4b05f81eec40d63" target="_blank">
+							甘肃省武威市2014年引进急需紧缺人才公告（4月24日 10:00）
+						</a>
+					</p>
+					<p class="p2">
+						举办时间:2014-04-24 10:00
+					</p><p class="p2">
+					举办地点: <a href="/campus-talk/北京/华北电力大学" target="_blank">华电</a> | 就业之家 
+				</p>
+				</li>
+				<li class="float--left">
+					<p class="p1">
+						<a href="/campus-talk/detail/53563ffde4b05f81eec40d63" target="_blank">
+							甘肃省武威市2014年引进急需紧缺人才公告（4月24日 10:00）
+						</a>
+					</p>
+					<p class="p2">
+						举办时间:2014-04-24 10:00
+					</p><p class="p2">
+					举办地点: <a href="/campus-talk/北京/华北电力大学" target="_blank">华电</a> | 就业之家 
+				</p>
+				</li>
+			</ul>
+			<ul class="category-article-list" style="display: none">
+				<li class="float--left">
+					<p class="p1">
+						<a href="/campus-talk/detail/533f4839e4b0a04bea86cfbb" target="_blank">
+							友乐活（北京）网络科技有限公司2014校园宣讲会
+						</a>
+					</p>
+					<p class="p2">
+						举办时间:2014-04-24 15:30
+					</p><p class="p2">
+					举办地点: <a href="/campus-talk/北京/北京邮电大学" target="_blank">北邮</a> | 就业多厅 
+				</p>
+				</li>
+				<li class="float--left">
+					<p class="p1">
+						<a href="/campus-talk/detail/533f4839e4b0a04bea86cfbb" target="_blank">
+							友乐活（北京）网络科技有限公司2014校园宣讲会
+						</a>
+					</p>
+					<p class="p2">
+						举办时间:2014-04-24 15:30
+					</p><p class="p2">
+					举办地点: <a href="/campus-talk/北京/北京邮电大学" target="_blank">北邮</a> | 就业多厅 
+				</p>
 				</li>
 			</ul>
 		</div>
@@ -57,10 +109,22 @@
 	<tail>
 		<script type="text/javascript">
 			$(function(){
+				/*				$(".category-body ul").each(function(index){
+				 if (index ==0) $(this).css("display", "block");
+				 else $(this).css("display", "none");
+				 }); // the page will shake cause the dom change*/
 
+				$(".category-labels li a").mouseenter(function(){
+					// obtain this selected elements
+					$(this).addClass("hover")
+					$(this).parent("li").siblings("li").find("a").removeClass("hover")
 
-
-
+					var $index = $(this).parent("li").index();
+					$(".category-body ul").each(function(index){
+						if ($index == index) $(this).show();
+						else $(this).hide();
+					});
+				});
 			});
 		</script>
 	</tail>
