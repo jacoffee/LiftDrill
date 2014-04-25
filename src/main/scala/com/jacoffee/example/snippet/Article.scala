@@ -34,7 +34,6 @@ object Article  extends DispatchSnippet {
 						"data-bind=article-time *" #>  { ArticleModel.getPublishDate(article.created_at.get) } &
 						"data-bind=article-content" #> {
 							val articleContent = article.content.get
-							println(" NNNNNN " + articleContent)
 							if (search.is.isEmpty) { <pre>{ articleContent }</pre> }
 							else { XhtmlParser(Source.fromString("<pre>"+ArticleModel.highlightText(search.is, contentName, articleContent) + "</pre>")) }
 						}

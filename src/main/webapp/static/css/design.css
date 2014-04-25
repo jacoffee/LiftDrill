@@ -1,0 +1,29 @@
+@CHARSET "UTF-8";
+
+ul li {
+	 list-style: none outside none;
+	 float: left;
+ }
+/* article hover */
+.category-list .category-labels li {
+	margin: 5px;
+}
+.category-list .category-labels li a:hover,
+.category-list .category-labels li .hover {
+	color: #439ADC;
+	box-shadow: 0 4px 0 #439ADC;
+	-webkit-box-shadow: 0 4px 0 #439ADC;
+	-moz-box-shadow: 0 4px 0 #439ADC;
+	-ms-box-shadow: 0 4px 0 #439ADC;
+	text-decoration: none;
+}
+/* 新建文章 */
+.new-article {
+	margin-top: 150px;
+}
+/* zhihu mianpage */
+#myForm table tr td {
+	height: 45px;
+	text-align: center
+}
+
