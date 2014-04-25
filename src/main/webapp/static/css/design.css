@@ -5,6 +5,12 @@ ul li {
 	 float: left;
  }
 /* article hover */
+.category-list {
+	border: 1px solid #3a3a3a;
+}
+.category-list .category-header {
+	border-bottom: 1px solid #888;
+}
 .category-list .category-labels li {
 	margin: 5px;
 }
@@ -16,6 +22,15 @@ ul li {
 	-moz-box-shadow: 0 4px 0 #439ADC;
 	-ms-box-shadow: 0 4px 0 #439ADC;
 	text-decoration: none;
+}
+.category-list .category-body li {
+	width: 300px;
+}
+.category-list .category-body li p {
+	width: 280px;
+	text-overflow:ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
 }
 /* 新建文章 */
 .new-article {

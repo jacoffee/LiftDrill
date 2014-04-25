@@ -1,16 +1,14 @@
 <div data-lift="surround?with=default&at=content" class="wrapper">
-	<head>
-		<link rel="stylesheet" type="text/css" href="/static/css/design.css">
-	</head>
+	<link rel="stylesheet" type="text/css" href="/static/css/design.css">
 	<div class="category-list">
-		<div class="category-header">
-			<ul class="category-labels">
+		<div class="category-header clearfix">
+			<ul class="category-labels clearfix"><!--这里的Clearfix 可以将整个ul整起来 不至于塌下去-->
 				<li><a href="http://sports.sina.com.cn/" target="_blank" class="hover">体育</a></li>
 				<li><a href="http://ent.sina.com.cn/" target="_blank">娱乐</a></li>
 				<li><a href="http://health.sina.com.cn/" target="_blank">健康</a></li>
 			</ul>
 		</div>
-		<div class="category-body">
+		<div class="category-body clearfix">
 			<ul class="category-article-list">
 				<li  class="float--left">
 					<p class="p1">
@@ -95,12 +93,13 @@
 	</div>
 	<tail>
 		<script type="text/javascript">
-			$(function(){
+
+			// qiaobu main 首页划过城市 底下跟着变
+			var hoverAndChange = function() {
 				/*				$(".category-body ul").each(function(index){
 				 if (index ==0) $(this).css("display", "block");
 				 else $(this).css("display", "none");
 				 }); // the page will shake cause the dom change*/
-
 				$(".category-labels li a").mouseenter(function(){
 					// obtain this selected elements
 					$(this).addClass("hover")
@@ -112,6 +111,10 @@
 						else $(this).hide();
 					});
 				});
+			}
+
+			$(function(){
+				hoverAndChange();
 			});
 		</script>
 	</tail>
