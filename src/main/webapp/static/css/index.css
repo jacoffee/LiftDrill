@@ -241,13 +241,18 @@ a.city {
 自增长的外层div 要设置成  height auto
 */
 .note-content {
-    border-radius: 4px 4px 4px 4px;
-    height: auto;
-    margin: 0 0 10px 17px;
-    padding: 5px 0 0 11px;
-    width: 470px;
+	border-radius: 4px 4px 4px 4px;
+	height: auto;
+	margin: 0 0 10px 17px;
+	padding: 5px 0 0 11px;
+	width: 470px;
 }
-
+.topic-header #topic-form-error {
+	display: none;
+	font-size: 13px;
+	color: #c33;
+	font-weight: 400;
+}
 .topic-content {
 	margin: 0 auto;
 	border: 1px solid #999;

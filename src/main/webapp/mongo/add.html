@@ -35,9 +35,9 @@
 		<div class="topic-header">
 			选择话题(必填):
 			<span style="color:#999999;font-size:11px">最多可以选择三个话题</span>
+			<span id="topic-form-error">至少添加一个话题</span>
 			<div class="topic-content">
 				<input class="add-topic" type="text"/>
-
 			</div>
 		</div>
 
@@ -84,6 +84,7 @@
 	/*					$self.blur(function(event){
 							event.preventDefault();
 						});*/
+					$("#topic-form-error").hide();
 
 					var $inputTopic = $self.val();
 					if (!isEmpty($inputTopic)) {
@@ -95,6 +96,10 @@
 								).append(
 									$("<a href='javascript:;' class='topic-remove-btn'></a>").bind("click", function(){
 										$(this).parent(".topic-block").remove();
+										var $addedTopicCount = $(".topic-content .topic-block").length;
+										if ($addedTopicCount === 0) {
+											$("#topic-form-error").show();
+										}
 										$self.focus();
 									})
 								)
