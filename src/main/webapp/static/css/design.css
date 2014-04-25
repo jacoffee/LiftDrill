@@ -4,10 +4,11 @@ ul li {
 	 list-style: none outside none;
 	 float: left;
  }
-/* article hover */
-.category-list {
+div.part {
 	border: 1px solid #3a3a3a;
+	margin: 15px 0px;
 }
+/* article hover */
 .category-list .category-header {
 	border-bottom: 1px solid #888;
 }
@@ -36,9 +37,28 @@ ul li {
 .new-article {
 	margin-top: 150px;
 }
-/* zhihu mianpage */
-#myForm table tr td {
-	height: 45px;
-	text-align: center
+
+/* lateset dishes */
+.latest-dish h1 {
+	color: #810430;
+}
+
+.latest-dish {
+	border-radius: 3px;
+	padding: 10px;
+}
+.latest-dish .media {
+	width: 490px;
+}
+.latest-dish .media img {
+	float: left;
+	border: solid 9px #810430;   /* set border thicker to make it look like framed */
+}
+.latest-dish .media a h2 {
+	color: #49301a;
+	font-family: LatoBold, Arial, Helvetica, sans-serif;
+	font-weight: normal;
+	font-size: 26px;
+	margin-bottom: 5px;
 }
 
