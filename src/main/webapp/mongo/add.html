@@ -36,12 +36,8 @@
 			选择话题(必填):
 			<span style="color:#999999;font-size:11px">最多可以选择三个话题</span>
 			<div class="topic-content">
-				<input class="add-topic"  type="text"/>
-				<div class="topic-block">
-					<span>艺术体操</span>
-					<a href="javascript:;" class="topic-remove-btn">q</a>
-					<input type="hidden" value="艺术体操" class="topic-selected" />
-				</div>
+				<input class="add-topic" type="text"/>
+
 			</div>
 		</div>
 
@@ -77,6 +73,36 @@
 			$("#cancel").click(function() {
 				$(".model-dialog").css("display", "none");
 				$(".black-overlay").css("display", "none");
+			});
+
+			// 自定义话题
+			$(".add-topic").keydown(function(event){
+				var $self = $(this);
+				var code = event.keyCode;
+				if (code == 13 || code == 9) {
+					// blur the input & get the input content if it is not empty
+	/*					$self.blur(function(event){
+							event.preventDefault();
+						});*/
+
+					var $inputTopic = $self.val();
+					if (!isEmpty($inputTopic)) {
+						$self.val("");
+						var $topicBlock =
+							$("<div class='topic-block' />").
+								append(
+									$("<span></span>").text($inputTopic)
+								).append(
+									$("<a href='javascript:;' class='topic-remove-btn'></a>").bind("click", function(){
+										$(this).parent(".topic-block").remove();
+										$self.focus();
+									})
+								)
+						$(this).before($topicBlock);
+					} else {
+						$self.focus();
+					}
+				}
 			});
 		</script>
 	</tail>

@@ -55,3 +55,8 @@ var elements = $(".send-mail").
 var a, b, c,
 	foo = true,
 	bar = false;
+
+
+function isEmpty(str) {
+	return (!str || str.length === 0);   // === strictly equation str.length has to be number
+}
