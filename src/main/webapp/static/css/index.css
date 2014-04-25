@@ -10,6 +10,12 @@ body {
 	width: 100%;
 	margin: 20px auto;
 }
+* {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
 .container {
 	margin: 10px auto;
 }
@@ -277,7 +283,7 @@ a.city {
 	display: inline-block;
 	margin-left: 5px;
 	background: url("../images/sprites.png") no-repeat scroll -266px -139px;
-	width: 15px;
+	width: 15px;  /* set height and width to hold up the image */
 	height: 15px;
 	cursor: pointer;
 }
