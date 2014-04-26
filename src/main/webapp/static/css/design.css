@@ -5,7 +5,6 @@ ul li {
 	 float: left;
  }
 div.part {
-	margin: 15px 0px;
 	border: 1px solid #CAC9CA;
 }
 /* article hover */
@@ -71,3 +70,21 @@ div.part {
 	text-transform: uppercase;
 }
 
+
+/* 学历Dropdown */
+.education {
+	margin: 0 auto;
+	width: 400px;
+}
+.education .dropdown_trigger {
+	display: block;
+	border: 1px solid #999;
+	border-radius: 1px;
+	line-height: 30px;
+}
+.education .dropdown li {
+	float: none;
+}
+.education .dropdown li:hover {
+	background-color: #fff;
+}

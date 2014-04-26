@@ -1,5 +1,5 @@
 <div data-lift="surround?with=default&at=content" class="wrapper">
-	<link rel="stylesheet" type="text/css" href="/static/css/design.css">
+	<lift:head><link rel="stylesheet" type="text/css" href="/static/css/design.css"></lift:head>
 	<div class="category-list part">
 		<div class="category-header clearfix">
 			<ul class="category-labels clearfix"><!--这里的Clearfix 可以将整个ul整起来 不至于塌下去-->
@@ -10,28 +10,32 @@
 		</div>
 		<div class="category-body clearfix">
 			<ul class="category-article-list">
-				<li  class="float--left">
+				<li class="float--left">
 					<p class="p1">
 						<a href="/recruitment/detail/53354afae4b07feb37f90ebd" target="_blank">
 							《环球时报》社行业周刊部招聘
 						</a>
 					</p>
+
 					<p class="p2">
 						发布学校：<a href="/recruitment/北京/北京大学" target="_blank"> 北京大学</a>
 					</p>
+
 					<p class="p2">
 						浏览人数：182   发布时间：2014-03-28
 					</p>
 				</li>
-				<li  class="float--left">
+				<li class="float--left">
 					<p class="p1">
 						<a href="/recruitment/detail/53354afae4b07feb37f90ebd" target="_blank">
 							《环球时报》社行业周刊部招聘
 						</a>
 					</p>
+
 					<p class="p2">
 						发布学校：<a href="/recruitment/北京/北京大学" target="_blank"> 北京大学</a>
 					</p>
+
 					<p class="p2">
 						浏览人数：182   发布时间：2014-03-28
 					</p>
@@ -46,9 +50,10 @@
 					</p>
 					<p class="p2">
 						举办时间:2014-04-24 10:00
-					</p><p class="p2">
-					举办地点: <a href="/campus-talk/北京/华北电力大学" target="_blank">华电</a> | 就业之家 
-				</p>
+					</p>
+					<p class="p2">
+						举办地点: <a href="/campus-talk/北京/华北电力大学" target="_blank">华电</a> | 就业之家 
+					</p>
 				</li>
 				<li class="float--left">
 					<p class="p1">
@@ -56,11 +61,14 @@
 							甘肃省武威市2014年引进急需紧缺人才公告（4月24日 10:00）
 						</a>
 					</p>
+
 					<p class="p2">
 						举办时间:2014-04-24 10:00
-					</p><p class="p2">
-					举办地点: <a href="/campus-talk/北京/华北电力大学" target="_blank">华电</a> | 就业之家 
-				</p>
+					</p>
+
+					<p class="p2">
+						举办地点: <a href="/campus-talk/北京/华北电力大学" target="_blank">华电</a> | 就业之家 
+					</p>
 				</li>
 			</ul>
 			<ul class="category-article-list" style="display: none">
@@ -70,11 +78,14 @@
 							友乐活（北京）网络科技有限公司2014校园宣讲会
 						</a>
 					</p>
+
 					<p class="p2">
 						举办时间:2014-04-24 15:30
-					</p><p class="p2">
-					举办地点: <a href="/campus-talk/北京/北京邮电大学" target="_blank">北邮</a> | 就业多厅 
-				</p>
+					</p>
+
+					<p class="p2">
+						举办地点: <a href="/campus-talk/北京/北京邮电大学" target="_blank">北邮</a> | 就业多厅 
+					</p>
 				</li>
 				<li class="float--left">
 					<p class="p1">
@@ -82,17 +93,21 @@
 							友乐活（北京）网络科技有限公司2014校园宣讲会
 						</a>
 					</p>
+
 					<p class="p2">
 						举办时间:2014-04-24 15:30
-					</p><p class="p2">
-					举办地点: <a href="/campus-talk/北京/北京邮电大学" target="_blank">北邮</a> | 就业多厅 
-				</p>
+					</p>
+
+					<p class="p2">
+						举办地点: <a href="/campus-talk/北京/北京邮电大学" target="_blank">北邮</a> | 就业多厅 
+					</p>
 				</li>
 			</ul>
 		</div>
 	</div>
 	<div class="latest-dish part">
 		<h1>LATEST RECIPES</h1>
+
 		<div class="media clearfix">
 			<a href="#6">
 				<img src="/static/images/design/haddock.jpg" alt="Haddock skewers">
@@ -103,35 +118,57 @@
 		<div class="media clearfix">
 			<a href="#6">
 				<img src="/static/images/design/haddock.jpg" alt="Haddock skewers">
+
 				<h2>Zesty Smoked Haddock Skewers</h2>
+
 				<p>Cooking time: <span>20</span> minutes</p>
 			</a>
 		</div>
+	</div>
+	<div class="education part clearfix">
+		<span class="dropdown_trigger">专科及以上</span>
+		<input type="hidden" name="education" />
+		<ul class="dropdown drop-list">
+			<li><a href="javascript:;" class="job-category" data-value="1">专科及以上</a></li>
+			<li ><a href="javascript:;" class="job-category" data-value="2">本科及以上</a></li>
+			<li ><a href="javascript:;" class="job-category" data-value="3">硕士及以上</a></li>
+			<li ><a href="javascript:;" class="job-category" data-value="4">博士及以上</a></li>
+		</ul>
+		<span class="icon icon-dropdown"></span>
 	</div>
 	<tail>
 		<script type="text/javascript">
 
 			// qiaobu main 首页划过城市 底下跟着变
-			var hoverAndChange = function() {
+			var hoverAndChange = function () {
 				/*				$(".category-body ul").each(function(index){
 				 if (index ==0) $(this).css("display", "block");
 				 else $(this).css("display", "none");
 				 }); // the page will shake cause the dom change*/
-				$(".category-labels li a").mouseenter(function(){
+				$(".category-labels li a").mouseenter(function () {
 					// obtain this selected elements
 					$(this).addClass("hover")
 					$(this).parent("li").siblings("li").find("a").removeClass("hover")
 
 					var $index = $(this).parent("li").index();
-					$(".category-body ul").each(function(index){
+					$(".category-body ul").each(function (index) {
 						if ($index == index) $(this).show();
 						else $(this).hide();
 					});
 				});
 			}
 
-			$(function(){
+			// click education li -- the value of it will display in the span
+			var clickEducationAndSet = function() {
+				$(".education .dropdown li").click(function(){
+					var $eduValue = $(this).find("a").text();
+					$(this).parents("ul").hide();
+					$(this).parents(".education").find(".dropdown_trigger").text($eduValue);
+				});
+			}
+			$(function () {
 				hoverAndChange();
+				clickEducationAndSet();
 			});
 		</script>
 	</tail>
