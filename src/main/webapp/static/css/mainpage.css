@@ -1,14 +1,8 @@
 @CHARSET "UTF-8";
-* {
-	margin: 0;
-	border: 0 none;
-	padding: 0;
-	font-family: 'Helvetica Neue',Arial,'Liberation Sans',FreeSans,'Hiragino Sans GB',sans-serif;
-	font-size:15px;
-	text-decoration: none;
+body {
+	background:#EEEEEE;
 }
-
-div.top{
+div.top {
 	margin: 0 auto;
 	background-color:#0078D8;
 	width:100%;
@@ -80,68 +74,55 @@ div.right{
    cursor:pointer;
 }
 label.error{
-    font-size:12px;
-    color:white;
-    font-style:italic;
-    font-weight:bold;
-    margin-left:3px;
+	font-size:12px;
+	color:white;
+	font-style:italic;
+	font-weight:bold;
+	margin-left:3px;
 }
 
 #warning{
-    font-size:13px;
-    font-weight:bold;
-    color:white;
-    margin-left:70px;
+	font-size:13px;
+	font-weight:bold;
+	color:white;
+	margin-left:70px;
 }
-
-body{
-	background:#EEEEEE;
-}
-
-#bottom{
-	text-shadow:0 1px 1px rgba(0, 0, 0, 0.15);
-	line-height:1.7;	
+.bottom .inner-wrapper {
+	margin: 30px auto;
+	width: 750px;
 }
 
 .hot-list{
-	position:relative;
-	margin:30px 0 0 265px;
-  	width:260px;
-  	float:left;
+	float: left;
+	margin-top: 10px;
+	padding: 20px 0px;
+	width: 260px;
 }
 
 .hot-list  span{
-    display:none;
-    word-break:break-all;
+	display:none;
 }
 .hot-list .rep{
-   margin:0  10px 10px 0;
-   background:#EEEEEE;
+	margin:0  10px 10px 0;
+	background:#EEEEEE;
 }
 
 
 .hot-list .rep img {
-	-moz-transition:all 0.05s ease-in-out 0s;
-    border: 7px solid #FFFFFF;
-    border-radius: 35px 35px 35px 35px;
-    height: 50px;
-    margin-bottom: 15px;
-    margin-right: 10px;
-    width: 50px;
-    
+	border: 6px solid #FFFFFF;
+	border-radius: 35px 35px 35px 35px;
+	-moz-transition: all 0.05s ease-in-out 0s;
+	height: 50px;
 }
 
 .single-list {
-    background: none repeat scroll 0 0 #FFFFFF;
-    border-radius: 5px 5px 5px 5px;
-    margin: 25px 0 0 524px;
-    padding: 27px 30px 15px 29px;
-    position: relative;
-    text-align: left;
-    width: 409px;
-    color:#7491A8;
-    text-shadow: 0px 1px 1px rgba(0,0,0,0.25) inset;
-    font-weight:inherit;
+	float: right;
+	margin: 5px;
+	border-radius: 5px;
+	background: none repeat scroll 0 0 #FFFFFF;
+	padding: 10px;
+	width: 409px;
+	color:#7491A8;
 }
 
 .single-list  .list-title{

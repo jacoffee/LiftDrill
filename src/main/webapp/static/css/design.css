@@ -5,7 +5,7 @@ ul li {
 	 float: left;
  }
 div.part {
-	border: 1px solid #3a3a3a;
+	border: 1px solid #CAC9CA;
 	margin: 15px 0px;
 }
 /* article hover */
@@ -60,5 +60,13 @@ div.part {
 	font-weight: normal;
 	font-size: 26px;
 	margin-bottom: 5px;
+}
+.latest-dish .media a p {
+	margin-left: 10px;
+	color: #7b6047;
+}
+.latest-dish .media a:hover p {
+	color: #b32c1c;
+	text-transform: uppercase;
 }
 
