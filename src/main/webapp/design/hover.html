@@ -126,7 +126,7 @@
 		</div>
 	</div>
 	<div class="education part clearfix">
-		<span class="dropdown_trigger">专科及以上</span>
+		<span class="dropdown_trigger"></span>
 		<input type="hidden" name="education" />
 		<ul class="dropdown drop-list">
 			<li><a href="javascript:;" class="job-category" data-value="1">专科及以上</a></li>
@@ -160,10 +160,17 @@
 
 			// click education li -- the value of it will display in the span
 			var clickEducationAndSet = function() {
+				$(".dropdown_trigger").click(function(){
+					$(".dropdown").show();
+				});
+				$(".dropdown_trigger").blur(function(){
+					$(".dropdown").hide();
+				});
 				$(".education .dropdown li").click(function(){
-					var $eduValue = $(this).find("a").text();
-					$(this).parents("ul").hide();
-					$(this).parents(".education").find(".dropdown_trigger").text($eduValue);
+					var $eduLink = $(this).find("a");
+					$(".dropdown").hide();
+					$(this).parents(".education").find(".dropdown_trigger").text($eduLink.text());
+					$(this).parents(".education").find("input[name=education]").val($eduLink.data("value"));
 				});
 			}
 			$(function () {

@@ -73,6 +73,7 @@ div.part {
 
 /* 学历Dropdown */
 .education {
+	position: relative;
 	margin: 0 auto;
 	width: 400px;
 }
@@ -80,11 +81,35 @@ div.part {
 	display: block;
 	border: 1px solid #999;
 	border-radius: 1px;
+	height: 30px;
 	line-height: 30px;
+}
+.education .dropdown {
+	display: none;
+	z-index: 1000;
 }
 .education .dropdown li {
 	float: none;
+	line-height: 30px;
 }
 .education .dropdown li:hover {
-	background-color: #fff;
+	background-color:  #abd9fb;
+}
+.education .dropdown li:hover a {
+	color: #fff;
+}
+.education .dropdown li a {
+	color: #616161;
+}
+.education .icon-dropdown {
+	display: block;
+	position: absolute;
+	border: 1px solid #999;
+	top: 0px;
+	right: 0px;
+	background: url("../images/design/dropdown.png") no-repeat -13px/60px;
+	width: 30px;
+	height: 30px;
+	line-height: 28px;
+	cursor: pointer;
 }
