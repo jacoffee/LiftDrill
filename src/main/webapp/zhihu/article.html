@@ -7,6 +7,9 @@
 			<div class="article-meta">
 				<span class="article-meta-author" data-bind="article-author">Instagram</span>
 				<span class="article-meta-time" data-bind="article-time">2014年04月20日 01:36</span>
+				<span class="article-action">
+					<i class="like-btn"></i>
+				</span>
 			</div>
 			<div class="article-content" data-bind="article-content">
 	北京时间4月20日，在猛龙与篮网的季后赛第一场比赛开始前，猛龙总经理马赛-乌杰里在场外向到场的猛龙球迷发表演讲，期间他高喊：干死布鲁克林！“干死布鲁克林！(F***BROOKLYN!)”马赛-乌杰里高喊。随后，在本场比赛的中场休息时，乌杰里在接受采访的时候对自己的行为表示歉意：“我为自己的措辞表示歉意。你们知道我的感觉，我不喜欢他们，但是我需要道歉。”
@@ -14,4 +17,19 @@
 			</div>
 		</div>
 	</div>
+	<script type="text/javascript">
+		$(function(){
+			// click heart btn ----the up  will add one send Jsob req in Lift
+			$(".article-action").click(function(){
+				$.post({
+					url: "/article/like.json",
+					success: function(data) {
+						// set value operation
+
+					},
+					dataType: "json"
+				});
+			});
+		});
+	</script>
 </div>

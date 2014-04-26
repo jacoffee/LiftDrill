@@ -71,6 +71,13 @@ class Boot extends Bootable{
 		}
 	}
 
+	private def initReqDispatch {
+		LiftRules.dispatch.append {
+			case Req("article" :: "like" :: Nil, "json", PostRequest) => () => Full(XmlResponse(<p></p>))
+		}
+	}
+
+
 	private def initConnect {
 		val mongoOptions = new MongoOptions
 		mongoOptions.connectionsPerHost = Config.Mongo.connectionsPerHost
