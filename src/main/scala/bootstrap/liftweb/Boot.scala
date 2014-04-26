@@ -15,6 +15,7 @@ import com.mongodb.MongoOptions
 import net.liftweb.mongodb.MongoAddress
 import net.liftweb.mongodb.MongoHost
 import com.jacoffee.example.util.Config
+import com.jacoffee.example.snippet.Article
 
 class Boot extends Bootable{
 
@@ -46,6 +47,7 @@ class Boot extends Bootable{
 		LiftRules.setSiteMapFunc(() => MenuInfo.sitemap)
 		requestDispatch
 		initSnippetDisapatch
+		initReqDispatch
 		// dbBase Connection
 		initConnect
 		AutoComplete.init
@@ -72,8 +74,11 @@ class Boot extends Bootable{
 	}
 
 	private def initReqDispatch {
+		println("asasa");
 		LiftRules.dispatch.append {
-			case Req("article" :: "like" :: Nil, "json", PostRequest) => () => Full(XmlResponse(<p></p>))
+			// relative to root dir so the first one is /zhihu/article/like.json req
+			// corresponding ajax req => type: "POST", url: "/zhihu/article/like.json",
+			case Req("zhihu" :: "article" :: "like" :: Nil, "json", PostRequest) => Article.addLike _
 		}
 	}
 

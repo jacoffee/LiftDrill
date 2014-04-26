@@ -21,11 +21,12 @@
 		$(function(){
 			// click heart btn ----the up  will add one send Jsob req in Lift
 			$(".article-action").click(function(){
-				$.post({
-					url: "/article/like.json",
+				$.ajax({
+					type: "POST",
+					url: "/zhihu/article/like.json",
 					success: function(data) {
 						// set value operation
-
+						console.log(data);
 					},
 					dataType: "json"
 				});

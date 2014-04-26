@@ -3,14 +3,18 @@ package com.jacoffee.example.snippet
 import scala.xml.{Xhtml, NodeSeq}
 import scala.xml.parsing.XhtmlParser
 import scala.io.Source
-import net.liftweb.http.{S, RequestVar, SHtml, DispatchSnippet}
+import net.liftweb.http._
 import net.liftweb.util.Helpers.strToCssBindPromoter
 import com.jacoffee.example.model.{ Article => ArticleModel }
+import net.liftweb.common.Full
+import net.liftweb.json.JsonAST.JObject
+import net.liftweb.http.rest.RestHelper
 
 /**
  * Created by qbt-allen on 14-4-19.
  */
 object Article  extends DispatchSnippet {
+
 	def dispatch = {
 		case "searchBox" => searchBox
 		case "create" => create
@@ -82,5 +86,13 @@ object Article  extends DispatchSnippet {
 			)(xhtml)
 		}
 	}
+
+	def addLike = Full {
+		import net.liftweb.json.JsonDSL._
+		JsonResponse{
+			("hello", "hello" ) ~ ("you", "ni")
+		}
+	}
+
 
 }
