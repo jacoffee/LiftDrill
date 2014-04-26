@@ -25,8 +25,8 @@ body {
 }
 .wrapper {
 	position: relative;
-        margin: 0 auto;
-        background: none repeat scroll 0 0 rgba(255, 255, 255, 0.6);
+	margin: 0 auto;
+	background: none repeat scroll 0 0 rgba(255, 255, 255, 0.6);
 	width:  800px;
 }
 .clearfix:after {
@@ -66,15 +66,10 @@ a:hover {
 /*好好研究  清除浮动的方案*/
 /* margin 的这个用法要配合宽度来使用 */
 .group {
-	width: 800px;
 	margin: 0 auto;
-}
-.group:after {
-	clear: both;
-	content: ".";
-	display: block;
-	height: 0;
-	visibility: hidden;
+	padding: 5px;
+	background-image: linear-gradient(#87053e, #560329);
+	width: 800px;
 }
 #logo-type {
 	margin-top: 10px;
@@ -98,6 +93,7 @@ a:hover {
 }
 .sidebar {
 	float: right;
+	padding: 13px;
 }
 .sidebar ul {
 	width: 100%;

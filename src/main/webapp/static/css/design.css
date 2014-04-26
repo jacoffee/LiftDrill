@@ -5,8 +5,8 @@ ul li {
 	 float: left;
  }
 div.part {
-	border: 1px solid #CAC9CA;
 	margin: 15px 0px;
+	border: 1px solid #CAC9CA;
 }
 /* article hover */
 .category-list .category-header {
@@ -49,17 +49,18 @@ div.part {
 }
 .latest-dish .media {
 	width: 490px;
+	overflow: hidden;
 }
 .latest-dish .media img {
 	float: left;
 	border: solid 9px #810430;   /* set border thicker to make it look like framed */
+	margin-right: 5.5%;
 }
 .latest-dish .media a h2 {
+	margin: 10px 0px;
 	color: #49301a;
-	font-family: LatoBold, Arial, Helvetica, sans-serif;
-	font-weight: normal;
 	font-size: 26px;
-	margin-bottom: 5px;
+	text-align: inherit;
 }
 .latest-dish .media a p {
 	margin-left: 10px;
