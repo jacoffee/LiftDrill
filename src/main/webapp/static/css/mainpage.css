@@ -96,14 +96,15 @@ label.error{
 	float: left;
 	margin-top: 10px;
 	padding: 20px 0px;
-	width: 260px;
+	width: 300px;
 }
 
 .hot-list  span{
 	display:none;
 }
 .hot-list .rep{
-	margin:0  10px 10px 0;
+	display: inline-block;
+	margin:0 15px 15px 0;
 	background:#EEEEEE;
 }
 
@@ -112,7 +113,7 @@ label.error{
 	border: 6px solid #FFFFFF;
 	border-radius: 35px 35px 35px 35px;
 	-moz-transition: all 0.05s ease-in-out 0s;
-	height: 50px;
+	height: 60px;
 }
 
 .single-list {

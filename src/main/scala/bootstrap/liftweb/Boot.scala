@@ -74,7 +74,6 @@ class Boot extends Bootable{
 	}
 
 	private def initReqDispatch {
-		println("asasa");
 		LiftRules.dispatch.append {
 			// relative to root dir so the first one is /zhihu/article/like.json req
 			// corresponding ajax req => type: "POST", url: "/zhihu/article/like.json",
