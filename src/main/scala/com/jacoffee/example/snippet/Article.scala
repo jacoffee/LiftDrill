@@ -6,7 +6,7 @@ import scala.io.Source
 import net.liftweb.http._
 import net.liftweb.util.Helpers.strToCssBindPromoter
 import com.jacoffee.example.model.{ Article => ArticleModel }
-import net.liftweb.common.Full
+import net.liftweb.common.{Empty, Full}
 import net.liftweb.json.JsonAST.JObject
 import net.liftweb.http.rest.RestHelper
 
@@ -87,12 +87,22 @@ object Article  extends DispatchSnippet {
 		}
 	}
 
-	def addLike = Full {
+	def addLike = {
 		import net.liftweb.json.JsonDSL._
-		JsonResponse{
-			("hello", "hello" ) ~ ("you", "ni")
+		 S.param("like").flatMap{  num =>
+			try {
+				Some(num.toInt)
+			} catch {
+				case e: Exception => None
+			}
+		} match {
+			case  Full(num) => Full {
+				JsonResponse{
+					//("hello", "hello" ) ~ ("you", "ni")
+					("updatedLike", (num+1).toString)
+				}
+			}
+			case _ => Empty
 		}
 	}
-
-
 }
