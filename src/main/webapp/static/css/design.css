@@ -1,5 +1,17 @@
 @CHARSET "UTF-8";
 
+/*[class^="icon-"]:before, [class*=" icon-"]:before {
+	font-family: "allen-font";
+	font-style: normal;
+	font-weight: normal;
+}*/
+.icon-heart:before {
+	margin-right: 10px;
+	content: '\e800';
+	font-family: "allen-font";
+	font-style: normal;
+	font-weight: normal;
+}
 ul li {
 	 list-style: none outside none;
 	 float: left;
