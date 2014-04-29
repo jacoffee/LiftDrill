@@ -6,7 +6,6 @@ import net.liftweb.record.field.{ StringField,  EnumField }
 import net.liftweb.json.JsonDSL._
 import net.liftweb.json.JsonAST.JObject
 import net.liftweb.record.field.DateTimeField
-import net.liftweb.example.MongoConfig
 import net.liftweb.util.Helpers
 import java.util.{ Calendar, Date }
 import java.text.SimpleDateFormat
