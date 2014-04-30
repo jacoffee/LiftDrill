@@ -19,5 +19,23 @@
 		<lift:bind name="content"></lift:bind>
 	</div>
 	<div data-lift="msg?id=page_alert;errorClass=error_alert;warningClass=warning_alert;noticeClass=notice_alert"></div>
+	<script type="text/javascript">
+		$(function(){
+			$(window).bind("mousewheel DOMMouseScroll", function(event){
+				// || will return true if one of the side is true
+				// as undefined will be considered as falsy when boolean value need
+				var scrollAngel = event.detail || event.wheelDelta //只要有一种情况满足 就会返回
+/*				console.log(" FireFox ");
+				console.log(event.detail);
+				console.log(" Other WebBrowser");
+				console.log(event.wheelDelta);*/
+				if (scrollAngel <  0) {
+					console.log(" Scroll Down");
+				} else {
+					console.log(" Scroll Up");
+				}
+			});
+		});
+	</script>
 </body>
 </html>

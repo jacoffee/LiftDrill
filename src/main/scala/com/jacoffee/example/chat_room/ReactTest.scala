@@ -15,10 +15,12 @@ object ReactTest extends App {
 //			val from = sender
 			react {
 				case From(actor) => {
+					println(" Actor State of From'"+ Actor.self.getState)
 					react {
 						// execute the first req and will wait for the Put message
 						// the second react will block
 						case Put(msg) => {
+							println(" Actor State of Put'"+ Actor.self.getState)
 							println(" Actor Info " + actor.getState)
 							actor ! msg
 						}
@@ -28,4 +30,7 @@ object ReactTest extends App {
 		}
 	helloActor ! From(Actor.self)
 	helloActor ! Put("If msg is for the break of the shackle")
+	receive {
+		case msg: String => println(" 在主线程上接收 <<actor ! msg>> 发送的消息 ？？？？？？   " +  msg)
+	}
 }

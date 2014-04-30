@@ -58,5 +58,6 @@ var a, b, c,
 
 
 function isEmpty(str) {
+	"zhoumenglin".replace("ou", "huhu")
 	return (!str || str.length === 0);   // === strictly equation str.length has to be number
 }

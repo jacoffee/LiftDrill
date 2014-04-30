@@ -11,6 +11,8 @@ object EventBasedActor extends App {
 	// an important transfer from e-b-a to t-b-a is the usage of react over receive
 	def buildChainActor(count: Int, next: Actor): Actor = {
 		val a = actor {
+			println(" Current Thread Name " + Thread.currentThread.getName)
+			// Current Thread Name ForkJoinPool-1-worker-11
 			react {
 				case 'Die => {
 					val from = sender
@@ -29,7 +31,7 @@ object EventBasedActor extends App {
 	}
 
 	val start = System.currentTimeMillis
-	buildChainActor(0, null) ! 'Die
+	buildChainActor(2, null) ! 'Die
 
 	receive {
 		case 'Ack =>
