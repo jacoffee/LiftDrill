@@ -45,6 +45,7 @@ object Scraper extends DispatchSnippet with Loggable {
 		case "extractAttr"  => extractAttr
 		case "htCity" => htCity
 		case "jobApply" => jobApply
+		case "wiki" => wiki
 	}
 	val baseUrlOfXJH = "http://xjh.haitou.cc"
 	val defaultTimeout = 5000
@@ -62,17 +63,17 @@ object Scraper extends DispatchSnippet with Loggable {
 	}
 	def wiki(xhtml: NodeSeq): NodeSeq = {
 		// connect to certain webpage
-		val doc = Jsoup.connect("http://en.wikipedia.org/wiki/Main_Page").get()
+		val doc = Jsoup.connect("http://en.wikipedia.org/wiki/Main_Page").timeout(1000000).get
 		// detect certain elements with jQuery-like style method
 		<div class="wikiTitle">
 			<p>Top viewed In Wiki This week</p>
-		{
-			doc.select("#mp-itn b a").map { urlText => 
-				<a href={s"http://en.wikipedia.org${urlText.attr("href")}"} title={ urlText.attr("title") } target="_blank">
-					{ urlText.html }
-				</a> 
+			{
+				doc.select("#mp-itn b a").map { urlText =>
+					<a href={s"http://en.wikipedia.org${urlText.attr("href")}"} title={ urlText.attr("title") } target="_blank">
+						{ urlText.html }
+					</a>
+				}
 			}
-		}
 		</div>
 	}
 
@@ -104,6 +105,7 @@ object Scraper extends DispatchSnippet with Loggable {
 	} 
 
 	def htCity(xhtml: NodeSeq): NodeSeq = {
+		println(getCityNamesAndUrls(buildConnection(baseUrlOfXJH),cityLoc))
 		val cityInfo = getCityNamesAndUrls(buildConnection(baseUrlOfXJH),cityLoc).map {
 				case (cityText, cityUrl) => {
 				<div>
