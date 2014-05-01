@@ -12,30 +12,13 @@ import org.apache.lucene.analysis.Analyzer
 import java.io.StringReader
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute
 import java.io.File
-import scala.util.Random
-import net.liftweb.util.PassThru
 import net.liftweb.util.Helpers._
-import net.liftweb.common.Full
-import net.liftweb.builtin.snippet.Form
-import net.liftweb.http.S
-import scala.xml.Text
-import net.liftweb.http.SHtml
-import net.liftweb.http.js.JsCmd
-import net.liftweb.http.JsonHandler
-import net.liftweb.http.js.JsCmds.Alert
-import net.liftweb.util.JsonCmd
-import net.liftweb.http.js.JsCmds.{SetHtml, Script, SetValById, Function}
-import net.liftweb.http.js.JE.JsVar
-import net.liftweb.http.js.JE.JsRaw
-import java.text.SimpleDateFormat
-import java.util.Date
-import net.liftweb.http.js.JsCmds.Run
-import net.liftmodules.widgets.autocomplete.AutoComplete
 import net.liftweb.common.Loggable
-import net.liftweb.http.js.JsExp
-import net.liftweb.http.js.JE
 import scala.xml.parsing.XhtmlParser
 import scala.io.Source
+import scala.concurrent.ExecutionContext
+import ExecutionContext.Implicits.global
+import scala.concurrent.{ Await, ExecutionContext, Future, future }
 
 
 
