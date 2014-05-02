@@ -1,21 +1,31 @@
-var PageAlert = function() {
-	var $msg = $("#page_alert").find("[class$=alert]");
+var Helper = {
+	isEmpty: function (str) {
+		// === strictly equation str.length has to be number
+		return !str || str.length === 0;
+	},
+	isNullable: function(value) {
+		return value === null || value === undefined;
+	},
+	PageAlert: function() {
+		var $msg = $("#page_alert").find("[class$=alert]");
 
-	// dynamical add a div in the top and then fade away
-	$(body).append(
-			$("<div class='msg_container'></div>").html($msg.text()).fadeIn(3000).fadeOut("slow")
-	);
-}
-
-var blackOverLayPop = function(title, content, action) {
-
-
-
-}
+		// dynamical add a div in the top and then fade away
+		$(body).append(
+		$("<div class='msg_container'></div>").html($msg.text()).fadeIn(3000).fadeOut("slow")
+		);
+	}
+},
+BasePopup = {
+},
+blackOverLayPop = $.extend(BasePopup,
+	{
+		show: function(title, content, action) {}
+	}
+)
 
 var innerMailPopup = function (title, content, actionObj) {
 	var titleElem = function() {
-		if (title == null || title == undefined) {
+		if (Helper.isEmpty(title)) {
 			return $();
 		} else {
 			return $("<div class='title'></div>");
@@ -41,23 +51,3 @@ var innerMailPopup = function (title, content, actionObj) {
 	$("body").append($mailbox);
 }
 
-/*  recommended jQuery Writing Style */
-
-// If the method changes the context, an extra level of indentation must be used.
-var elements = $(".send-mail").
-				addClass(".active")
-				.children()
-					.html( "hello")
-				.end()
-				.appendTo( "body" );
-
-//  Declarations that don't have an assignment must be listed together at the start of the declaration
-var a, b, c,
-	foo = true,
-	bar = false;
-
-
-function isEmpty(str) {
-	"zhoumenglin".replace("ou", "huhu")
-	return (!str || str.length === 0);   // === strictly equation str.length has to be number
-}
