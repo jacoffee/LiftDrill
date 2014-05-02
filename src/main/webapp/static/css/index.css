@@ -187,12 +187,11 @@ a.city {
 	position: absolute; /* 弹窗 要脱离文档流 */
 	left: 50px;
 
-	margin: 0 auto;
 	border-radius: 5px 5px 5px 5px;
 	box-shadow: 0 0 80px 0 rgba(0, 0, 0, 0.6);
 
 	background: none repeat scroll 0 0 white;
-	width: 700px;
+	width: 600px;
 	z-index: 99999;
 }
 
@@ -320,8 +319,7 @@ a.city {
 	*/
 
 .process {
-	margin-bottom: 10px;
-	padding-left: 380px;
+	margin-bottom: 15px;
 }
 
 .process #writeNote,
@@ -378,10 +376,7 @@ mail box
 	margin: 0 auto;
 	width: 400px;
 }
-
 .zy-inbox-content label {
-	margin: 10px 0 0 25px;
-	position: absolute;
 }
 
 .main-body-wrap {
@@ -394,12 +389,12 @@ mail box
 }
 
 .send-content{
-	resize:none;
-	border:none;
-	overflow:hidden;
-	height:auto;
-	min-height:66px;
-	width:100%;
+	resize: none;
+	border: 1px solid #DDDDDD;
+	overflow: hidden;
+	height: auto;
+	min-height: 66px;
+	width: 60%;
 }
 
 .zy-form-input {
@@ -410,14 +405,15 @@ mail box
 	background: none repeat scroll 0 0 #FFFFFF;
 	line-height: 15px;
 }
-
-.zy-inbox-receiver {
-	border-radius: 7px;
-	line-height: 1.7;
-	padding: 5px;
-	margin: 0 70px;
+.model-dialog .content-wrapper {
+	margin: 5px auto;
+	width: 600px;
 }
-
+.model-dialog .content-wrapper .zy-inbox-receiver {
+	margin: 0 auto;
+	padding: 5px;
+	width: 300px;
+}
 p.logintips_error {
 	border: 1px solid #deacb4;
 	background: #f2dede;
@@ -428,13 +424,10 @@ p.logintips_error {
 	border-radius: 3px;
 	margin-bottom: 12px;
 }
-
-
 .to, .subject, .mailbody {
 	width: 800px;
 	height: 21px;
 }
-
 div.mail_content {
 	border: 1px solid #FFFFFF;
 	padding: 0 100px;

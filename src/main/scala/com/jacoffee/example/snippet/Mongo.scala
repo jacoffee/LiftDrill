@@ -217,9 +217,7 @@ object Mongo extends DispatchSnippet {
 										</div>
 										<div class="zy-inbox-content">
 											<label for="content">内容: </label>
-											<div class="main-body-wrap">
-												<textarea class="send-content" id="content" name="content"></textarea>
-											</div>
+											<textarea class="send-content" id="content" name="content"></textarea>
 										</div>
 									},
 									JsObj(
