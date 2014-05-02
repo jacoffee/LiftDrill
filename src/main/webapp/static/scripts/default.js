@@ -1,3 +1,11 @@
+PageAlert = function() {
+	var $msg = $("#page_alert").find("[class$=alert]");
+	// dynamical add a div in the top and then fade away
+	$("body").append(
+		$("<div class='msg_container'></div>").html($msg.text()).fadeIn(3000).fadeOut("slow")
+	);
+}
+
 var Helper = {
 	isEmpty: function (str) {
 		// === strictly equation str.length has to be number
@@ -6,14 +14,6 @@ var Helper = {
 	isNullable: function(value) {
 		return value === null || value === undefined;
 	},
-	PageAlert: function() {
-		var $msg = $("#page_alert").find("[class$=alert]");
-
-		// dynamical add a div in the top and then fade away
-		$(body).append(
-		$("<div class='msg_container'></div>").html($msg.text()).fadeIn(3000).fadeOut("slow")
-		);
-	}
 },
 BasePopup = {
 	classNames: ['model-dialog'],
@@ -25,19 +25,29 @@ BasePopup = {
 	zIndex: 99999,
 
 	setPosition: function() {
+		var top = ($(window).height - this.getElement().height()) / 3;
 
+		if (top < 0 ) {
+			top = 50
+		}
+		return this.getElement().css(
+			{
+				/* 第二次出现的时候  由于CSS添加了 宽度所以起作用了 to be done */
+				left: ($(window).width() - this.getElement().width()) / 2 + "px",
+				top: $(document).scrollTop() + top + "px"
+			}
+		);
 	},
 	renderTitleElement: function(titleHtml) {
-		this.getElement().find("." +this.titleClassNames[0]).html(titleHtml)
-		this
+		this.getElement().find("." +this.titleClassNames[0]).html(titleHtml);
+		return this;
 	},
 	renderContentElement: function(contentHtml) {
-		this.getElement().find("." +this.contentClassNames[0]).html(contentHtml)
-		this
+		this.getElement().find("." +this.contentClassNames[0]).html(contentHtml);
+		return this;
 	},
 	getElement: function() {
 		// if the current object has no element attr
-		var self = this;
 		if (Helper.isNullable(this.element)) {
 			// dynamic add attribute for JavaScript
 			// just add empty the rest will be filled with othe method
@@ -49,11 +59,12 @@ BasePopup = {
 				$("<div></div>").addClass(this.titleClassNames.join(" "))
 			).append(
 				$("<div></div>").addClass(this.contentClassNames.join(" "))
-			)
+			);
 		}
-		this.element
+		return this.element;
 	},
 	show: function(){
+		this.setPosition();
 		this.getElement().appendTo($("body")).show();
 	}
 },
@@ -62,39 +73,12 @@ BlackOverlayPop = $.extend(
 	{
 		overlayClassName: ['black-overlay'],
 		renderblackOverLay: function() {
-			$("<div></div>").addClass(this.overlayClassName.join(" "))
+			return $("<div></div>").addClass(this.overlayClassName.join(" "));
 		},
 		show: function() {
+			this.setPosition();
 			this.getElement().before(this.renderblackOverLay()).appendTo($("body")).show();
 		}
 	}
 )
-
-var innerMailPopup = function (title, content, actionObj) {
-	var titleElem = function() {
-		if (Helper.isEmpty(title)) {
-			return $();
-		} else {
-			return $("<div class='title'></div>");
-		}
-	}();
-	titleElem.html(title);
-
-	var $mailbox = $("<div class='model-dialog' />");
-	$mailbox.append(titleElem).append(content);
-
-	var $actionContainer = $("<div class='process' />");
-	$.each(actionObj,  function(key, action){
-		var btn = $("<button type='button' />").html(key).addClass("send").unbind("click").click(function(){
-			action();
-		});
-		var alink = $("<a href='javascript:;' />").text("取消").addClass("cancel-send").unbind("click").click(function(){
-			// parent 只会匹配单一层级 而 parents则会匹配多个层级
-			$(this).parents(".model-dialog").hide();
-		});
-		$actionContainer.append(btn).append(alink);
-	});
-	$mailbox.append($actionContainer);
-	$("body").append($mailbox);
-}
 

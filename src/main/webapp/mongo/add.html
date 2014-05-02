@@ -87,7 +87,7 @@
 					$("#topic-form-error").hide();
 
 					var $inputTopic = $self.val();
-					if (!isEmpty($inputTopic)) {
+					if (!Helper.isEmpty($inputTopic)) {
 						$self.val("");
 						var $topicBlock =
 							$("<div class='topic-block' />").

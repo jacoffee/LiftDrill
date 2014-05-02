@@ -3,37 +3,31 @@
 		<tr data-lift="Mongo.users"><td>test</td></tr>
 	</table>
 	<a href='/mongo/add' class="add">Add a User</a>
-	<div data-lift="tail">
-		<script type="text/javascript">
-			var popupDiv = {
+	<tail>
+	<script type="text/javascript">
+		var popupDiv = $.extend(
+			BlackOverlayPop,
+			{
 				// actions actually an object in JavaScript key-value
 				// the essence of the following codes is to generate html snippets with some sort of action binding
-				infoContent: function(title, content, actionObject) {
-					var $container = $(".wrapper")
-					var titleElement = function(){
-						if (Helper.isEmpty(title)) {
-							return $();
-						} else {
-							return $("<span class='title'></span>");
-						}
-					}();
-					titleElement.text(title);
-
+				sendInnerMail: function(title, content, actionObj) {
 					var $personInfo = $("<div class='personInfo'></div>").html(content);
-
-					// action bind
-					$.each(actionObject, function(val, action){
+					$.each(actionObj, function(val, action){
 						var btn = $("<button type='button'></button>").html(val).unbind("click").click(function(){
 							action();
 						});
 						var alink = $("<a href='javascript:;'></a>").text("取消").click(function(){
-							$(this).parent(".personInfo").hide();
+							$(this).parents(".model-dialog").hide();
+							$(this).parents(".model-dialog").siblings(".black-overlay").hide();
 						});
-						$personInfo.append(btn).append(alink)
+						$personInfo.append(btn).append(alink);
 					});
-					$container.append($personInfo);
+					this.getElement();
+					this.renderTitleElement(title).renderContentElement($personInfo);
+					this.show();
 				}
 			}
-		</script>
-	</div>
+		)
+	</script>
+	</tail>
 </div>

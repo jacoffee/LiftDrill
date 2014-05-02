@@ -138,7 +138,7 @@ object Mongo extends DispatchSnippet {
 						{
 							SHtml.a(
 								Text("edit"),
-								Call("popupDiv.infoContent",
+								Call("popupDiv.sendInnerMail",
 									"修改Person信息",
 									JsHtml {
 										<input type="text" value={person.username.get} id={userId} name = {person.username.name} />
@@ -208,7 +208,7 @@ object Mongo extends DispatchSnippet {
 						{
 							SHtml.a(
 								Text("发送站内信"),
-								Call("innerMailPopup",
+								Call("popupDiv.sendInnerMail",
 									"发送站内信",
 									JsHtml {
 										<div class="zy-inbox-receiver">
