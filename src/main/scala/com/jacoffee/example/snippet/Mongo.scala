@@ -1,19 +1,19 @@
 package com.jacoffee.example.snippet
 
-import scala.xml.{ Text, Group, NodeSeq, Elem }
-import net.liftweb.example.model.{ Person => PersonModel }
-import net.liftweb.util.Helpers.{ strToSuperArrowAssoc, millis, AttrBindParam }
+import scala.xml.{Text, Group, NodeSeq, Elem}
+import net.liftweb.example.model.{Person => PersonModel}
+import net.liftweb.util.Helpers.{strToSuperArrowAssoc, millis, AttrBindParam}
 import net.liftweb.util.BindPlus.nodeSeqToBindable
-import net.liftweb.http.{ S, SHtml, RequestVar, DispatchSnippet }
+import net.liftweb.http.{S, SHtml, RequestVar, DispatchSnippet}
 import net.liftweb.http.SHtml.ElemAttr
-import net.liftweb.http.js.JsCmds.{ Alert, Prompt, SetHtml, jsExpToJsCmd, Noop, Confirm }
-import net.liftweb.http.js.jquery.JqJE.{ Jq, JqId, JqRemove }
-import net.liftweb.http.js.JE.{ AnonFunc, Call, JsFunc, JsObj, JsArray }
-import net.liftweb.http.js.{ JsCmds, JE, JsExp, JsCmd }
+import net.liftweb.http.js.JsCmds.{Alert, Prompt, SetHtml, jsExpToJsCmd, Noop, Confirm}
+import net.liftweb.http.js.jquery.JqJE.{Jq, JqId, JqRemove}
+import net.liftweb.http.js.JE.{AnonFunc, Call, JsFunc, JsObj, JsArray}
+import net.liftweb.http.js.{JsCmds, JE, JsExp, JsCmd}
 import net.liftweb.util.BindPlus.nodeSeqToBindable
-import net.liftweb.json.JsonAST.{ JArray, JString, JValue }
-import net.liftweb.common.{ Empty, Box, Full }
-import net.liftweb.util.{ Helpers, ToJsCmd }
+import net.liftweb.json.JsonAST.{JArray, JString, JValue}
+import net.liftweb.common.{Empty, Box, Full}
+import net.liftweb.util.{Helpers, ToJsCmd}
 import net.liftweb.http.js.HtmlFixer
 import net.liftweb.http.js.JE.ValById
 import org.bson.types.ObjectId
@@ -28,28 +28,31 @@ object Mongo extends DispatchSnippet {
 
 	private object selectedPerson extends RequestVar[Box[PersonModel]](Empty)
 
-	case class JsHtml(node: NodeSeq) extends  JsExp with HtmlFixer {
+	case class JsHtml(node: NodeSeq) extends JsExp with HtmlFixer {
 		def toJsCmd = fixHtmlAndJs("inline", node)._1
 	}
 
 	object UserName extends RequestVar[String]("")
+
 	object Email extends RequestVar[String]("")
+
 	object Password extends RequestVar[String]("")
+
 	object Personality extends RequestVar[String]("")
+
 	/* Add a user */
 	// "mycall" -> SHtml.a(Text("add Practice"),  Call("addUser.calculate",JsExp.intToJsExp(3), 4).cmd,  "id" -> "myadd")
 	def add(xhtml: NodeSeq): NodeSeq = {
 		xhtml.bind("input",
-			"username" -> SHtml.text(UserName.is, u => UserName(u.trim), "id"-> "username", "class"-> "text", "placeholder" -> "请输入用户名"),
-			"email" -> SHtml.text(Email.is, e =>  Email(e.trim), "id" -> "email", "class" -> "text", "placeholder" -> "请输入邮箱"),
-			"password" -> SHtml.text(Password.is, p =>  Password(p.trim), "id" -> "password", "class" -> "text", "placeholder" -> "请输入密码"),
+			"username" -> SHtml.text(UserName.is, u => UserName(u.trim), "id" -> "username", "class" -> "text", "placeholder" -> "请输入用户名"),
+			"email" -> SHtml.text(Email.is, e => Email(e.trim), "id" -> "email", "class" -> "text", "placeholder" -> "请输入邮箱"),
+			"password" -> SHtml.text(Password.is, p => Password(p.trim), "id" -> "password", "class" -> "text", "placeholder" -> "请输入密码"),
 			"personality" -> SHtml.text(Personality.is, p => Personality(p.trim), "id" -> "personality", "class" -> "text"),
 			"delete" -> {
 				SHtml.a(
 					() => JsCmds.Confirm(
 						"确定要删除吗？",
-						SHtml.ajaxInvoke(() =>
-						{
+						SHtml.ajaxInvoke(() => {
 							S.notice("Operation Completed")
 							JsCmds.After(Helpers.TimeSpan(3L), JsCmds.Reload)
 						}
@@ -68,10 +71,11 @@ object Mongo extends DispatchSnippet {
 		person.username(UserName.is)
 		person.email(Email.is)
 		person.password(Password.is)
-		person.personalityType(Random.nextInt(3)+1)
+		person.personalityType(Random.nextInt(3) + 1)
 		person.save
 		S.redirectTo("/mongo/index", () => S.notice("page_alert", <span>恭喜您， 成功注册</span>))
 	}
+
 	/**
 	 * Get the XHTML containing a list of users
 	 */
@@ -91,110 +95,116 @@ object Mongo extends DispatchSnippet {
 			<th>EDIT</th>
 			<th>DELETE</th>
 			<th>Mail</th>
-		</tr> ++
-		{
-			PersonModel.getAllSortByUsername.map { person =>
-				val idValue = person.id.get.toString
-				val personality = PersonModel.Personality.allTypes(Random.nextInt(3)+1).toString
-				val reload = Call("window.location.reload").cmd
-				//需要前提传递Json格式的数据
-				def validateAndUpdate(jvalue: JValue): JsCmd = {
-					println(" jvalue " + jvalue)
-					println(jvalue.extractOpt[MyPerson].isEmpty)
-					jvalue.extractOpt[MyPerson].map { p =>
-						try {
-							//进行更新操作  先查询 然后再进行更新 验证
-							PersonModel.find(idValue) match {
-								case Full(person) => {
-									person.username(p.username).email(p.email).save
+		</tr> ++ {
+			PersonModel.getAllSortByUsername.map {
+				person =>
+					val idValue = person.id.get.toString
+					val personality = PersonModel.Personality.allTypes(Random.nextInt(3) + 1).toString
+					val reload = Call("window.location.reload").cmd
+					//需要前提传递Json格式的数据
+					def validateAndUpdate(jvalue: JValue): JsCmd = {
+						println(" jvalue " + jvalue)
+						println(jvalue.extractOpt[MyPerson].isEmpty)
+						jvalue.extractOpt[MyPerson].map {
+							p =>
+								try {
+									//进行更新操作  先查询 然后再进行更新 验证
+									PersonModel.find(idValue) match {
+										case Full(person) => {
+											person.username(p.username).email(p.email).save
+										}
+										case _ =>
+									}
+									Call("window.location.reload").cmd
+								} catch {
+									case e: Exception => {
+										Call("window.location.reload").cmd
+									}
 								}
-								case _ =>
-							}
-							Call("window.location.reload").cmd
-						} catch {
-							case e: Exception =>  {
-								Call("window.location.reload").cmd
-							}
-						}
-					}.getOrElse(Call("window.location.reload").cmd)
-				}
+						}.getOrElse(Call("window.location.reload").cmd)
+					}
 
-				<tr>
-					<td>{ person.username.get }</td>
-					<td>{ person.email.get }</td>
-					<td>{ personality }</td>
-					<td>
+					<tr>
+						<td>
+							{person.username.get}
+						</td>
+						<td>
+							{person.email.get}
+						</td>
+						<td>
+							{personality}
+						</td>
+						<td>
 						{
 							SHtml.a(
 								Text("edit"),
 								Call("popupDiv.infoContent",
 									"修改Person信息",
 									JsHtml {
-										<input type="text" value= { person.username.get } id={userId} name={ person.username.name }></input>
-										<input type="text" value= { person.email.get } id={emailId} name={ person.email.name }></input>
-										<input type="text" value= { personality } ></input>
-									},
-									JsObj("确认修改" ->
-										AnonFunc(
-											// SHtml.jsonCall(jsExpValue, JValue => JsCmd)
-											// when clicking the 确认修改按钮 首先获取要传递的数据 并进行验证然后 提交提交到服务器端进行相关处理
-											// 最后以JsCmd进行回调处理
-											SHtml.jsonCall(
-												JsArray{
-													List(
-														ValById(userId),
-														ValById(emailId)
-													)
-												},
-												{
-													_ match {
-														case JArray(
-															JString(username) :: JString(email) :: Nil
-														) => {
-															try {
-																//进行更新操作  先查询 然后再进行更新 验证
-																PersonModel.find(idValue) match {
-																	case Full(person) => {
-																		person.username(username)
-																			.email(email)
-																			.save
+										<input type="text" value={person.username.get} id={userId} name = {person.username.name} />
+										<input type="text" value={person.email.get} id={emailId} name={person.email.name}></input>
+										<input type="text" value={personality}></input>
+										},
+										JsObj("确认修改" ->
+											AnonFunc(
+												// SHtml.jsonCall(jsExpValue, JValue => JsCmd)
+												// when clicking the 确认修改按钮 首先获取要传递的数据 并进行验证然后 提交提交到服务器端进行相关处理
+												// 最后以JsCmd进行回调处理
+												SHtml.jsonCall(
+													JsArray{
+														List(
+															ValById(userId),
+															ValById(emailId)
+														)
+													},
+													{
+														_ match {
+																case JArray( JString(username) :: JString(email) :: Nil) => {
+																	try {
+																		//进行更新操作  先查询 然后再进行更新 验证
+																		PersonModel.find(idValue) match {
+																			case Full(person) => {
+																				person.username(username)
+																				.email(email)
+																				.save
+																			}
+																			case _ =>
+																		}
+																		Call("window.location.reload")
+																	} catch {
+																		case e: Exception => {
+																			Call("window.location.reload")
+																		}
 																	}
-																	case _ =>
 																}
-																Call("window.location.reload")
-															} catch {
-																case e: Exception =>  {
+																case _ => {
 																	Call("window.location.reload")
 																}
-															}
 														}
-														case _ => {
-															Call("window.location.reload")
-														}
-													}
-												}:(JValue => JsCmd)
+													}:(JValue => JsCmd)
+												)
 											)
 										)
-									)
-								).cmd
-							)
-						}
-					</td>
-					<td>
-						{
-							SHtml.a(Text("delete"),
-								JsCmds.Confirm("确认要删除该记录吗",
-									SHtml.ajaxInvoke( () => {
-										//  数据删除操作
+									).cmd
+								)
+							}
+							</td>
+							<td>
+							{
+								SHtml.a(
+									Text("delete"),
+									JsCmds.Confirm("确认要删除该记录吗",
+										SHtml.ajaxInvoke( () => {
+											//  数据删除操作
 											PersonModel.deleteUser(idValue)
 											Call("window.location.reload")     // jsExpToJsCmd(Call("window.location.reload"))
-										}
-									).exp
+											}
+										).exp
+									)
 								)
-							)
-						}
-					</td>
-					<td>
+							}
+							</td>
+						<td>
 						{
 							SHtml.a(
 								Text("发送站内信"),
@@ -212,29 +222,30 @@ object Mongo extends DispatchSnippet {
 											</div>
 										</div>
 									},
-									JsObj("发送" -> AnonFunc(
-										SHtml.jsonCall(
-											JsArray(
-												ValById("to"),
-												ValById("content")
-											),
-											{
-												_ match {
-													case JArray(JString(to) :: JString(content) :: Nil) =>{
-														Call("window.location.reload")
+									JsObj(
+										"发送" ->
+										AnonFunc(
+											SHtml.jsonCall(
+												JsArray(
+													ValById("to"),
+													ValById("content")
+												),
+												{
+													_ match {
+														case JArray(JString(to) :: JString(content) :: Nil) =>{
+															Call("window.location.reload")
+														}
+														case _ => Noop
 													}
-													case _ => Noop
-												}
-											}: (JValue => JsCmd)
+												}: (JValue => JsCmd)
+											)
 										)
-									))
+									)
 								)
 							)
 						}
-					</td>
-				</tr>
-			}
-		}
+						</td>
+					</tr>
+			}}
 	}
-
 }

@@ -24,7 +24,7 @@
 			// click heart btn ----the up  will add one send Jsob req in Lift
 			$(".article-action").click(function(){
 				var $likeNum =$(this).find(" .num");
-				if(!isEmpty($likeNum.text())) {
+				if(!Helper.isEmpty($likeNum.text())) {
 					$.ajax({
 						type: "POST",
 						data: { "like": parseInt($likeNum.text()) },

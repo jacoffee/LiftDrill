@@ -11,7 +11,7 @@
 				infoContent: function(title, content, actionObject) {
 					var $container = $(".wrapper")
 					var titleElement = function(){
-						if (title === null || title === undefined) {
+						if (Helper.isEmpty(title)) {
 							return $();
 						} else {
 							return $("<span class='title'></span>");

@@ -16,10 +16,57 @@ var Helper = {
 	}
 },
 BasePopup = {
+	classNames: ['model-dialog'],
+
+	titleClassNames: ["title"],
+
+	contentClassNames: ["content-wrapper"],
+
+	zIndex: 99999,
+
+	setPosition: function() {
+
+	},
+	renderTitleElement: function(titleHtml) {
+		this.getElement().find("." +this.titleClassNames[0]).html(titleHtml)
+		this
+	},
+	renderContentElement: function(contentHtml) {
+		this.getElement().find("." +this.contentClassNames[0]).html(contentHtml)
+		this
+	},
+	getElement: function() {
+		// if the current object has no element attr
+		var self = this;
+		if (Helper.isNullable(this.element)) {
+			// dynamic add attribute for JavaScript
+			// just add empty the rest will be filled with othe method
+			this.element = $("<div></div>").addClass(this.classNames.join(" ")).css(
+				{
+					"z-index": this.zIndex
+				}
+			).append(
+				$("<div></div>").addClass(this.titleClassNames.join(" "))
+			).append(
+				$("<div></div>").addClass(this.contentClassNames.join(" "))
+			)
+		}
+		this.element
+	},
+	show: function(){
+		this.getElement().appendTo($("body")).show();
+	}
 },
-blackOverLayPop = $.extend(BasePopup,
+BlackOverlayPop = $.extend(
+	BasePopup,
 	{
-		show: function(title, content, action) {}
+		overlayClassName: ['black-overlay'],
+		renderblackOverLay: function() {
+			$("<div></div>").addClass(this.overlayClassName.join(" "))
+		},
+		show: function() {
+			this.getElement().before(this.renderblackOverLay()).appendTo($("body")).show();
+		}
 	}
 )
 
