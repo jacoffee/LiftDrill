@@ -17,9 +17,6 @@ trait MongoModel[ModelType <: MongoModel[ModelType]] extends MongoRecord[ModelTy
 
 	object created_at extends DateTimeField[ModelType](self) with LifecycleCallbacks {
 		val fieldLabel ="创建时间"
-		override def afterSave {
-			this.set(Calendar.getInstance)
-		}
 	}
 
 	object update_at extends DateTimeField[ModelType](self) with LifecycleCallbacks {
@@ -30,9 +27,13 @@ trait MongoModel[ModelType <: MongoModel[ModelType]] extends MongoRecord[ModelTy
 		}
 	}
 
+	def afterSave {}
+
 }
 
 // trait MongoMetaRecord[BaseRecord <: MongoRecord[BaseRecord]]
 trait MongoModelMeta[ModelType <: MongoModel[ModelType]] extends MongoMetaRecord[ModelType] { self: ModelType =>
 	def toObjectIdOption(idString: String) = if (ObjectId.isValid(idString)) Some(new ObjectId(idString)) else None
+
+	def invokeAfterSave(model: ModelType) = foreachCallback(model, _.afterSave)
 }

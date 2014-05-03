@@ -2,7 +2,7 @@
 
 body {
 	background: #f6f6f6 url("../images/article/main-bg.png") repeat top left;
-	font-family: "微软雅黑";
+	font-family: "Microsoft YaHei";
 }
 input, textarea, select, button {
 	font-family: 'Helvetica Neue',Helvetica,Arial,Sans-serif;
@@ -236,8 +236,8 @@ h1, h2, h3, h4, h5 {
 .articles .article-item {
 	position: relative;
 	border-bottom: 1px solid red;
-	 /* background: #1e1e1e url("../images/article/darker-noise.png") repeat top left; */
-	padding-left: 30px;
+	/* background: #1e1e1e url("../images/article/darker-noise.png") repeat top left; */
+	padding-left: 35px;
 	padding-top: 10px;
 	background: #cbb6a3;
 }
@@ -245,8 +245,8 @@ h1, h2, h3, h4, h5 {
 	content: url("../images/article/bird.png");
 	display: block;
 	position: absolute;
-	top: 10px;
-	left: 5px;
+	top: 13px;
+	left: 3px;
 }
 .articles .article-item .article-action {
 	background-color: #fff;
@@ -263,12 +263,15 @@ h1, h2, h3, h4, h5 {
 	height: 15px;
 }
 .articles .article-item pre {
+	font-family: "Microsoft YaHei";
 	text-indent: 10px;
 	white-space: pre-wrap;
 	white-space: -moz-pre-wrap;
 	white-space: -pre-wrap;
 	white-space: -o-pre-wrap;
 	word-wrap: break-word;
+	font-size: 13px;
+	color: #404040;
 }
 .articles .article-title {
 }

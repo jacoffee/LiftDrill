@@ -123,6 +123,10 @@ object Article extends Article with MongoModelMeta[Article] {
 		Stream.continually((stream.incrementToken, term.toString)).takeWhile(_._1).map(t =>s"[${t._2}]")
 	}
 
+	override def afterSave {
+		println(" New Or Update Job!!")
+		super.afterSave
+	}
 }
 
 class Article extends MongoModel[Article] {
