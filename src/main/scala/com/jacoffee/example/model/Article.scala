@@ -122,11 +122,6 @@ object Article extends Article with MongoModelMeta[Article] {
 		val term = stream.addAttribute(classOf[CharTermAttribute])
 		Stream.continually((stream.incrementToken, term.toString)).takeWhile(_._1).map(t =>s"[${t._2}]")
 	}
-
-	override def afterSave {
-		println(" New Or Update Job!!")
-		super.afterSave
-	}
 }
 
 class Article extends MongoModel[Article] {
@@ -145,5 +140,9 @@ class Article extends MongoModel[Article] {
 	}
 	object comment extends StringField[Article](this, 100) {
 		val fieldLabel = "评论"
+	}
+	override def afterSave {
+		println(" New Or Update Job!!")
+		super.afterSave
 	}
 }
