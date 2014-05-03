@@ -5,7 +5,7 @@ import scala.util.Random
 import net.liftweb.example.model.{Person => PersonModel}
 import net.liftweb.util.Helpers.strToSuperArrowAssoc
 import net.liftweb.util.Helpers.strToCssBindPromoter
-import net.liftweb.http.{S, SHtml, RequestVar, DispatchSnippet}
+import net.liftweb.http._
 import net.liftweb.http.js.JsCmds.{ Alert, jsExpToJsCmd, Noop }
 import net.liftweb.http.js.JE._
 import net.liftweb.http.js.{ HtmlFixer, JsCmds, JsExp, JsCmd }
@@ -14,6 +14,11 @@ import net.liftweb.json.JsonAST.{ JArray, JString, JValue }
 import net.liftweb.http.js.JE.Call
 import net.liftweb.util.Helpers
 import net.liftweb.common.Full
+import net.liftweb.common.Full
+import net.liftweb.http.js.JE.ValById
+import net.liftweb.json.JsonAST.JArray
+import net.liftweb.http.js.JE.Call
+import net.liftweb.json.JsonAST.JString
 
 object Mongo extends DispatchSnippet {
 
@@ -238,9 +243,29 @@ object Mongo extends DispatchSnippet {
 	}
 
 	def download = {
+		val poem =
+			"Roses are red," ::
+			"Violets are blue," ::
+			"Lift rocks!" ::
+			"And so do you." :: Nil
 
+		def downloadLink =
+			SHtml.link(
+				"/notused",
+				() => throw new ResponseShortcutException(poemTextFile),
+				Text("Download")
+			)
 
-		"" #> <p></p>
+		def poemTextFile : LiftResponse =
+			InMemoryResponse(
+				poem.mkString("\n").getBytes("UTF-8"),
+				"Content-Type" -> "text/plain; charset=utf8" ::
+				"Content-Disposition" -> "attachment; filename=poem.txt" :: Nil, // disposition is very crucial for the download
+				cookies=Nil,
+				200
+			)
+
+		".poem" #> poem.map(line => ".line" #> line) &
+		"a" #> downloadLink
 	}
-
 }
