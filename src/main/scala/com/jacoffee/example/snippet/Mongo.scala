@@ -1,43 +1,35 @@
 package com.jacoffee.example.snippet
 
-import scala.xml.{Text, Group, NodeSeq, Elem}
-import net.liftweb.example.model.{Person => PersonModel}
-import net.liftweb.util.Helpers.{strToSuperArrowAssoc, millis, AttrBindParam}
-import net.liftweb.util.BindPlus.nodeSeqToBindable
-import net.liftweb.http.{S, SHtml, RequestVar, DispatchSnippet}
-import net.liftweb.http.SHtml.ElemAttr
-import net.liftweb.http.js.JsCmds.{Alert, Prompt, SetHtml, jsExpToJsCmd, Noop, Confirm}
-import net.liftweb.http.js.jquery.JqJE.{Jq, JqId, JqRemove}
-import net.liftweb.http.js.JE.{AnonFunc, Call, JsFunc, JsObj, JsArray}
-import net.liftweb.http.js.{JsCmds, JE, JsExp, JsCmd}
-import net.liftweb.util.BindPlus.nodeSeqToBindable
-import net.liftweb.json.JsonAST.{JArray, JString, JValue}
-import net.liftweb.common.{Empty, Box, Full}
-import net.liftweb.util.{Helpers, ToJsCmd}
-import net.liftweb.http.js.HtmlFixer
-import net.liftweb.http.js.JE.ValById
-import org.bson.types.ObjectId
+import scala.xml.{ Text, NodeSeq }
 import scala.util.Random
+import net.liftweb.example.model.{Person => PersonModel}
+import net.liftweb.util.Helpers.strToSuperArrowAssoc
+import net.liftweb.util.Helpers.strToCssBindPromoter
+import net.liftweb.http.{S, SHtml, RequestVar, DispatchSnippet}
+import net.liftweb.http.js.JsCmds. { jsExpToJsCmd, Noop }
+import net.liftweb.http.js.JE._
+import net.liftweb.http.js.{ HtmlFixer, JsCmds, JsExp, JsCmd }
+import net.liftweb.util.BindPlus.nodeSeqToBindable
+import net.liftweb.json.JsonAST.{ JArray, JString, JValue }
+import net.liftweb.http.js.JE.Call
+import net.liftweb.util.Helpers
+import net.liftweb.common.Full
 
 object Mongo extends DispatchSnippet {
 
 	def dispatch = {
 		case "add" => add
 		case "users" => users
+		case "download" => download
 	}
-
-	private object selectedPerson extends RequestVar[Box[PersonModel]](Empty)
 
 	case class JsHtml(node: NodeSeq) extends JsExp with HtmlFixer {
 		def toJsCmd = fixHtmlAndJs("inline", node)._1
 	}
 
 	object UserName extends RequestVar[String]("")
-
 	object Email extends RequestVar[String]("")
-
 	object Password extends RequestVar[String]("")
-
 	object Personality extends RequestVar[String]("")
 
 	/* Add a user */
@@ -85,7 +77,6 @@ object Mongo extends DispatchSnippet {
 
 		case class MyPerson(username: String, email: String)
 		// 查询出所有的Person按 姓氏 升序排列
-		// the header
 		val userId = "username"
 		val emailId = "email"
 		<tr class="tblTitle">
@@ -115,13 +106,11 @@ object Mongo extends DispatchSnippet {
 										}
 										case _ =>
 									}
-									Call("window.location.reload").cmd
+									reload
 								} catch {
-									case e: Exception => {
-										Call("window.location.reload").cmd
-									}
+									case e: Exception => reload
 								}
-						}.getOrElse(Call("window.location.reload").cmd)
+						}.getOrElse(reload)
 					}
 
 					<tr>
@@ -246,4 +235,11 @@ object Mongo extends DispatchSnippet {
 					</tr>
 			}}
 	}
+
+	def download = {
+
+
+		"" #> <p></p>
+	}
+
 }

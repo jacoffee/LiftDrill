@@ -5,3 +5,13 @@
 记录一切与数据库相关的练习
 3、Ajax.scala
 记录一切与Lift Ajax // JS Ajax 相关的操作
+
+
+
+2014-05-04
+1、Download with SHtml.link and InMemoryResponse
+Remember that the essence of download is to
+	<1>  put things you wanna client to download in the input stream as byte code
+	<2> write byte code to client
+ every language and framework must have its implementation,
+ but wrapping them in the Response is a must.
