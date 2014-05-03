@@ -6,7 +6,7 @@ import net.liftweb.example.model.{Person => PersonModel}
 import net.liftweb.util.Helpers.strToSuperArrowAssoc
 import net.liftweb.util.Helpers.strToCssBindPromoter
 import net.liftweb.http.{S, SHtml, RequestVar, DispatchSnippet}
-import net.liftweb.http.js.JsCmds. { jsExpToJsCmd, Noop }
+import net.liftweb.http.js.JsCmds.{ Alert, jsExpToJsCmd, Noop }
 import net.liftweb.http.js.JE._
 import net.liftweb.http.js.{ HtmlFixer, JsCmds, JsExp, JsCmd }
 import net.liftweb.util.BindPlus.nodeSeqToBindable
@@ -139,8 +139,9 @@ object Mongo extends DispatchSnippet {
 												// SHtml.jsonCall(jsExpValue, JValue => JsCmd)
 												// when clicking the 确认修改按钮 首先获取要传递的数据 并进行验证然后 提交提交到服务器端进行相关处理
 												// 最后以JsCmd进行回调处理
+												SHtml.jsonCall(Call("sendAsynData.person", ValById(userId), ValById(emailId)), validateAndUpdate _) /*&
 												SHtml.jsonCall(
-													JsArray{
+													JsArray {
 														List(
 															ValById(userId),
 															ValById(emailId)
@@ -171,7 +172,7 @@ object Mongo extends DispatchSnippet {
 																}
 														}
 													}:(JValue => JsCmd)
-												)
+												)*/
 											)
 										)
 									).cmd
