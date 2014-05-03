@@ -1,42 +1,43 @@
 <html>
-<head>
-	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
-	<title data-lift="Menu.title">Programming Should Be Fun: %*%</title>
-	<link rel="stylesheet"  type="text/css" href="/static/css/index.css">
-	<script type="text/javascript" src="/static/scripts/jquery.min.js"></script>
-	<script type="text/javascript" src="/static/scripts/default.js"></script>
-	<!-- <script type="text/javascript" src="http://code.jquery.com/ui/1.10.4/jquery-ui.js" ></script> -->
-</head>
-<body>
-	<div class="container">
-		<div id="logo" class="group clearfix">
-			<img src="/images/moon.png"  alt="logo"  id="logo-mark" />
-			<img src="/images/type.png" alt="Things You Left On Moon" id="logo-type" />
-				 <div class="sidebar">
-				 	<div data-lift="menu.builder"></div>
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<title data-lift="Menu.title">Programming Should Be Fun: %*%</title>
+		<link rel="stylesheet"  type="text/css" href="/static/css/index.css">
+		<script type="text/javascript" src="/static/scripts/jquery.min.js"></script>
+		<script type="text/javascript" src="/static/scripts/default.js"></script>
+	</head>
+	<body>
+		<div class="container">
+			<div class="group clearfix">
+				<div class="logo">
+					<img src="/images/moon.png"  alt="logo"  id="logo-mark" />
+					<img src="/images/type.png" alt="Things You Left On Moon" id="logo-type" />
 				</div>
+				<div class="sidebar">
+					<div data-lift="menu.builder"></div>
+				</div>
+			</div>
+			<lift:bind name="content"></lift:bind>
 		</div>
-		<lift:bind name="content"></lift:bind>
-	</div>
-	<div data-lift="msg?id=page_alert;errorClass=error_alert;warningClass=warning_alert;noticeClass=notice_alert"></div>
-	<script type="text/javascript">
-		$(function(){
-			$(window).bind("mousewheel DOMMouseScroll", function(event){
-				// || will return true if one of the side is true
-				// as undefined will be considered as falsy when boolean value need
-				var scrollAngel = event.detail || event.wheelDelta //只要有一种情况满足 就会返回
-/*				console.log(" FireFox ");
-				console.log(event.detail);
-				console.log(" Other WebBrowser");
-				console.log(event.wheelDelta);*/
-				if (scrollAngel <  0) {
-					console.log(typeof event.preventDefault());
-					console.log(" Scroll Down");
-				} else {
-					console.log(" Scroll Up");
-				}
+		<div data-lift="msg?id=page_alert;errorClass=error_alert;warningClass=warning_alert;noticeClass=notice_alert"></div>
+		<script type="text/javascript">
+			$(function(){
+				$(window).bind("mousewheel DOMMouseScroll", function(event){
+					// || will return true if one of the side is true
+					// as undefined will be considered as falsy when boolean value need
+					var scrollAngel = event.detail || event.wheelDelta //只要有一种情况满足 就会返回
+	/*				console.log(" FireFox ");
+					console.log(event.detail);
+					console.log(" Other WebBrowser");
+					console.log(event.wheelDelta);*/
+					if (scrollAngel <  0) {
+						//console.log(typeof event.preventDefault());
+						// console.log(" Scroll Down");
+					} else {
+						// console.log(" Scroll Up");
+					}
+				});
 			});
-		});
-	</script>
-</body>
+		</script>
+	</body>
 </html>

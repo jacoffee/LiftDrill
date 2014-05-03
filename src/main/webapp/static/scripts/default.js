@@ -22,6 +22,8 @@ BasePopup = {
 
 	contentClassNames: ["content-wrapper"],
 
+	actionClassNames: ["process"],
+
 	zIndex: 99999,
 
 	setPosition: function() {
@@ -44,6 +46,10 @@ BasePopup = {
 	},
 	renderContentElement: function(contentHtml) {
 		this.getElement().find("." +this.contentClassNames[0]).html(contentHtml);
+		return this;
+	},
+	renderActionElement: function(actionObj) {
+		this.getElement().find("." +this.actionClassNames[0]).append(actionObj);
 		return this;
 	},
 	getElement: function() {
@@ -77,8 +83,16 @@ BlackOverlayPop = $.extend(
 		},
 		show: function() {
 			this.setPosition();
-			this.getElement().before(this.renderblackOverLay()).appendTo($("body")).show();
+			this.getElement().appendTo($("body")).show();
 		}
 	}
 )
 
+// First, define two simple functions
+var sum = function(x,y) { return x+y; };
+var square = function(x) { return x*x; };
+// Then use those functions with Array methods to compute mean and stddev
+var data = [1,1,3,5,5];
+var mean = data.reduce(sum)/data.length;
+var deviations = data.map(function(x) {return x-mean;});
+var stddev = Math.sqrt(deviations.map(square).reduce(sum)/(data.length-1));

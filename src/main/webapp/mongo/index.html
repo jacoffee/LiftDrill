@@ -23,7 +23,14 @@
 						});
 						$actionContainer.append(btn).append(alink);
 					});
+					console.log(typeof  content);
+
 					this.getElement();
+					function appendedAction() {
+						console.log(this === undefined); // in non-strict model, this refers to global varible
+						//return this.getElement().find(".process") ? $() : $actionContainer;
+					}
+					$("div").remove(".process");
 					this.renderTitleElement(title).renderContentElement(content).getElement().append($actionContainer);
 					this.show();
 				}
