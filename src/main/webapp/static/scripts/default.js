@@ -96,3 +96,22 @@ var data = [1,1,3,5,5];
 var mean = data.reduce(sum)/data.length;
 var deviations = data.map(function(x) {return x-mean;});
 var stddev = Math.sqrt(deviations.map(square).reduce(sum)/(data.length-1));
+
+// Array Constructor to define
+//---- []
+var a = new Array();
+//---- length is 10 b[0] = undefined
+var b = new Array(10);
+
+// iterate array
+var obj = {x: 1, y: 2, z: 3}
+var arr = Object.keys(obj)  // [x, y, z]
+var objValues = [];
+for (var i in arr) {
+	console.log(i); // key is  0 1 2
+	var key= arr[i];
+	var objValues = [];
+	//objValues.push(obj[key]);  // put the current value in the Array so in this way it only returns the last value
+	objValues[i] = obj[key]
+}
+console.log(objValues);
