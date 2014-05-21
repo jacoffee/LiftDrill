@@ -29,6 +29,7 @@ object Article  extends DispatchSnippet {
 			val q = search.is.trim
 			if (q.nonEmpty) ArticleModel.search(contentName, search.is) else ArticleModel.findAll
 		}
+		println(" searchedArticles " + searchedArticles)
 		"data-bind=article-records" #> {
 			(xhtml: NodeSeq) => {
 				searchedArticles.map { article =>
@@ -38,6 +39,8 @@ object Article  extends DispatchSnippet {
 						"data-bind=article-time *" #>  { ArticleModel.getPublishDate(article.created_at.get) } &
 						"data-bind=article-content" #> {
 							val articleContent = article.content.get
+							println(" Highlight Result")
+							println(ArticleModel.highlightText(search.is, contentName, articleContent) == null)
 							if (search.is.isEmpty) { <pre>{ articleContent }</pre> }
 							else { XhtmlParser(Source.fromString("<pre>"+ArticleModel.highlightText(search.is, contentName, articleContent) + "</pre>")) }
 						}
@@ -76,7 +79,7 @@ object Article  extends DispatchSnippet {
 					SHtml.text(initilaArticle.title.get,  t => articleToSave.is.title(t))
 				} &
 				"data-bind=content" #> {
-					SHtml.text(initilaArticle.content.get,  c => articleToSave.is.content(c))
+					SHtml.textarea(initilaArticle.content.get,  c => articleToSave.is.content(c))
 				} &
 				"data-bind=comment" #> {
 					SHtml.text(initilaArticle.comment.get,  c => articleToSave.is.comment(c))

@@ -9,7 +9,7 @@ import org.apache.lucene.util.Version
 import org.apache.lucene.document.{ Document, Field, NumericField }
 import org.apache.lucene.document.Field.{ Store, Index }
 import org.apache.lucene.search.{ IndexSearcher, TermQuery, Filter, NumericRangeQuery, PrefixQuery, BooleanQuery, BooleanClause, MatchAllDocsQuery }
-import org.apache.lucene.queryParser.QueryParser
+import org.apache.lucene.queryParser.{MultiFieldQueryParser, QueryParser}
 import org.apache.lucene.analysis.standard.StandardAnalyzer
 import org.apache.lucene.search.highlight.{SimpleHTMLFormatter, Highlighter, SimpleSpanFragmenter, QueryScorer}
 
@@ -141,7 +141,7 @@ class  Indexable  {
 		val iSearch = new IndexSearcher(indexedFilePosition)
 		// query parser translate user-enter query expression into query object for IndexSearcher to execute
 		// 确保和索引文档时所用的 分词器一致
-		val parser = new QueryParser(version, fieldName, new WhitespaceAnalyzer(version))
+		val parser = new MultiFieldQueryParser(version, Array(fieldName, "title"), new WhitespaceAnalyzer(version))
 		// "Amsterdam Or Shanghai"
 		val parsedQuery = parser.parse(searchString)
 		val topDocs = iSearch.search(parsedQuery, 5)

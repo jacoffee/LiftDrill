@@ -5,13 +5,13 @@ import net.liftweb.util.{ Mailer => LiftMailer }
 import net.liftweb.util.Mailer.{ From, To, Subject, PlainMailBodyType }
 import net.liftweb.util.Schedule
 import net.liftweb.util.Helpers._
+import java.util.Queue
 
 /**
  * Created by qbt-allen on 14-4-23.
  * for Mailer
  */
 object Mailer extends App {
-
 	// you can not send a mail with local server
 /*
 	LiftMailer.sendMail(

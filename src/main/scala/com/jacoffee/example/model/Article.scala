@@ -12,7 +12,7 @@ import org.apache.lucene.store.FSDirectory
 import org.apache.lucene.analysis.cn.smart.SmartChineseAnalyzer
 import org.apache.lucene.analysis.{WhitespaceAnalyzer, WordlistLoader, Analyzer}
 import org.apache.lucene.analysis.tokenattributes.{TypeAttribute, OffsetAttribute, PositionIncrementAttribute, CharTermAttribute}
-import org.apache.lucene.queryParser.QueryParser
+import org.apache.lucene.queryParser.{MultiFieldQueryParser, QueryParser}
 import org.apache.lucene.search.{TermQuery, IndexSearcher}
 import org.apache.lucene.search.highlight._
 import net.liftweb.record.field.StringField
@@ -78,10 +78,12 @@ object Article extends Article with MongoModelMeta[Article] {
 	def search(fieldName: String,  searchString: String) = {
 		// 获取命中文档ID
 		val iSearch = new IndexSearcher(FSDirectory.open(new File(indexedFilePosition)))
-		// val parser = new QueryParser(version, fieldName, new SmartChineseAnalyzer(version))
-		val termQuery = new TermQuery(new Term("content", searchString))
-		//val parsedQuery = parser.parse(searchString)
-		val topDocs = iSearch.search(termQuery, 5)
+		val parser =  new MultiFieldQueryParser(version, Array(fieldName, "title"), new SmartChineseAnalyzer(version))
+		val termQuery = new TermQuery(new Term(fieldName, searchString))
+		println(" Query ToString")
+		println(termQuery.toString(fieldName))
+		val parsedQuery = parser.parse(searchString)
+		val topDocs = iSearch.search(parsedQuery, 5)
 		val objectIds =topDocs.scoreDocs.toList.map {hitDoc =>
 			val actualDoc = iSearch.doc(hitDoc.doc)
 
@@ -107,12 +109,23 @@ object Article extends Article with MongoModelMeta[Article] {
 	def highlightText(search: String, fieldName:String, textToDivide: String) = {
 		// val tokenStream = TokenSources.getAnyTokenStream(iSearch.getIndexReader, hitDoc.doc, "content", actualDoc, analyzer)
 		val termQuery = new TermQuery(new Term(fieldName, search))
-		val scorer = new QueryScorer(termQuery, fieldName)
-		val formatter = new SimpleHTMLFormatter("""<span class="highlight">""", """</span>""")
+		println(" Term  of Thie QUery")
+		println(termQuery.getTerm)
 
-		val highlighter = new Highlighter(formatter, scorer)
+
+		val parser = new MultiFieldQueryParser(version, Array(fieldName, "title"), new SmartChineseAnalyzer(version))
+		// "Amsterdam Or Shanghai"
+		val parsedQuery = parser.parse(search)
+
+		val scorer = new QueryScorer(parsedQuery, fieldName)
+
+		val highlighter = new Highlighter(
+			new SimpleHTMLFormatter("""<span class="highlight">""", """</span>"""),
+			scorer
+		)
 		val tokenStream = analyzer.tokenStream(fieldName, new StringReader(textToDivide))
 
+		//  1000 stands for the size of byte that will be each hit
 		highlighter.setTextFragmenter(new SimpleSpanFragmenter(scorer,1000))
 		highlighter.getBestFragment(tokenStream, textToDivide)
 	}
