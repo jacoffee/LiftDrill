@@ -75,16 +75,16 @@ object Article extends Article with MongoModelMeta[Article] {
 		}
 	}
 
-	def search(fieldName: String,  searchString: String) = {
+	def search(fieldName: String, searchString: String) = {
 		// 获取命中文档ID
 		val iSearch = new IndexSearcher(FSDirectory.open(new File(indexedFilePosition)))
 		val parser =  new MultiFieldQueryParser(version, Array(fieldName, "title"), new SmartChineseAnalyzer(version))
 		val termQuery = new TermQuery(new Term(fieldName, searchString))
 		println(" Query ToString")
 		println(termQuery.toString(fieldName))
-		val parsedQuery = parser.parse(searchString)
-		val topDocs = iSearch.search(parsedQuery, 5)
-		val objectIds =topDocs.scoreDocs.toList.map {hitDoc =>
+		//val parsedQuery = parser.parse(searchString)
+		val topDocs = iSearch.search(termQuery, 5)
+		val objectIds =topDocs.scoreDocs.toList.map { hitDoc =>
 			val actualDoc = iSearch.doc(hitDoc.doc)
 
 			// 然后发现这种方式是走不通的 因为我根本就没有 Store Content Field 所以
@@ -113,11 +113,11 @@ object Article extends Article with MongoModelMeta[Article] {
 		println(termQuery.getTerm)
 
 
-		val parser = new MultiFieldQueryParser(version, Array(fieldName, "title"), new SmartChineseAnalyzer(version))
-		// "Amsterdam Or Shanghai"
-		val parsedQuery = parser.parse(search)
+//		val parser = new MultiFieldQueryParser(version, Array(fieldName, "title"), new SmartChineseAnalyzer(version))
+//		// "Amsterdam Or Shanghai"
+//		val parsedQuery = parser.parse(search)
 
-		val scorer = new QueryScorer(parsedQuery, fieldName)
+		val scorer = new QueryScorer(termQuery, fieldName)
 
 		val highlighter = new Highlighter(
 			new SimpleHTMLFormatter("""<span class="highlight">""", """</span>"""),
