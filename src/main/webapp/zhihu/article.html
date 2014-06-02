@@ -37,6 +37,11 @@
 					});
 				}
 			});
+			$("#q").bind("keypress", function(event){
+				if (event.keyCode === 13) {
+					$(this).click();
+				}
+			});
 		});
 	</script>
 </div>
