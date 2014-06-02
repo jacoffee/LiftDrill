@@ -6,6 +6,7 @@ import scala.io.Source
 import net.liftweb.http._
 import net.liftweb.util.Helpers.strToCssBindPromoter
 import net.liftweb.common.{ Empty, Full }
+import net.liftweb.http.js.JsCmds.{ jsExpToJsCmd, Noop }
 import com.jacoffee.example.model.{ Article => ArticleModel }
 import com.jacoffee.example.util.Helpers.{ isBlank }
 
@@ -16,7 +17,7 @@ object Article  extends DispatchSnippet {
 
 	def dispatch = {
 		case "searchBox" => searchBox
-		case "create" => create
+		case "create" => createArticle
 		case "list" => list
 	}
 
@@ -32,7 +33,6 @@ object Article  extends DispatchSnippet {
 			val q = search.is.trim
 			if (q.nonEmpty) ArticleModel.search(contentName, q) else ArticleModel.findAll
 		}
-		println(" searchedArticles " + searchedArticles)
 		implicit def stringToNode(input: String) = Text(input)
 		def highlightText(text: String) = ArticleModel.highlightText(search.is, contentName, text)
 		"data-bind=article-records" #> {
@@ -46,6 +46,16 @@ object Article  extends DispatchSnippet {
 							val articleContent = article.content.get
 							if (search.is.isEmpty) { <pre>{ articleContent }</pre> }
 							else <pre>{ toUnparsedSafely(articleContent)(highlightText _).getOrElse(articleContent: NodeSeq) } </pre>
+						} &
+						"data-bind=article-action [onclick]" #> {
+							SHtml.ajaxInvoke(
+								() => {
+									ArticleModel.getBoxById(article.idValue).foreach { article =>
+										article.like(article.like.get + 1).save(true)
+									}
+									Noop
+								}
+							)
 						}
 					)(xhtml)
 				}
@@ -56,7 +66,7 @@ object Article  extends DispatchSnippet {
 	object articleToSave extends RequestVar({
 		ArticleModel.createRecord
 	})
-	def create = {
+	def createArticle = {
 
 		def create {
 			val article = ArticleModel.createRecord
@@ -66,9 +76,7 @@ object Article  extends DispatchSnippet {
 			article.content(articleInReq.content.get)
 			article.comment(articleInReq.comment.get)
 			article.tags(List("政治", "文化", "教育"))
-			article.save(true)
-			// index the article
-			ArticleModel.indexArticle(article)
+			article.save(true)  // after save hook will tigger indexing operation
 			S.redirectTo("/zhihu/article")
 		}
 		val initilaArticle = articleToSave.is

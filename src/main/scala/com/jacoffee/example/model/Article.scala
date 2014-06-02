@@ -5,17 +5,17 @@ import java.util.Calendar
 import java.io.{StringReader, Reader, File}
 import scala.io.{Codec, Source}
 import scala.collection.JavaConversions.setAsJavaSet
-import org.apache.lucene.document.{ Field, Document }
+import org.apache.lucene.document.{NumericField, Field, Document}
 import org.apache.lucene.document.Field.{ TermVector, Index, Store }
 import org.apache.lucene.index.{Term, IndexWriterConfig, IndexWriter}
 import org.apache.lucene.store.FSDirectory
 import org.apache.lucene.analysis.cn.smart.SmartChineseAnalyzer
 import org.apache.lucene.analysis.{WhitespaceAnalyzer, WordlistLoader, Analyzer}
-import org.apache.lucene.analysis.tokenattributes.{TypeAttribute, OffsetAttribute, PositionIncrementAttribute, CharTermAttribute}
+import org.apache.lucene.analysis.tokenattributes.{ TypeAttribute, OffsetAttribute, PositionIncrementAttribute, CharTermAttribute }
 import org.apache.lucene.queryParser.{MultiFieldQueryParser, QueryParser}
-import org.apache.lucene.search.{TermQuery, IndexSearcher}
+import org.apache.lucene.search.{SortField, Sort, TermQuery, IndexSearcher}
 import org.apache.lucene.search.highlight._
-import net.liftweb.record.field.StringField
+import net.liftweb.record.field.{ StringField, IntField }
 import net.liftweb.mongodb.record.field.{MongoListField, ObjectIdPk}
 import net.liftweb.mongodb.record.{MongoRecord, MongoMetaRecord}
 import com.jacoffee.example.util.{Helpers, Config}
@@ -38,38 +38,17 @@ object Article extends Article with MongoModelMeta[Article] {
 
 	val indexedFilePosition = getIndexedFilePosition("article")
 
-	def indexArticle(article: Article) = {
-		// 要养成关闭流的习惯 就像查询数据库一样敏感
-		// where to save the index
-		val directory = FSDirectory.open(new File(indexedFilePosition))
-		val config = new IndexWriterConfig(version, smartChineseAnalyzer)
-		 val indexWriter = new IndexWriter(directory, config)
-
-		val doc = new Document
-		// idValue is ObjectId[]
-		// if Index.NO is specified for a field,you must also specify TermVector.NO
-		doc.add(new Field(article.id.name, article.idValue.toString, Store.YES, Index.NOT_ANALYZED_NO_NORMS, Field.TermVector.NO))
-		doc.add(new Field(article.author.name, article.author.get, Store.YES, Index.NOT_ANALYZED))
-		doc.add(new Field(article.title.name, article.title.get, Store.YES, Index.ANALYZED))
-		doc.add(new Field(article.content.name, article.content.get, Store.YES, Index.ANALYZED_NO_NORMS, Field.TermVector.YES))
-		doc.add(new Field(article.comment.name, article.comment.get, Store.NO, Index.ANALYZED))
-
-		indexWriter.addDocument(doc)
-		try {
-			indexWriter.close
-		} finally {
-			if (IndexWriter.isLocked(directory)) {
-				IndexWriter.unlock(directory)
-			}
-		}
-	}
-
+	// class to build Sort and Query Info to better display Article to end-user
+	// class QueryInfo()
 	def search(fieldName: String, searchString: String) = {
 		// 获取命中文档ID
 		val iSearch = new IndexSearcher(FSDirectory.open(new File(indexedFilePosition)))
-		val parser =  new MultiFieldQueryParser(version, Array(fieldName, "title"), new SmartChineseAnalyzer(version))
+		val parser =  new MultiFieldQueryParser(version, Array(fieldName, title.name), new SmartChineseAnalyzer(version))
 		val parsedQuery = parser.parse(searchString)
-		val topDocs = iSearch.search(parsedQuery, 5)
+		// add sort field
+		val sortField = new SortField(like.name, like.get, true)
+		val sort = new Sort(sortField)
+		val topDocs = iSearch.search(parsedQuery, 5, sort)
 		val objectIds =topDocs.scoreDocs.toList.map { hitDoc =>
 			val actualDoc = iSearch.doc(hitDoc.doc)
 
@@ -84,12 +63,41 @@ object Article extends Article with MongoModelMeta[Article] {
 			val termVectorAndFreq = iSearch.getIndexReader.getTermFreqVector(hitDoc.doc, "content")
 			// println(termVectorAndFreq.getTerms)
 			// println(termVectorAndFreq)
+			println(" like number" + actualDoc.get(like.name))
 			actualDoc.get(id.name)
 		}
 		// obtain tokenStream after indexing without setting TermVector
 		// (IndexReader reader, int docId, String field, Document doc, Analyzer analyzer)
 		// 根据ID 再次查询
 		findAll( objectIds.flatMap{ oid => this.toObjectIdOption(oid) })
+	}
+
+	def  indexArticle(article: Article) = {
+		// 要养成关闭流的习惯 就像查询数据库一样敏感
+		// where to save the index
+		val directory = FSDirectory.open(new File(indexedFilePosition))
+		val config = new IndexWriterConfig(version, smartChineseAnalyzer)
+		val indexWriter = new IndexWriter(directory, config)
+
+		val doc = new Document
+		// idValue is ObjectId[]
+		// if Index.NO is specified for a field,you must also specify TermVector.NO
+		doc.add(new Field(article.id.name, article.idValue.toString, Store.YES, Index.NOT_ANALYZED_NO_NORMS, Field.TermVector.NO))
+		doc.add(new Field(article.author.name, article.author.get, Store.YES, Index.NOT_ANALYZED))
+		doc.add(new Field(article.title.name, article.title.get, Store.YES, Index.ANALYZED))
+		doc.add(new Field(article.content.name, article.content.get, Store.YES, Index.ANALYZED_NO_NORMS, Field.TermVector.YES))
+		doc.add(new Field(article.comment.name, article.comment.get, Store.NO, Index.ANALYZED))
+		// enhancement of original record  you can generate all kinds of  meta-records and put them in Lucene Index
+		doc.add(new NumericField(article.like.name, Store.NO, false).setIntValue(article.like.get))
+
+		indexWriter.addDocument(doc)
+		try {
+			indexWriter.close
+		} finally {
+			if (IndexWriter.isLocked(directory)) {
+				IndexWriter.unlock(directory)
+			}
+		}
 	}
 
 	def highlightText(search: String, fieldName:String, textToDivide: String) = {
@@ -134,8 +142,12 @@ class Article extends MongoModel[Article] {
 	object comment extends StringField[Article](this, 100) {
 		val fieldLabel = "评论"
 	}
+	object like extends IntField[Article](this) {
+		override val defaultValue = 0
+	}
 	override def afterSave {
 		println(" New Or Update Job!!")
+		meta.indexArticle(this)
 		super.afterSave
 	}
 }

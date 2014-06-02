@@ -9,11 +9,12 @@ PageAlert = function() {
 var Helper = {
 	isEmpty: function (str) {
 		// === strictly equation str.length has to be number
+		// == will automatically trigger conversion string  to int
 		return !str || str.length === 0;
 	},
 	isNullable: function(value) {
 		return value === null || value === undefined;
-	},
+	}
 },
 BasePopup = {
 	classNames: ['model-dialog'],
@@ -107,7 +108,7 @@ var b = new Array(10);
 var obj = {x: 1, y: 2, z: 3}
 var arr = Object.keys(obj)  // [x, y, z]
 var objValues = [];
-for (var i in arr) {
+for (var i in arr) { // this is used to converse object rather array
 	console.log(i); // key is  0 1 2
 	var key= arr[i];
 	var objValues = [];

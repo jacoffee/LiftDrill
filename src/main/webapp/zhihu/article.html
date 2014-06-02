@@ -7,7 +7,7 @@
 			<div class="article-meta">
 				<span class="article-meta-author" data-bind="article-author">Instagram</span>
 				<span class="article-meta-time" data-bind="article-time">2014年04月20日 01:36</span>
-				<span class="article-action">
+				<span class="article-action" data-bind="article-action">
 					<i class="like-btn"></i>
 					喜欢
 					<span class="num">0</span>
@@ -22,21 +22,21 @@
 	<script type="text/javascript">
 		$(function(){
 			// click heart btn ----the up  will add one send Jsob req in Lift
-			$(".article-action").click(function(){
-				var $likeNum =$(this).find(" .num");
-				if(!Helper.isEmpty($likeNum.text())) {
-					$.ajax({
-						type: "POST",
-						data: { "like": parseInt($likeNum.text()) },
-						url: "/zhihu/article/like.json",
-						success: function(data) {
-							// set value operation
-							$likeNum.text(data.updatedLike);
-						},
-						dataType: "json"
-					});
-				}
-			});
+//			$(".article-action").click(function(){
+//				var $likeNum =$(this).find(" .num");
+//				if(!Helper.isEmpty($likeNum.text())) {
+//					$.ajax({
+//						type: "POST",
+//						data: { "like": parseInt($likeNum.text()) },
+//						url: "/zhihu/article/like.json",
+//						success: function(data) {
+//							// set value operation
+//							$likeNum.text(data.updatedLike);
+//						},
+//						dataType: "json"
+//					});
+//				}
+//			});
 			$("#q").bind("keypress", function(event){
 				if (event.keyCode === 13) {
 					$(this).click();
