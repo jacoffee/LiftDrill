@@ -18,7 +18,8 @@ import org.apache.lucene.search.highlight._
 import net.liftweb.record.field.StringField
 import net.liftweb.mongodb.record.field.{MongoListField, ObjectIdPk}
 import net.liftweb.mongodb.record.{MongoRecord, MongoMetaRecord}
-import com.jacoffee.example.util.Config
+import com.jacoffee.example.util.{Helpers, Config}
+import com.jacoffee.example.util.Config.Lucene.{ version, getIndexedFilePosition, getStopWordsSet, smartChineseAnalyzer }
 
 /**
  * Created by qbt-allen on 20114-4-19.
@@ -35,25 +36,13 @@ object Article extends Article with MongoModelMeta[Article] {
 		d.format(cal.getTime)
 	}
 
-	val version = Config.Lucene.version
-	val indexedFilePosition = (Config.Path.path_shared :: Config.Lucene.path :: "article" :: Nil).mkString("\\")
-	val analyzer = new SmartChineseAnalyzer(version, getStopWordsSet)
-	def getStopWordsSet = {
-		//Source.fromInputStream(this.getClass.getClassLoader.getResourceAsStream("lucene/stopwords.txt"))(Codec.UTF8).getLines.toSet
-		val stopWordSrc = Source.fromInputStream(this.getClass.getClassLoader.getResourceAsStream("lucene/stopwords.txt"))(Codec.UTF8)
-		// println("Orginal Ones" +stopWordSrc.getLines.toList)
-		try {
-			WordlistLoader.getWordSet(classOf[Article], "/lucene/stopwords.txt", "//")
-		} finally {
-			stopWordSrc.close
-		}
-	}
+	val indexedFilePosition = getIndexedFilePosition("article")
 
 	def indexArticle(article: Article) = {
 		// 要养成关闭流的习惯 就像查询数据库一样敏感
 		// where to save the index
 		val directory = FSDirectory.open(new File(indexedFilePosition))
-		val config = new IndexWriterConfig(version, analyzer)
+		val config = new IndexWriterConfig(version, smartChineseAnalyzer)
 		 val indexWriter = new IndexWriter(directory, config)
 
 		val doc = new Document
@@ -79,11 +68,8 @@ object Article extends Article with MongoModelMeta[Article] {
 		// 获取命中文档ID
 		val iSearch = new IndexSearcher(FSDirectory.open(new File(indexedFilePosition)))
 		val parser =  new MultiFieldQueryParser(version, Array(fieldName, "title"), new SmartChineseAnalyzer(version))
-		val termQuery = new TermQuery(new Term(fieldName, searchString))
-		println(" Query ToString")
-		println(termQuery.toString(fieldName))
-		//val parsedQuery = parser.parse(searchString)
-		val topDocs = iSearch.search(termQuery, 5)
+		val parsedQuery = parser.parse(searchString)
+		val topDocs = iSearch.search(parsedQuery, 5)
 		val objectIds =topDocs.scoreDocs.toList.map { hitDoc =>
 			val actualDoc = iSearch.doc(hitDoc.doc)
 
@@ -108,26 +94,20 @@ object Article extends Article with MongoModelMeta[Article] {
 
 	def highlightText(search: String, fieldName:String, textToDivide: String) = {
 		// val tokenStream = TokenSources.getAnyTokenStream(iSearch.getIndexReader, hitDoc.doc, "content", actualDoc, analyzer)
-		val termQuery = new TermQuery(new Term(fieldName, search))
-		println(" Term  of Thie QUery")
-		println(termQuery.getTerm)
-
-
-//		val parser = new MultiFieldQueryParser(version, Array(fieldName, "title"), new SmartChineseAnalyzer(version))
-//		// "Amsterdam Or Shanghai"
-//		val parsedQuery = parser.parse(search)
-
-		val scorer = new QueryScorer(termQuery, fieldName)
-
+		val parser = new MultiFieldQueryParser(version, Array(fieldName, "title"), smartChineseAnalyzer)
+		val parsedQuery = parser.parse(search)
+		val scorer = new QueryScorer(parsedQuery, null)
 		val highlighter = new Highlighter(
 			new SimpleHTMLFormatter("""<span class="highlight">""", """</span>"""),
 			scorer
 		)
-		val tokenStream = analyzer.tokenStream(fieldName, new StringReader(textToDivide))
-
-		//  1000 stands for the size of byte that will be each hit
+		// String getBestFragment(Analyzer analyzer, String fieldName,String text)
+		// 1000 stands for the size of byte that will be each hit
+		def toOptional(text: String) = if (Helpers.isBlank(text)) None else Some(text)
+		def geBestFragment(textToDivide: String) = toOptional(highlighter.getBestFragment(smartChineseAnalyzer, fieldName, textToDivide))
 		highlighter.setTextFragmenter(new SimpleSpanFragmenter(scorer,1000))
-		highlighter.getBestFragment(tokenStream, textToDivide)
+		//  @return highlighted text fragment or null if no terms found so you have another consideration
+		geBestFragment(textToDivide)
 	}
 
 	def AnalyzerUtils(analyzer: Analyzer, reader: Reader) = {

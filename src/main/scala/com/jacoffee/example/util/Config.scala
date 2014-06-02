@@ -3,6 +3,9 @@ package com.jacoffee.example.util
 import org.apache.lucene.util.Version
 import net.liftweb.util.Props
 import net.liftweb.mongodb.MongoIdentifier
+import org.apache.lucene.analysis.cn.smart.SmartChineseAnalyzer
+import scala.io.{Codec, Source}
+import org.apache.lucene.analysis.WordlistLoader
 
 /**
  * Created by qbt-allen on 14-4-23.
@@ -17,9 +20,22 @@ object Config {
 		}
 	}
 
+	class Lucene {}
 	object Lucene {
 		val version = Version.LUCENE_34
 		val path = "lucene"
+		def getIndexedFilePosition(indexName: String) = (Path.path_shared :: path :: indexName :: Nil).mkString("\\")
+		def getStopWordsSet = {
+			//Source.fromInputStream(this.getClass.getClassLoader.getResourceAsStream("lucene/stopwords.txt"))(Codec.UTF8).getLines.toSet
+			val stopWordSrc = Source.fromInputStream(this.getClass.getClassLoader.getResourceAsStream("lucene/stopwords.txt"))(Codec.UTF8)
+			// println("Orginal Ones" +stopWordSrc.getLines.toList)
+			try {
+				WordlistLoader.getWordSet(classOf[Lucene], "/lucene/stopwords.txt", "//")
+			} finally {
+				stopWordSrc.close
+			}
+		}
+		val smartChineseAnalyzer = new SmartChineseAnalyzer(version, getStopWordsSet)
 	}
 
 	object Mongo {

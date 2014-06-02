@@ -1,14 +1,13 @@
 package com.jacoffee.example.snippet
 
-import scala.xml.{Xhtml, NodeSeq}
+import scala.xml.{Text, Unparsed, Utility, NodeSeq}
 import scala.xml.parsing.XhtmlParser
 import scala.io.Source
 import net.liftweb.http._
 import net.liftweb.util.Helpers.strToCssBindPromoter
+import net.liftweb.common.{ Empty, Full }
 import com.jacoffee.example.model.{ Article => ArticleModel }
-import net.liftweb.common.{Empty, Full}
-import net.liftweb.json.JsonAST.JObject
-import net.liftweb.http.rest.RestHelper
+import com.jacoffee.example.util.Helpers.{ isBlank }
 
 /**
  * Created by qbt-allen on 14-4-19.
@@ -23,26 +22,30 @@ object Article  extends DispatchSnippet {
 
 	object search extends RequestVar(S.param("search").openOr(""))
 	def searchBox = "*" #> SHtml.text(search.is, s => search(s), "placeholder" ->"搜索留言或人...", "name" ->"search", "id" ->"q")
+
+	def toUnparsedSafely(unSafeText: String)(safeTextToUnparsed: String => Option[String]) =
+		Option(unSafeText).map(Utility.escape _).flatMap(safeTextToUnparsed).map(Unparsed(_))
+
 	def list = {
 		val contentName = ArticleModel.content.name
 		val searchedArticles = {
 			val q = search.is.trim
-			if (q.nonEmpty) ArticleModel.search(contentName, search.is) else ArticleModel.findAll
+			if (q.nonEmpty) ArticleModel.search(contentName, q) else ArticleModel.findAll
 		}
 		println(" searchedArticles " + searchedArticles)
+		implicit def stringToNode(input: String) = Text(input)
+		def highlightText(text: String) = ArticleModel.highlightText(search.is, contentName, text)
 		"data-bind=article-records" #> {
 			(xhtml: NodeSeq) => {
 				searchedArticles.map { article =>
 					(
-						"data-bind=article-title *" #>  { article.title.get } &
-						"data-bind=article-author *" #>  { article.author.get } &
-						"data-bind=article-time *" #>  { ArticleModel.getPublishDate(article.created_at.get) } &
+						"data-bind=article-title *" #> article.title.get &
+						"data-bind=article-author *" #> article.author.get &
+						"data-bind=article-time *" #> ArticleModel.getPublishDate(article.created_at.get) &
 						"data-bind=article-content" #> {
 							val articleContent = article.content.get
-							println(" Highlight Result")
-							println(ArticleModel.highlightText(search.is, contentName, articleContent) == null)
 							if (search.is.isEmpty) { <pre>{ articleContent }</pre> }
-							else { XhtmlParser(Source.fromString("<pre>"+ArticleModel.highlightText(search.is, contentName, articleContent) + "</pre>")) }
+							else <pre>{ toUnparsedSafely(articleContent)(highlightText _).getOrElse(articleContent: NodeSeq) } </pre>
 						}
 					)(xhtml)
 				}
