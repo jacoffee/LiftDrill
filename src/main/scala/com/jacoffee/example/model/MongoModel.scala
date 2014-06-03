@@ -48,7 +48,7 @@ trait MongoModel[ModelType <: MongoModel[ModelType]] extends MongoRecord[ModelTy
 // trait MongoMetaRecord[BaseRecord <: MongoRecord[BaseRecord]]
 trait MongoModelMeta[ModelType <: MongoModel[ModelType]] extends MongoModel[ModelType] with MongoMetaRecord[ModelType] { self: ModelType =>
 	def toObjectIdOption(idString: String) = if (ObjectId.isValid(idString)) Some(new ObjectId(idString)) else None
-
+	implicit def objectIdToString(id: ObjectId) = id.toString
 	// def invokeBeforeSave(model: ModelType) = foreachCallback(model, _.beforeSave)
 	// def invokeAfterSave(model: ModelType) = foreachCallback(model, _.afterSave)
 

@@ -2,8 +2,8 @@ package com.jacoffee.example.model
 
 import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.io.{StringReader, Reader, File}
-import scala.io.{Codec, Source}
+import java.io.{ StringReader, Reader, File }
+import scala.io.{ Codec, Source }
 import scala.collection.JavaConversions.setAsJavaSet
 import org.apache.lucene.document.{NumericField, Field, Document}
 import org.apache.lucene.document.Field.{ TermVector, Index, Store }
@@ -18,8 +18,11 @@ import org.apache.lucene.search.highlight._
 import net.liftweb.record.field.{ StringField, IntField }
 import net.liftweb.mongodb.record.field.{MongoListField, ObjectIdPk}
 import net.liftweb.mongodb.record.{MongoRecord, MongoMetaRecord}
-import com.jacoffee.example.util.{Helpers, Config}
+import com.jacoffee.example.util.{ Helpers, Config }
 import com.jacoffee.example.util.Config.Lucene.{ version, getIndexedFilePosition, getStopWordsSet, smartChineseAnalyzer }
+import net.liftweb.json.JsonAST.JObject
+import net.liftweb.json.JsonDSL.{ pair2jvalue, string2jvalue, int2jvalue, seq2jvalue }
+// pay attention to the difference of seq2jvalue and list2jvalue
 
 /**
  * Created by qbt-allen on 20114-4-19.
@@ -69,7 +72,9 @@ object Article extends Article with MongoModelMeta[Article] {
 		// (IndexReader reader, int docId, String field, Document doc, Analyzer analyzer)
 		// 根据ID 再次查询
 		// XXX Pay attention: this is will be ordered by ids so the lucene sort takes effect but overriden by DataBase order
-		findAll(objectIds.flatMap{ oid => toObjectIdOption(oid) })
+		//  def findAll(qry: JObject, sort: JObject, opts: FindOption*): List[BaseRecord] =
+		val ids = objectIds.flatMap{ oid => toObjectIdOption(oid) }.map(_.toString)
+		findAll(idFieldName -> ("$in", ids), like.name -> -1)
 	}
 
 	def  indexArticle(article: Article) = {
