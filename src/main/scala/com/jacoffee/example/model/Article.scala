@@ -43,11 +43,10 @@ object Article extends Article with MongoModelMeta[Article] {
 	def search(fieldName: String, searchString: String) = {
 		// 获取命中文档ID
 		val iSearch = new IndexSearcher(FSDirectory.open(new File(indexedFilePosition)))
-		val parser =  new MultiFieldQueryParser(version, Array(fieldName, title.name), new SmartChineseAnalyzer(version))
+		val parser =  new MultiFieldQueryParser(version, Array(fieldName, title.name), smartChineseAnalyzer)
 		val parsedQuery = parser.parse(searchString)
 		// add sort field
-		val sortField = new SortField(like.name, like.get, true)
-		val sort = new Sort(sortField)
+		val sort = new Sort(new SortField(like.name,SortField.INT, true))
 		val topDocs = iSearch.search(parsedQuery, 5, sort)
 		val objectIds =topDocs.scoreDocs.toList.map { hitDoc =>
 			val actualDoc = iSearch.doc(hitDoc.doc)
@@ -63,13 +62,14 @@ object Article extends Article with MongoModelMeta[Article] {
 			val termVectorAndFreq = iSearch.getIndexReader.getTermFreqVector(hitDoc.doc, "content")
 			// println(termVectorAndFreq.getTerms)
 			// println(termVectorAndFreq)
-			println(" like number" + actualDoc.get(like.name))
+			println(" article likenum" +  actualDoc.get(like.name)) // 10 - 9 - 6
 			actualDoc.get(id.name)
 		}
 		// obtain tokenStream after indexing without setting TermVector
 		// (IndexReader reader, int docId, String field, Document doc, Analyzer analyzer)
 		// 根据ID 再次查询
-		findAll( objectIds.flatMap{ oid => this.toObjectIdOption(oid) })
+		// XXX Pay attention: this is will be ordered by ids so the lucene sort takes effect but overriden by DataBase order
+		findAll(objectIds.flatMap{ oid => toObjectIdOption(oid) })
 	}
 
 	def  indexArticle(article: Article) = {
@@ -88,7 +88,7 @@ object Article extends Article with MongoModelMeta[Article] {
 		doc.add(new Field(article.content.name, article.content.get, Store.YES, Index.ANALYZED_NO_NORMS, Field.TermVector.YES))
 		doc.add(new Field(article.comment.name, article.comment.get, Store.NO, Index.ANALYZED))
 		// enhancement of original record  you can generate all kinds of  meta-records and put them in Lucene Index
-		doc.add(new NumericField(article.like.name, Store.NO, false).setIntValue(article.like.get))
+		doc.add(new NumericField(article.like.name, Store.YES, true).setIntValue(article.like.get))
 
 		indexWriter.addDocument(doc)
 		try {
