@@ -5,7 +5,7 @@ import net.liftweb.mongodb.record.field.ObjectIdPk
 import net.liftweb.record.field.DateTimeField
 import net.liftweb.record.LifecycleCallbacks
 import net.liftweb.json.JsonAST.{JObject, JValue}
-import net.liftweb.json.JsonDSL.{ pair2jvalue, string2jvalue, seq2jvalue, list2jvalue }
+import net.liftweb.json.JsonDSL.{ pair2jvalue, string2jvalue, seq2jvalue, list2jvalue, map2jvalue, int2jvalue }
 import java.util.Calendar
 import org.bson.types.ObjectId
 
@@ -49,9 +49,12 @@ trait MongoModelMeta[ModelType <: MongoModel[ModelType]] extends MongoModel[Mode
 	implicit def objectIdToString(id: ObjectId) = id.toString
 	implicit def objectIdsToListString(ids: List[ObjectId])= ids.map(objectIdToString)
 
+	implicit def stringListToObjectIds(idStringList: List[String]) =  idStringList.flatMap(toObjectIdOption)
+
 	// def invokeBeforeSave(model: ModelType) = foreachCallback(model, _.beforeSave)
 	// def invokeAfterSave(model: ModelType) = foreachCallback(model, _.afterSave)
 
 	def getBoxById(id: ObjectId) = find(idFieldName -> id.toString)
+	// def findIn(ids: List[ObjectId], sort: Map[String, Int] = Map.empty) = findAll(id.name -> ("$in" -> objectIdsToListString(ids)), sort)
 	def findIn(ids: List[ObjectId]) = findAll(id.name -> ("$in" -> objectIdsToListString(ids)))
 }
