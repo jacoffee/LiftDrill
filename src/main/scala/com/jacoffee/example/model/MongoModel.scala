@@ -4,13 +4,11 @@ import net.liftweb.mongodb.record.{ MongoRecord, MongoMetaRecord }
 import net.liftweb.mongodb.record.field.ObjectIdPk
 import net.liftweb.record.field.DateTimeField
 import net.liftweb.record.LifecycleCallbacks
-import net.liftweb.json.JsonDSL.{ pair2jvalue, string2jvalue }
+import net.liftweb.json.JsonAST.{JObject, JValue}
+import net.liftweb.json.JsonDSL.{ pair2jvalue, string2jvalue, seq2jvalue, list2jvalue }
 import java.util.Calendar
 import org.bson.types.ObjectId
 
-/**
- * Created by qbt-allen on 14-4-19.
- */
 // trait MongoRecord[MyType <: MongoRecord[MyType]] extends BsonRecord[MyType]
 trait MongoModel[ModelType <: MongoModel[ModelType]] extends MongoRecord[ModelType]  with ObjectIdPk[ModelType] { self: ModelType =>
 	def meta: MongoModelMeta[ModelType]
@@ -49,8 +47,11 @@ trait MongoModel[ModelType <: MongoModel[ModelType]] extends MongoRecord[ModelTy
 trait MongoModelMeta[ModelType <: MongoModel[ModelType]] extends MongoModel[ModelType] with MongoMetaRecord[ModelType] { self: ModelType =>
 	def toObjectIdOption(idString: String) = if (ObjectId.isValid(idString)) Some(new ObjectId(idString)) else None
 	implicit def objectIdToString(id: ObjectId) = id.toString
+	implicit def objectIdsToListString(ids: List[ObjectId])= ids.map(objectIdToString)
+
 	// def invokeBeforeSave(model: ModelType) = foreachCallback(model, _.beforeSave)
 	// def invokeAfterSave(model: ModelType) = foreachCallback(model, _.afterSave)
 
 	def getBoxById(id: ObjectId) = find(idFieldName -> id.toString)
+	def findIn(ids: List[ObjectId]) = findAll(id.name -> ("$in" -> objectIdsToListString(ids)))
 }

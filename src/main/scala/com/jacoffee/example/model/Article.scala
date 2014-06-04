@@ -13,7 +13,7 @@ import org.apache.lucene.analysis.cn.smart.SmartChineseAnalyzer
 import org.apache.lucene.analysis.{WhitespaceAnalyzer, WordlistLoader, Analyzer}
 import org.apache.lucene.analysis.tokenattributes.{ TypeAttribute, OffsetAttribute, PositionIncrementAttribute, CharTermAttribute }
 import org.apache.lucene.queryParser.{MultiFieldQueryParser, QueryParser}
-import org.apache.lucene.search.{SortField, Sort, TermQuery, IndexSearcher}
+import org.apache.lucene.search.{ SortField, Sort, TermQuery, IndexSearcher }
 import org.apache.lucene.search.highlight._
 import net.liftweb.record.field.{ StringField, IntField }
 import net.liftweb.mongodb.record.field.{MongoListField, ObjectIdPk}
