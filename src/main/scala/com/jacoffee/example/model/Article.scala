@@ -75,7 +75,7 @@ object Article extends Article with MongoModelMeta[Article] {
 		// 根据ID 再次查询
 		// XXX Pay attention: this is will be ordered by ids so the lucene sort takes effect but overriden by DataBase order
 		// def findAll(qry: JObject, sort: JObject, opts: FindOption*): List[BaseRecord] =
-		val modelsById = findIn(objectIds: List[ObjectId]).groupBy(_.idValue)
+		val modelsById = findIn(objectIds).groupBy(_.idValue)
 		(objectIds: List[ObjectId]).flatMap(id => modelsById.get(id).flatMap(_.headOption))
 	}
 

@@ -3,7 +3,7 @@ package net.liftweb.example.snippet
 import net.liftweb.http.{RequestVar, S}
 import net.liftweb.http.js.JsCmd
 import net.liftweb.util.Props
-import xml.NodeSeq
+import scala.xml.NodeSeq
 
 
 // Github source configuration
