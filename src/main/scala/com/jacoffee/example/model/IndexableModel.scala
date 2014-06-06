@@ -80,7 +80,7 @@ trait IndexableModelMeta[ModelType <: IndexableModel[ModelType]] extends Indexab
 	 * @param sortInfoOption
 	 * @return hit Document and the Total Number
 	 */
-	def search(search: String, query: Query, fieldNameArray: Array[String], sortInfoOption: Option[SortInfo] = None) = {
+	def luceneSearch(search: String, query: Query, fieldNameArray: Array[String], sortInfoOption: Option[SortInfo] = None) = {
 		val parsedQuery = new MultiFieldQueryParser(version, fieldNameArray, smartChineseAnalyzer).parse(search)
 		val indexSearcher = cachedIndexSearcher.get
 		val topDocs = sortInfoOption match {
@@ -99,14 +99,6 @@ trait IndexableModelMeta[ModelType <: IndexableModel[ModelType]] extends Indexab
 			),
 			topDocs.totalHits
 		)
-//		val objectIds =topDocs.scoreDocs.toList.map { hitDoc =>
-//			val actualDoc = indexSearcher.doc(hitDoc.doc)
-//			val termVectorAndFreq = indexSearcher.getIndexReader.getTermFreqVector(hitDoc.doc, "content")
-//			actualDoc.get(id.name)
-//		}
-//		// XXX Pay attention: this is will be ordered by ids so the lucene sort takes effect but overriden by DataBase order
-//		val modelsById = findIn(objectIds).groupBy(_.idValue)
-//		(objectIds: List[ObjectId]).flatMap(id => modelsById.get(id).flatMap(_.headOption))
 	}
 
 	def highlightText(query: Query, fieldName: String, textToDivide: String) = {
@@ -125,10 +117,12 @@ trait IndexableModelMeta[ModelType <: IndexableModel[ModelType]] extends Indexab
 		geBestFragment(textToDivide)
 	}
 
-	def getIndexModels(search: String, query: Query, fieldNameArray: Array[String], sortInfoOption: Option[SortInfo] = None) = {
-
-
-
+	def getIndexModels(queryText: String, query: Query, fieldNameArray: Array[String], sortInfoOption: Option[SortInfo] = None) = {
+		val (docArray, totalHits) = luceneSearch(queryText, query, fieldNameArray, sortInfoOption)
+		val objectIds =docArray.flatMap(doc => toObjectIdOption(doc.get(idIndexFieldName))).toList
+		// XXX Pay attention: this is will be ordered by ids so the lucene sort takes effect but overriden by DataBase order
+		val modelsById = findIn(objectIds).groupBy(_.idValue)
+		(objectIds: List[ObjectId]).flatMap(id => modelsById.get(id).flatMap(_.headOption))
 	}
 }
 
