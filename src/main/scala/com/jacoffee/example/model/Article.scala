@@ -88,34 +88,38 @@ object Article extends Article with MongoModelMeta[Article] {
 	}
 
 	val cachedPeriod = 1000L * 60
-	@volatile var indexSearcherCache: (Long, IndexSearcher) = {
-		if ( System.currentTimeMillis - indexSearcherCache._1> cachedPeriod) {
+	@volatile var cachedIndexSearcher: (Long, IndexSearcher) = {
+		if ( System.currentTimeMillis - cachedIndexSearcher._1> cachedPeriod) {
 			(System.currentTimeMillis, new IndexSearcher(IndexReader.open(directory, true)))
 		} else {
-			indexSearcherCache
+			cachedIndexSearcher
 		}
 	}
 
 	def  indexArticle(article: Article) {
 		// 要养成关闭流的习惯 就像查询数据库一样敏感
+		val topDocs = cachedIndexSearcher._2.search(new TermQuery(new Term(idFieldName, article.idValue.toString)), 1)
 		val indexWriter =getIndexWriter
-		val doc = new Document
-		// if Index.NO is specified for a field,you must also specify TermVector.NO
-		doc.add(new Field(article.id.name, article.idValue.toString, Store.YES, Index.NOT_ANALYZED_NO_NORMS, Field.TermVector.NO))
-		doc.add(new Field(article.author.name, article.author.get, Store.YES, Index.NOT_ANALYZED))
-		doc.add(new Field(article.title.name, article.title.get, Store.YES, Index.ANALYZED))
-		doc.add(new Field(article.content.name, article.content.get, Store.YES, Index.ANALYZED_NO_NORMS, Field.TermVector.YES))
-		doc.add(new Field(article.comment.name, article.comment.get, Store.NO, Index.ANALYZED))
-		// enhancement of original record  you can generate all kinds of  meta-records and put them in Lucene Index
-		doc.add(new NumericField(article.like.name, Store.YES, true).setIntValue(article.like.get))
-
-		indexWriter.addDocument(doc)
-		try {
-			indexWriter.close
-		} finally {
-			if (IndexWriter.isLocked(directory)) {
-				IndexWriter.unlock(directory)
+		if (topDocs.totalHits == 0) {
+			val doc = new Document
+			// if Index.NO is specified for a field,you must also specify TermVector.NO
+			doc.add(new Field(idFieldName, article.idValue.toString, Store.YES, Index.NOT_ANALYZED_NO_NORMS, Field.TermVector.NO))
+			doc.add(new Field(article.author.name, article.author.get, Store.YES, Index.NOT_ANALYZED))
+			doc.add(new Field(article.title.name, article.title.get, Store.YES, Index.ANALYZED))
+			doc.add(new Field(article.content.name, article.content.get, Store.YES, Index.ANALYZED_NO_NORMS, Field.TermVector.YES))
+			doc.add(new Field(article.comment.name, article.comment.get, Store.NO, Index.ANALYZED))
+			// enhancement of original record  you can generate all kinds of  meta-records and put them in Lucene Index
+			doc.add(new NumericField(article.like.name, Store.YES, true).setIntValue(article.like.get))
+			indexWriter.addDocument(doc)
+			try {
+				indexWriter.close
+			} finally {
+				if (IndexWriter.isLocked(directory)) {
+					IndexWriter.unlock(directory)
+				}
 			}
+		} else {
+
 		}
 	}
 
