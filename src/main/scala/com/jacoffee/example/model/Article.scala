@@ -140,12 +140,6 @@ object Article extends Article with MongoModelMeta[Article] {
 		//  @return highlighted text fragment or null if no terms found so you have another consideration
 		geBestFragment(textToDivide)
 	}
-
-	def AnalyzerUtils(analyzer: Analyzer, reader: Reader) = {
-		val stream = analyzer.reusableTokenStream("", reader)
-		val term = stream.addAttribute(classOf[CharTermAttribute])
-		Stream.continually((stream.incrementToken, term.toString)).takeWhile(_._1).map(t =>s"[${t._2}]")
-	}
 }
 
 class Article extends MongoModel[Article] {
