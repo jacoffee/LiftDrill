@@ -11,8 +11,9 @@ import org.apache.lucene.analysis.Analyzer
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute
 import org.apache.lucene.queryParser.MultiFieldQueryParser
 import org.apache.lucene.search.highlight.{SimpleSpanFragmenter, SimpleHTMLFormatter, Highlighter, QueryScorer}
-import com.jacoffee.example.util.Helpers
 import org.bson.types.ObjectId
+import com.jacoffee.example.util.{ TempCache, Helpers }
+
 
 /**
  * Created by qbt-allen on 14-6-6.
@@ -44,9 +45,12 @@ trait IndexableModel[ModelType <: IndexableModel[ModelType]] extends MongoModel[
 }
 
 trait IndexableModelMeta[ModelType <: IndexableModel[ModelType]] extends IndexableModel[ModelType]
+	with MongoModelMeta[ModelType]
 	with LuceneUtil {
 	self:ModelType =>
 
+	protected val skip = 0
+	protected val limit = 10
 	def indexModel(model: ModelType) = model.index
 
 	// Update Lucene Index
@@ -69,49 +73,43 @@ trait IndexableModelMeta[ModelType <: IndexableModel[ModelType]] extends Indexab
 	}
 
 	/**
-	 *
+	 * Mainly for lucene searcher process
 	 * @param search
-	 * @param query other seach query except user search
-	 * @param fieldNameArray fieldName to cover in the search
+	 * @param query
+	 * @param fieldNameArray
+	 * @param sortInfoOption
+	 * @return hit Document and the Total Number
 	 */
-	def luceneSearch(search: String, query: Query, fieldNameArray: Array[String], sortInfoOption: Option[SortInfo] = None) = {
+	def search(search: String, query: Query, fieldNameArray: Array[String], sortInfoOption: Option[SortInfo] = None) = {
 		val parsedQuery = new MultiFieldQueryParser(version, fieldNameArray, smartChineseAnalyzer).parse(search)
+		val indexSearcher = cachedIndexSearcher.get
 		val topDocs = sortInfoOption match {
 			case Some(sortInfo) => {
-
+				indexSearcher.search(
+					parsedQuery,
+					limit,
+					new Sort(new SortField(sortInfo.fieldName, sortInfo.sortType, sortInfo.reverse))
+				)
 			}
-			case _ => cachedIndexSearcher.search(parsedQuery, 5, sort)
+			case _ => indexSearcher.search(parsedQuery, limit)
 		}
-
-		// 获取命中文档ID
-
-		// add sort field
-		val sort = new Sort(new SortField(like.name,SortField.INT, true))
-		val topDocs = cachedIndexSearcher.search(parsedQuery, 5, sort)
-		val objectIds =topDocs.scoreDocs.toList.map { hitDoc =>
-			val actualDoc = iSearch.doc(hitDoc.doc)
-
-			// 然后发现这种方式是走不通的 因为我根本就没有 Store Content Field 所以
-			// Otherwise, the analyzer you pass in is used to reanalyze the text. in no way can happen
-			// Field content in document is not stored and cannot be analyzed
-			/*			val tokenStream = TokenSources.getAnyTokenStream(iSearch.getIndexReader, hitDoc.doc, "content", actualDoc, analyzer)
-						val term = tokenStream.addAttribute(classOf[CharTermAttribute])
-						val analyzedContentList = Stream.continually((tokenStream.incrementToken, term.toString)).takeWhile(_._1).map(t =>s"[${t._2}]").toList
-						println(" hit record's tokenStream ")
-						println(analyzedContentList)*/
-			val termVectorAndFreq = iSearch.getIndexReader.getTermFreqVector(hitDoc.doc, "content")
-			actualDoc.get(id.name)
-		}
-		// obtain tokenStream after indexing without setting TermVector
-		// (IndexReader reader, int docId, String field, Document doc, Analyzer analyzer)
-		// 根据ID 再次查询
-		// XXX Pay attention: this is will be ordered by ids so the lucene sort takes effect but overriden by DataBase order
-		// def findAll(qry: JObject, sort: JObject, opts: FindOption*): List[BaseRecord] =
-		val modelsById = findIn(objectIds).groupBy(_.idValue)
-		(objectIds: List[ObjectId]).flatMap(id => modelsById.get(id).flatMap(_.headOption))
+		(
+			topDocs.scoreDocs.map(scoreDoc =>
+					indexSearcher.doc(scoreDoc.doc)
+			),
+			topDocs.totalHits
+		)
+//		val objectIds =topDocs.scoreDocs.toList.map { hitDoc =>
+//			val actualDoc = indexSearcher.doc(hitDoc.doc)
+//			val termVectorAndFreq = indexSearcher.getIndexReader.getTermFreqVector(hitDoc.doc, "content")
+//			actualDoc.get(id.name)
+//		}
+//		// XXX Pay attention: this is will be ordered by ids so the lucene sort takes effect but overriden by DataBase order
+//		val modelsById = findIn(objectIds).groupBy(_.idValue)
+//		(objectIds: List[ObjectId]).flatMap(id => modelsById.get(id).flatMap(_.headOption))
 	}
 
-	def highlightText(query: Query, textToDivide: String) = {
+	def highlightText(query: Query, fieldName: String, textToDivide: String) = {
 		//val parser = new MultiFieldQueryParser(version, fieldNameArray, smartChineseAnalyzer)
 		// val parsedQuery = parser.parse(search)
 		val scorer = new QueryScorer(query, null)
@@ -126,6 +124,12 @@ trait IndexableModelMeta[ModelType <: IndexableModel[ModelType]] extends Indexab
 		// @return highlighted text fragment or null if no terms found so you have another consideration
 		geBestFragment(textToDivide)
 	}
+
+	def getIndexModels(search: String, query: Query, fieldNameArray: Array[String], sortInfoOption: Option[SortInfo] = None) = {
+
+
+
+	}
 }
 
 trait LuceneUtil {
@@ -135,30 +139,7 @@ trait LuceneUtil {
 	val indexedFilePosition = getIndexedFilePosition(collectionName)
 	val directory = FSDirectory.open(new File(indexedFilePosition))
 
-	class TempCache[V](period: Long)(getValue: => V) {
-		@volatile var cache: Option[(Long, V)] = None
-		def get = {
-			cache match {
-				case Some((time, v)) if (cachedPeriod + time > System.currentTimeMillis) => {
-					cache = Some(System.currentTimeMillis -> v)
-					v
-				}
-				case _ => {
-					val compute = getValue
-					cache = Some(System.currentTimeMillis, compute)
-					compute
-				}
-			}
-		}
-	}
-
-	@volatile var cachedIndexSearcher: (Long, IndexSearcher) = {
-		if (System.currentTimeMillis - cachedIndexSearcher._1> cachedPeriod) {
-			(System.currentTimeMillis, new IndexSearcher(IndexReader.open(directory, true)))
-		} else {
-			cachedIndexSearcher
-		}
-	}
+	object cachedIndexSearcher extends TempCache(cachedPeriod)(new IndexSearcher(IndexReader.open(directory, true)))
 
 	def AnalyzerUtils(analyzer: Analyzer, reader: Reader) = {
 		val stream = analyzer.reusableTokenStream("", reader)
