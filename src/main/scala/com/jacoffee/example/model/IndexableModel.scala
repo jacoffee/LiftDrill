@@ -136,13 +136,24 @@ trait LuceneUtil {
 	val directory = FSDirectory.open(new File(indexedFilePosition))
 
 	class TempCache[V](period: Long)(getValue: => V) {
-		@volatile var cachedIndexSearcher: Option[(Long, IndexSearcher)] = None
+		@volatile var cache: Option[(Long, V)] = None
 		def get = {
+			cache match {
+				case Some((time, v)) if (cachedPeriod + time > System.currentTimeMillis) => {
+					cache = Some(System.currentTimeMillis -> v)
+					v
+				}
+				case _ => {
+					val compute = getValue
+					cache = Some(System.currentTimeMillis, compute)
+					compute
+				}
+			}
 		}
 	}
 
 	@volatile var cachedIndexSearcher: (Long, IndexSearcher) = {
-		if ( System.currentTimeMillis - cachedIndexSearcher._1> cachedPeriod) {
+		if (System.currentTimeMillis - cachedIndexSearcher._1> cachedPeriod) {
 			(System.currentTimeMillis, new IndexSearcher(IndexReader.open(directory, true)))
 		} else {
 			cachedIndexSearcher
