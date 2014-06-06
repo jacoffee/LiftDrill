@@ -7,7 +7,7 @@ import scala.io.{ Codec, Source }
 import scala.collection.JavaConversions.setAsJavaSet
 import org.apache.lucene.document.{NumericField, Field, Document}
 import org.apache.lucene.document.Field.{ TermVector, Index, Store }
-import org.apache.lucene.index.{Term, IndexWriterConfig, IndexWriter}
+import org.apache.lucene.index.{IndexReader, Term, IndexWriterConfig, IndexWriter}
 import org.apache.lucene.store.FSDirectory
 import org.apache.lucene.analysis.cn.smart.SmartChineseAnalyzer
 import org.apache.lucene.analysis.{WhitespaceAnalyzer, WordlistLoader, Analyzer}
@@ -79,15 +79,27 @@ object Article extends Article with MongoModelMeta[Article] {
 		(objectIds: List[ObjectId]).flatMap(id => modelsById.get(id).flatMap(_.headOption))
 	}
 
-	def  indexArticle(article: Article) = {
-		// 要养成关闭流的习惯 就像查询数据库一样敏感
-		// where to save the index
-		val directory = FSDirectory.open(new File(indexedFilePosition))
+	val directory = FSDirectory.open(new File(indexedFilePosition))
+	def getIndexWriter = {
+		// if article already exists in the Lucene Update orElse index
+		// you should consider refresh period
 		val config = new IndexWriterConfig(version, smartChineseAnalyzer)
-		val indexWriter = new IndexWriter(directory, config)
+		new IndexWriter(directory, config)
+	}
 
+	val cachedPeriod = 1000L * 60
+	@volatile var indexSearcherCache: (Long, IndexSearcher) = {
+		if ( System.currentTimeMillis - indexSearcherCache._1> cachedPeriod) {
+			(System.currentTimeMillis, new IndexSearcher(IndexReader.open(directory, true)))
+		} else {
+			indexSearcherCache
+		}
+	}
+
+	def  indexArticle(article: Article) {
+		// 要养成关闭流的习惯 就像查询数据库一样敏感
+		val indexWriter =getIndexWriter
 		val doc = new Document
-		// idValue is ObjectId[]
 		// if Index.NO is specified for a field,you must also specify TermVector.NO
 		doc.add(new Field(article.id.name, article.idValue.toString, Store.YES, Index.NOT_ANALYZED_NO_NORMS, Field.TermVector.NO))
 		doc.add(new Field(article.author.name, article.author.get, Store.YES, Index.NOT_ANALYZED))
