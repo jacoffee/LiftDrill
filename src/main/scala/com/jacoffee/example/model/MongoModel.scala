@@ -56,5 +56,5 @@ trait MongoModelMeta[ModelType <: MongoModel[ModelType]] extends MongoModel[Mode
 
 	def getBoxById(id: ObjectId) = find(idFieldName -> id.toString)
 	// def findIn(ids: List[ObjectId], sort: Map[String, Int] = Map.empty) = findAll(id.name -> ("$in" -> objectIdsToListString(ids)), sort)
-	def findIn(ids: List[ObjectId]) = findAll(id.name -> ("$in" -> '(ids)))
+	def findIn(ids: List[ObjectId]) = findAll(id.name -> ("$in" -> objectIdsToListString(ids)))
 }
