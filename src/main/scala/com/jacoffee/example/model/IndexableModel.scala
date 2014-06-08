@@ -4,7 +4,7 @@ import java.io.{Reader, File}
 import org.apache.lucene.document.{ Document, Field, Fieldable }
 import org.apache.lucene.document.Field.{ TermVector, Index, Store }
 import org.apache.lucene.search.{ Sort, SortField, Query, IndexSearcher }
-import org.apache.lucene.index.IndexReader
+import org.apache.lucene.index.{ IndexWriter, IndexWriterConfig, IndexReader }
 import org.apache.lucene.store.FSDirectory
 import com.jacoffee.example.util.Config.Lucene.{ version, getIndexedFilePosition, getStopWordsSet, smartChineseAnalyzer }
 import org.apache.lucene.analysis.Analyzer
@@ -39,8 +39,12 @@ trait IndexableModel[ModelType <: IndexableModel[ModelType]] extends MongoModel[
 		boostOption.foreach(field.setBoost)
 		field
 	}
-	def getNoIndexFields(fieldName: String, fieldValue: String) = {
+	// mainly for query, typical example is intention_id in the SeekJob you just wanna query
+	def getNotIndexFields(fieldName: String, fieldValue: String) = {
 		new Field(idFieldName, fieldValue, Store.NO, Index.NOT_ANALYZED_NO_NORMS, TermVector.NO)
+	}
+	override def afterSave {
+		super.afterSave
 	}
 }
 
@@ -52,6 +56,8 @@ trait IndexableModelMeta[ModelType <: IndexableModel[ModelType]] extends Indexab
 	protected val skip = 0
 	protected val limit = 10
 	def indexModel(model: ModelType) = model.index
+
+	def indexOne(model: ModelType) = createIndex(indexModel(model))
 
 	// Update Lucene Index
 
@@ -124,17 +130,36 @@ trait IndexableModelMeta[ModelType <: IndexableModel[ModelType]] extends Indexab
 		val modelsById = findIn(objectIds).groupBy(_.idValue)
 		(objectIds: List[ObjectId]).flatMap(id => modelsById.get(id).flatMap(_.headOption))
 	}
+
 }
 
 trait LuceneUtil {
 
 	val cachedPeriod = 1000L * 60
-	protected val collectionName: String
-	val indexedFilePosition = getIndexedFilePosition(collectionName)
+	//protected val collectionName: String = ""
+	protected val indexedFilePosition = ""
 	val directory = FSDirectory.open(new File(indexedFilePosition))
 
 	object cachedIndexSearcher extends TempCache(cachedPeriod)(new IndexSearcher(IndexReader.open(directory, true)))
 
+	def getIndexWriter = {
+		// if article already exists in the Lucene Update orElse index
+		// you should consider refresh period
+		val config = new IndexWriterConfig(version, smartChineseAnalyzer)
+		new IndexWriter(directory, config)
+	}
+
+	def createIndex(doc: Document) = {
+		val indexWriter = getIndexWriter
+		indexWriter.addDocument(doc)
+		try {
+			indexWriter.close
+		} finally {
+			if (IndexWriter.isLocked(directory)) {
+				IndexWriter.unlock(directory)
+			}
+		}
+	}
 	def AnalyzerUtils(analyzer: Analyzer, reader: Reader) = {
 		val stream = analyzer.reusableTokenStream("", reader)
 		val term = stream.addAttribute(classOf[CharTermAttribute])

@@ -24,17 +24,17 @@ object Article  extends DispatchSnippet {
 	object search extends RequestVar(S.param("search").openOr(""))
 	def searchBox = "*" #> SHtml.text(search.is, s => search(s), "placeholder" ->"搜索留言或人...", "name" ->"search", "id" ->"q")
 
+	// escape &lt; <  &gt; >
 	def toUnparsedSafely(unSafeText: String)(safeTextToUnparsed: String => Option[String]) =
 		Option(unSafeText).map(Utility.escape _).flatMap(safeTextToUnparsed).map(Unparsed(_))
+	// implicit def stringToNode(input: String) = Text(input)
 
 	def list = {
 		val contentName = ArticleModel.content.name
 		val searchedArticles = {
 			val q = search.is.trim
-			if (q.nonEmpty) ArticleModel.search(contentName, q) else ArticleModel.findAll
+			if (q.nonEmpty) ArticleModel.getByTextSearch(contentName, Map.empty) else ArticleModel.findAll
 		}
-		implicit def stringToNode(input: String) = Text(input)
-		def highlightText(text: String) = ArticleModel.highlightText(search.is, contentName, text)
 		"data-bind=article-records" #> {
 			(xhtml: NodeSeq) => {
 				searchedArticles.map { article =>
@@ -44,8 +44,9 @@ object Article  extends DispatchSnippet {
 						"data-bind=article-time *" #> ArticleModel.getPublishDate(article.created_at.get) &
 						"data-bind=article-content" #> {
 							val articleContent = article.content.get
-							if (search.is.isEmpty) { <pre>{ articleContent }</pre> }
-							else <pre>{ toUnparsedSafely(articleContent)(highlightText _).getOrElse(articleContent: NodeSeq) } </pre>
+							// if (search.is.isEmpty) { <pre>{ articleContent }</pre> }
+							// else <pre>{ toUnparsedSafely(articleContent)(highlightText _).getOrElse(articleContent: NodeSeq) } </pre>
+							articleContent
 						} &
 						"data-bind=article-action [onclick]" #> {
 							SHtml.ajaxInvoke(
