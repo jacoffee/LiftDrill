@@ -67,7 +67,7 @@ class Article extends IndexableModel[Article] {
 
 object Article extends Article with IndexableModelMeta[Article] {
 	override def collectionName = "articles"
-	override val indexedFilePosition = getIndexedFilePosition(collectionName)
+	override val indexName = collectionName
 	def getPublishDate(cal: Calendar) = {
 		// 2014年09月10日 09:19
 		val d = new SimpleDateFormat("yyyy年MM月dd日 HH:MM")
@@ -94,4 +94,5 @@ object Article extends Article with IndexableModelMeta[Article] {
 			sortInfoOption
 		)
 	}
+
 }

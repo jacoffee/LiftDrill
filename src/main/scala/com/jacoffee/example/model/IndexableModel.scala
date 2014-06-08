@@ -35,13 +35,13 @@ trait IndexableModel[ModelType <: IndexableModel[ModelType]] extends MongoModel[
 	}
 	protected def getIndexFields(fieldName: String, fieldValue: String,
 		store: Store, index: Index, termVector: TermVector,boostOption: Option[Float]) = {
-		val field = new Field(idFieldName, fieldValue, store, index, termVector)
+		val field = new Field(fieldName, fieldValue, store, index, termVector)
 		boostOption.foreach(field.setBoost)
 		field
 	}
 	// mainly for query, typical example is intention_id in the SeekJob you just wanna query
 	def getNotIndexFields(fieldName: String, fieldValue: String) = {
-		new Field(idFieldName, fieldValue, Store.NO, Index.NOT_ANALYZED_NO_NORMS, TermVector.NO)
+		new Field(fieldName, fieldValue, Store.NO, Index.NOT_ANALYZED_NO_NORMS, TermVector.NO)
 	}
 	override def afterSave {
 		super.afterSave
@@ -137,8 +137,8 @@ trait LuceneUtil {
 
 	val cachedPeriod = 1000L * 60
 	//protected val collectionName: String = ""
-	protected val indexedFilePosition = ""
-	val directory = FSDirectory.open(new File(indexedFilePosition))
+	protected val indexName = "temp"
+	def directory = FSDirectory.open(new File(getIndexedFilePosition(indexName)))
 
 	object cachedIndexSearcher extends TempCache(cachedPeriod)(new IndexSearcher(IndexReader.open(directory, true)))
 
