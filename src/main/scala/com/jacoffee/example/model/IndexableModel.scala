@@ -25,7 +25,7 @@ trait IndexableModel[ModelType <: IndexableModel[ModelType]] extends MongoModel[
 	def index = {
 		val document = new Document
 		(
-			new Field(idIndexFieldName, idIndexFieldValue.toString, Store.NO, Index.ANALYZED, TermVector.NO) :: indexFields
+			new Field(idIndexFieldName, idIndexFieldValue.toString, Store.YES, Index.ANALYZED, TermVector.NO) :: indexFields
 		).foldLeft(document)(
 			(doc, field) => {
 				doc.add(field)
@@ -101,7 +101,7 @@ trait IndexableModelMeta[ModelType <: IndexableModel[ModelType]] extends Indexab
 		}
 		(
 			topDocs.scoreDocs.map(scoreDoc =>
-					indexSearcher.doc(scoreDoc.doc)
+				indexSearcher.doc(scoreDoc.doc)
 			),
 			topDocs.totalHits
 		)

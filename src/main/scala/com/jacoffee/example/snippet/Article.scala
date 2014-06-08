@@ -33,7 +33,7 @@ object Article  extends DispatchSnippet {
 		//val contentName = ArticleModel.content.name
 		val searchedArticles = {
 			val q = search.is.trim
-			if (q.nonEmpty) ArticleModel.getByTextSearch(q, Map.empty) else ArticleModel.findAll
+				if (q.nonEmpty) ArticleModel.getByTextSearch(q, Map.empty) else ArticleModel.findAll
 		}
 		"data-bind=article-records" #> {
 			(xhtml: NodeSeq) => {
