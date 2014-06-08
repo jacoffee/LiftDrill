@@ -8,7 +8,7 @@ import net.liftweb.util.Helpers.strToCssBindPromoter
 import net.liftweb.common.{ Empty, Full }
 import net.liftweb.http.js.JsCmds.{ jsExpToJsCmd, Noop }
 import com.jacoffee.example.model.{ Article => ArticleModel }
-import com.jacoffee.example.util.Helpers.{ isBlank }
+import com.jacoffee.example.util.Helpers.isBlank
 
 /**
  * Created by qbt-allen on 14-4-19.
@@ -30,10 +30,10 @@ object Article  extends DispatchSnippet {
 	// implicit def stringToNode(input: String) = Text(input)
 
 	def list = {
-		val contentName = ArticleModel.content.name
+		//val contentName = ArticleModel.content.name
 		val searchedArticles = {
 			val q = search.is.trim
-			if (q.nonEmpty) ArticleModel.getByTextSearch(contentName, Map.empty) else ArticleModel.findAll
+			if (q.nonEmpty) ArticleModel.getByTextSearch(q, Map.empty) else ArticleModel.findAll
 		}
 		"data-bind=article-records" #> {
 			(xhtml: NodeSeq) => {

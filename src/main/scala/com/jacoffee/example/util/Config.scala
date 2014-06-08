@@ -3,9 +3,9 @@ package com.jacoffee.example.util
 import org.apache.lucene.util.Version
 import net.liftweb.util.Props
 import net.liftweb.mongodb.MongoIdentifier
-import org.apache.lucene.analysis.cn.smart.SmartChineseAnalyzer
 import scala.io.{Codec, Source}
 import org.apache.lucene.analysis.WordlistLoader
+import org.apache.lucene.analysis.cn.smart.SmartChineseAnalyzer
 
 /**
  * Created by qbt-allen on 14-4-23.
@@ -30,12 +30,12 @@ object Config {
 			val stopWordSrc = Source.fromInputStream(this.getClass.getClassLoader.getResourceAsStream("lucene/stopwords.txt"))(Codec.UTF8)
 			// println("Orginal Ones" +stopWordSrc.getLines.toList)
 			try {
-				WordlistLoader.getWordSet(classOf[Lucene], "/lucene/stopwords.txt", "//")
+				WordlistLoader.getWordSet(stopWordSrc.reader, "//")
 			} finally {
 				stopWordSrc.close
 			}
 		}
-		val smartChineseAnalyzer = new SmartChineseAnalyzer(version, getStopWordsSet)
+		val smartChineseAnalyzer = new SmartChineseAnalyzer(version,  getStopWordsSet)
 	}
 
 	object Mongo {
