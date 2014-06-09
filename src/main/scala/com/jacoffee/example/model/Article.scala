@@ -82,7 +82,11 @@ object Article extends Article with IndexableModelMeta[Article] {
 			new MatchAllDocsQuery
 		}
 	}
-	def getByTextSearch(queryText: String, params: Map[String, String], sortInfoOption: Option[SortInfo] = None) = {
+
+	object orderKinds extends Enumeration {
+		val like = Value(1, "喜欢")
+	}
+	def getByTextSearch(queryText: String, params: Map[String, String], orderType: orderKinds.Value = orderKinds.like) = {
 		getIndexModels(
 			queryText,
 			params,
@@ -91,11 +95,16 @@ object Article extends Article with IndexableModelMeta[Article] {
 				title.name,
 				content.name
 			),
-			sortInfoOption
+			{
+				orderType match {
+					case orderKinds.like => Some(SortInfo(like.name))
+				}
+			}
 		)
 	}
 
 	def indexAll {
+		println(" IndexALL ING")
 		val oidsFromDoc = getAllDocuments._1.flatMap(doc => toObjectIdOption(doc.get(idIndexFieldName))).toList
 		indexAll(oidsFromDoc)
 	}

@@ -34,16 +34,17 @@ object Article  extends DispatchSnippet {
 		//val contentName = ArticleModel.content.name
 		val searchedArticles = {
 			val q = search.is.trim
-				if (q.nonEmpty) ArticleModel.getByTextSearch(q, Map.empty) else ArticleModel.findAll
+			if (q.nonEmpty) ArticleModel.getByTextSearch(q, Map.empty) else ArticleModel.findAll
 		}
+
+		"data-bind=reindex [onclick]" #> {
+			ArticleModel.indexAll
+			Noop
+		} &
 		"data-bind=article-records" #> {
 			(xhtml: NodeSeq) => {
 				searchedArticles.map { article =>
 					(
-						"data-bind=reindex [onclick]" #> {
-							ArticleModel.indexAll
-							Noop
-						} &
 						"data-bind=article-title *" #> article.title.get &
 						"data-bind=article-author *" #> article.author.get &
 						"data-bind=article-time *" #> ArticleModel.getPublishDate(article.created_at.get) &
