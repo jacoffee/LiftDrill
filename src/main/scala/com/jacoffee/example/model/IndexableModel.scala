@@ -4,7 +4,7 @@ import java.io.{Reader, File}
 import scala.concurrent.{ Await, ExecutionContext, Future, future }
 import org.apache.lucene.document.{ Document, Field, Fieldable }
 import org.apache.lucene.document.Field.{ TermVector, Index, Store }
-import org.apache.lucene.search.{ Sort, SortField, Query, IndexSearcher }
+import org.apache.lucene.search.{ MatchAllDocsQuery, Sort, SortField, Query, IndexSearcher }
 import org.apache.lucene.index.{Term, IndexWriter, IndexWriterConfig, IndexReader}
 import org.apache.lucene.store.FSDirectory
 import com.jacoffee.example.util.Config.Lucene.{ version, getIndexedFilePosition, getStopWordsSet, smartChineseAnalyzer }
@@ -98,6 +98,7 @@ trait IndexableModelMeta[ModelType <: IndexableModel[ModelType]] extends Indexab
 			)
 	}
 
+	def getAllDocuments = luceneSearch("", new MatchAllDocsQuery, Array.empty)
 	/**
 	 * Mainly for lucene searcher process
 	 * @param search
@@ -107,7 +108,13 @@ trait IndexableModelMeta[ModelType <: IndexableModel[ModelType]] extends Indexab
 	 * @return hit Document and the Total Number
 	 */
 	def luceneSearch(search: String, query: Query, fieldNameArray: Array[String], sortInfoOption: Option[SortInfo] = None) = {
-		val parsedQuery = new MultiFieldQueryParser(version, fieldNameArray, smartChineseAnalyzer).parse(search)
+		val parsedQuery = {
+			if (search.isEmpty && fieldNameArray.isEmpty) {
+				new MatchAllDocsQuery
+			} else {
+				new MultiFieldQueryParser(version, fieldNameArray, smartChineseAnalyzer).parse(search)
+			}
+		}
 		val indexSearcher = cachedIndexSearcher.get
 		val topDocs = sortInfoOption match {
 			case Some(sortInfo) => {
