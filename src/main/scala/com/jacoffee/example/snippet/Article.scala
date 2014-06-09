@@ -41,7 +41,8 @@ object Article  extends DispatchSnippet {
 				searchedArticles.map { article =>
 					(
 						"data-bind=reindex [onclick]" #> {
-
+							ArticleModel.indexAll
+							Noop
 						} &
 						"data-bind=article-title *" #> article.title.get &
 						"data-bind=article-author *" #> article.author.get &

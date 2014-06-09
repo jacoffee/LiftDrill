@@ -95,4 +95,9 @@ object Article extends Article with IndexableModelMeta[Article] {
 		)
 	}
 
+	def indexAll {
+		val oidsFromDoc = getAllDocuments._1.flatMap(doc => toObjectIdOption(doc.get(idIndexFieldName))).toList
+		indexAll(oidsFromDoc)
+	}
+
 }
