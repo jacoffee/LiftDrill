@@ -58,21 +58,22 @@ trait IndexableModelMeta[ModelType <: IndexableModel[ModelType]] extends Indexab
 	protected val limit = 10
 	def indexModel(model: ModelType) = model.index
 
-	def indexOne(model: ModelType) = createIndex(indexModel(model))
-
 	// 根据Lucene Document 查询出所有的 objectids   --- 如果在数据库中找不到对应的则删除 否则就更新相应的索引
-	def indexAll(modelIds: List[ObjectId]) = {
+	def indexOne(modelId: ObjectId) { indexAll(List(modelId)) }
+	def indexAll(modelIds: List[ObjectId]) {
 		import ExecutionContext.Implicits.global
 		future {
 			val indexWriter = getIndexWriter
-			val modelsById = findAll(modelIds).groupBy(_.idIndexFieldValue)
-			modelIds.grouped(10).foreach { groupedDbIds =>
-				groupedDbIds.foreach { groupedDbId =>
-					modelsById.get(groupedDbId).flatMap(_.headOption) match {
-						case Some(model) => {
-							indexWriter.updateDocument(new Term(idFieldName, model.idValue.toString), indexModel(model))
+			createIndex(indexWriter) {
+				val modelsById = findAll(modelIds).groupBy(_.idIndexFieldValue)
+				modelIds.grouped(10).foreach { groupedDbIds =>
+					groupedDbIds.foreach { groupedDbId =>
+						modelsById.get(groupedDbId).flatMap(_.headOption) match {
+							case Some(model) => {
+								indexWriter.updateDocument(new Term(idFieldName, model.idValue.toString), indexModel(model))
+							}
+							case _ => indexWriter.deleteDocuments(new Term(idFieldName, groupedDbId.toString))
 						}
-						case _ => indexWriter.deleteDocuments(new Term(idFieldName, groupedDbId.toString))
 					}
 				}
 			}
@@ -176,17 +177,28 @@ trait LuceneUtil {
 		new IndexWriter(directory, config)
 	}
 
-	def createIndex(doc: Document) = {
-		val indexWriter = getIndexWriter
-		indexWriter.addDocument(doc)
+	def createIndex(writer: IndexWriter)(indexing:  => Any) {
 		try {
-			indexWriter.close
+			indexing
+			writer.close
 		} finally {
 			if (IndexWriter.isLocked(directory)) {
 				IndexWriter.unlock(directory)
 			}
 		}
 	}
+
+//	def createIndex(doc: Document) = {
+//		val indexWriter = getIndexWriter
+//		indexWriter.addDocument(doc)
+//		try {
+//			indexWriter.close
+//		} finally {
+//			if (IndexWriter.isLocked(directory)) {
+//				IndexWriter.unlock(directory)
+//			}
+//		}
+//	}
 	def AnalyzerUtils(analyzer: Analyzer, reader: Reader) = {
 		val stream = analyzer.reusableTokenStream("", reader)
 		val term = stream.addAttribute(classOf[CharTermAttribute])
