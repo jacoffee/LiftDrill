@@ -3,6 +3,7 @@ package com.jacoffee.example.snippet
 import scala.xml.{Text, Unparsed, Utility, NodeSeq}
 import scala.xml.parsing.XhtmlParser
 import scala.io.Source
+import scala.concurrent.{ Await, ExecutionContext, Future, future }
 import net.liftweb.http._
 import net.liftweb.util.Helpers.strToCssBindPromoter
 import net.liftweb.common.{ Empty, Full }
@@ -39,6 +40,9 @@ object Article  extends DispatchSnippet {
 			(xhtml: NodeSeq) => {
 				searchedArticles.map { article =>
 					(
+						"data-bind=reindex [onclick]" #> {
+
+						} &
 						"data-bind=article-title *" #> article.title.get &
 						"data-bind=article-author *" #> article.author.get &
 						"data-bind=article-time *" #> ArticleModel.getPublishDate(article.created_at.get) &

@@ -1,10 +1,11 @@
 package com.jacoffee.example.model
 
 import java.io.{Reader, File}
+import scala.concurrent.{ Await, ExecutionContext, Future, future }
 import org.apache.lucene.document.{ Document, Field, Fieldable }
 import org.apache.lucene.document.Field.{ TermVector, Index, Store }
 import org.apache.lucene.search.{ Sort, SortField, Query, IndexSearcher }
-import org.apache.lucene.index.{ IndexWriter, IndexWriterConfig, IndexReader }
+import org.apache.lucene.index.{Term, IndexWriter, IndexWriterConfig, IndexReader}
 import org.apache.lucene.store.FSDirectory
 import com.jacoffee.example.util.Config.Lucene.{ version, getIndexedFilePosition, getStopWordsSet, smartChineseAnalyzer }
 import org.apache.lucene.analysis.Analyzer
@@ -58,6 +59,25 @@ trait IndexableModelMeta[ModelType <: IndexableModel[ModelType]] extends Indexab
 	def indexModel(model: ModelType) = model.index
 
 	def indexOne(model: ModelType) = createIndex(indexModel(model))
+
+	// 根据Lucene Document 查询出所有的 objectids   --- 如果在数据库中找不到对应的则删除 否则就更新相应的索引
+	def indexAll(modelIds: List[ObjectId]) = {
+		import ExecutionContext.Implicits.global
+		future {
+			val indexWriter = getIndexWriter
+			val modelsById = findAll(modelIds).groupBy(_.idIndexFieldValue)
+			modelIds.grouped(10).foreach { groupedDbIds =>
+				groupedDbIds.foreach { groupedDbId =>
+					modelsById.get(groupedDbId).flatMap(_.headOption) match {
+						case Some(model) => {
+							indexWriter.updateDocument(new Term(idFieldName, model.idValue.toString), indexModel(model))
+						}
+						case _ => indexWriter.deleteDocuments(new Term(idFieldName, groupedDbId.toString))
+					}
+				}
+			}
+		}
+	}
 
 	// Update Lucene Index
 
