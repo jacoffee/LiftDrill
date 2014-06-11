@@ -26,7 +26,7 @@ trait IndexableModel[ModelType <: IndexableModel[ModelType]] extends MongoModel[
 	def index = {
 		val document = new Document
 		(
-			new Field(idIndexFieldName, idIndexFieldValue.toString, Store.YES, Index.ANALYZED, TermVector.NO) :: indexFields
+			new Field(idIndexFieldName, idIndexFieldValue.toString, Store.YES, Index.NOT_ANALYZED_NO_NORMS, TermVector.NO) :: indexFields
 		).foldLeft(document)(
 			(doc, field) => {
 				doc.add(field)
@@ -72,7 +72,9 @@ trait IndexableModelMeta[ModelType <: IndexableModel[ModelType]] extends Indexab
 							case Some(model) => {
 								indexWriter.updateDocument(new Term(idFieldName, model.idValue.toString), indexModel(model))
 							}
-							case _ => indexWriter.deleteDocuments(new Term(idFieldName, groupedDbId.toString))
+							case _ =>  {
+								indexWriter.deleteDocuments(new Term(idFieldName, groupedDbId.toString))
+							}
 						}
 					}
 				}
@@ -127,6 +129,7 @@ trait IndexableModelMeta[ModelType <: IndexableModel[ModelType]] extends Indexab
 			}
 			case _ => indexSearcher.search(parsedQuery, limit)
 		}
+		indexSearcher.close
 		(
 			topDocs.scoreDocs.map(scoreDoc =>
 				indexSearcher.doc(scoreDoc.doc)
@@ -168,11 +171,11 @@ trait LuceneUtil {
 	protected val indexName = "temp"
 	def directory = FSDirectory.open(new File(getIndexedFilePosition(indexName)))
 
-	object cachedIndexSearcher extends TempCache(cachedPeriod)(new IndexSearcher(IndexReader.open(directory, true)))
+	object cachedIndexSearcher extends TempCache(cachedPeriod)({
+		new IndexSearcher(IndexReader.open(directory, true))
+	})
 
 	def getIndexWriter = {
-		// if article already exists in the Lucene Update orElse index
-		// you should consider refresh period
 		val config = new IndexWriterConfig(version, smartChineseAnalyzer)
 		new IndexWriter(directory, config)
 	}

@@ -9,6 +9,11 @@ input, textarea, select, button {
 	word-wrap: break-word;
 	font-size:13px;
 }
+textarea {
+	margin: 2px;
+	width: 732px;
+	height: 310px;
+}
 a {
 	color: #225599;
 	text-decoration: none;

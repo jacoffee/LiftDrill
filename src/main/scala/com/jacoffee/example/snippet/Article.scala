@@ -41,8 +41,12 @@ object Article  extends DispatchSnippet {
 		}
 
 		"data-bind=reindex [onclick]" #> {
-			ArticleModel.indexAll
-			Noop
+			SHtml.ajaxInvoke(
+				() => {
+					ArticleModel.indexAll
+					Noop
+				}
+			)
 		} &
 		"data-bind=article-records" #> {
 			(xhtml: NodeSeq) => {

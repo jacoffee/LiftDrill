@@ -5,7 +5,7 @@ import java.util.Calendar
 import java.io.{ FileOutputStream, File }
 import org.apache.lucene.document.NumericField
 import org.apache.lucene.document.Field.{ TermVector, Index, Store }
-import org.apache.lucene.search.MatchAllDocsQuery
+import org.apache.lucene.search.{ SortField, MatchAllDocsQuery }
 import net.liftweb.record.field.{ StringField, IntField }
 import net.liftweb.mongodb.record.field.MongoListField
 import com.jacoffee.example.util.Config.UploadPath
@@ -83,18 +83,15 @@ object Article extends Article with IndexableModelMeta[Article] {
 				title.name,
 				content.name
 			),
-			{
-				orderType match {
-					case orderKinds.like => Some(SortInfo(like.name))
-				}
+			orderType match {
+				case orderKinds.like => Some(SortInfo(like.name, SortField.LONG, true))
 			}
 		)
 	}
 
 	def indexAll {
 		println(" IndexALL ING")
-		val oidsFromDoc = getAllDocuments._1.flatMap(doc => toObjectIdOption(doc.get(idIndexFieldName))).toList
-		indexAll(oidsFromDoc)
+		indexAll{ getAllDocuments._1.flatMap(doc => toObjectIdOption(doc.get(idIndexFieldName))).toList.distinct }
 	}
 
 	def saveImage(fileName: String, what: Array[Byte]) = {
