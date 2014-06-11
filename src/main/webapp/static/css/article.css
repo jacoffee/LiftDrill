@@ -254,11 +254,12 @@ h1, h2, h3, h4, h5 {
 	left: 3px;
 }
 .articles .article-item .article-action {
+	margin-right: 5px;
 	background-color: #fff;
 	height: 15px;
-	cursor: pointer;
 	font-size: 13px;
 	line-height: 15px;
+	text-decoration: none;
 }
 .articles .article-item .article-action i.like-btn {
 	/* if you wanna set bg for element it must have width and height to pre-store/occupy the space for image inline-block is a nice choice */

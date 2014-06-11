@@ -47,9 +47,15 @@ class Article extends IndexableModel[Article] {
 	}
 
 	override def afterSave {
-		println(" New Or Update Job!!")
+		println(" New Or Update Article!!")
 		meta.indexOne(idValue)
 		super.afterSave
+	}
+
+	override def afterDelete {
+		println(" Delete Article!!")
+		meta.indexOne(idValue)
+		super.afterDelete
 	}
 }
 

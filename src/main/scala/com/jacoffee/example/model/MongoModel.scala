@@ -35,10 +35,16 @@ trait MongoModel[ModelType <: MongoModel[ModelType]] extends MongoRecord[ModelTy
 			// def owner = rec  here owner refers to the self  namely the Record Model Type
 			owner.afterSave
 		}
+
+		override def afterDelete {
+			super.afterDelete
+			owner.afterDelete
+		}
 	}
 
 	def save_! { save(true) }
 	def afterSave {}
+	def afterDelete {}
 
 	// def invokeBeforeSave = meta.invokeBeforeSave(this)
 	// def invokeAfterSave = meta.invokeAfterSave(this)
@@ -58,4 +64,8 @@ trait MongoModelMeta[ModelType <: MongoModel[ModelType]] extends MongoModel[Mode
 	def getBoxById(id: ObjectId) = find(idFieldName -> id.toString)
 	// def findIn(ids: List[ObjectId], sort: Map[String, Int] = Map.empty) = findAll(id.name -> ("$in" -> objectIdsToListString(ids)), sort)
 	def findIn(ids: List[ObjectId]) = findAll(id.name -> ("$in" -> objectIdsToListString(ids)))
+
+	// useColl { coll => coll.remove(qry) }
+	// it use default database delete so afterDelete will no be trigger
+	def deleteById(id: ObjectId) { delete(idFieldName -> id.toString) }
 }

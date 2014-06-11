@@ -7,12 +7,14 @@ import scala.concurrent.{ Await, ExecutionContext, Future, future }
 import net.liftweb.http._
 import net.liftweb.util.Helpers.strToCssBindPromoter
 import net.liftweb.common.{ Empty, Full }
-import net.liftweb.http.js.JsCmds.{ jsExpToJsCmd, Noop }
+import net.liftweb.http.js.JsCmds.{SetHtml, jsExpToJsCmd, Noop}
 import com.jacoffee.example.model.{ Article => ArticleModel }
 import com.jacoffee.example.util.Helpers.isBlank
 import java.io.{File, FileOutputStream}
 import com.jacoffee.example.util.Config.UploadPath
 import com.jacoffee.example.util.Config
+import net.liftweb.http.js.jquery.JqJE.JqId
+import net.liftweb.http.js.JE.Call
 
 /**
  * Created by qbt-allen on 14-4-19.
@@ -31,13 +33,14 @@ object Article  extends DispatchSnippet {
 	// escape &lt; <  &gt; >
 	def toUnparsedSafely(unSafeText: String)(safeTextToUnparsed: String => Option[String]) =
 		Option(unSafeText).map(Utility.escape _).flatMap(safeTextToUnparsed).map(Unparsed(_))
-	// implicit def stringToNode(input: String) = Text(input)
+	implicit def stringToNode(input: String) = Text(input)
 
 	def list = {
 		//val contentName = ArticleModel.content.name
 		val searchedArticles = {
 			val q = search.is.trim
-			if (q.nonEmpty) ArticleModel.getByTextSearch(q, Map.empty) else ArticleModel.findAll
+			if (q.isEmpty) ArticleModel.findAll
+			else ArticleModel.getByTextSearch(q, Map.empty)
 		}
 
 		"data-bind=reindex [onclick]" #> {
@@ -61,14 +64,32 @@ object Article  extends DispatchSnippet {
 							// else <pre>{ toUnparsedSafely(articleContent)(highlightText _).getOrElse(articleContent: NodeSeq) } </pre>
 							articleContent
 						} &
-						"data-bind=article-action [onclick]" #> {
-							SHtml.ajaxInvoke(
+						"data-bind=like-num" #> {
+							val articleId = article.idValue
+							SHtml.a(
 								() => {
-									ArticleModel.getBoxById(article.idValue).foreach { article =>
-										article.like(article.like.get + 1).save(true)
-									}
-									Noop
-								}
+									val addedLike =
+										ArticleModel.getBoxById(articleId).map { article =>
+											val likeNum = article.like.get + 1
+											article.like(likeNum).save_!
+											likeNum
+										}.openOr(0)
+
+									SetHtml("article"+articleId.toString, addedLike.toString)
+								},
+								<lift:children>
+									<i class="like-btn"></i>喜欢
+									<span class="num" id={ s"article$articleId" }>{ article.like.get }</span>
+								</lift:children>
+							)
+						} &
+						"data-bind=delete" #> {
+							SHtml.a(
+								() => {
+									article.delete_!
+									Call("window.location.reload")
+								},
+								"删除"
 							)
 						}
 					)(xhtml)
