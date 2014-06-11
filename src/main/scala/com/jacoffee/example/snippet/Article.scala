@@ -36,7 +36,6 @@ object Article  extends DispatchSnippet {
 	implicit def stringToNode(input: String) = Text(input)
 
 	def list = {
-		//val contentName = ArticleModel.content.name
 		val searchedArticles = {
 			val q = search.is.trim
 			if (q.isEmpty) ArticleModel.findAll
@@ -53,16 +52,30 @@ object Article  extends DispatchSnippet {
 		} &
 		"data-bind=article-records" #> {
 			(xhtml: NodeSeq) => {
+				val searchString = search.is
+
 				searchedArticles.map { article =>
 					(
-						"data-bind=article-title *" #> article.title.get &
+						"data-bind=article-title *" #> {
+							val title = article.title.get
+							if (searchString.isEmpty) title: NodeSeq
+							else {
+								toUnparsedSafely(title)(
+									ArticleModel.createFieldHighlighter(searchString, article.title.name, _)
+								).getOrElse(title: NodeSeq)
+							}
+						}&
 						"data-bind=article-author *" #> article.author.get &
 						"data-bind=article-time *" #> ArticleModel.getPublishDate(article.created_at.get) &
 						"data-bind=article-content *" #> {
 							val articleContent = article.content.get
-							// if (search.is.isEmpty) { <pre>{ articleContent }</pre> }
-							// else <pre>{ toUnparsedSafely(articleContent)(highlightText _).getOrElse(articleContent: NodeSeq) } </pre>
-							<pre>{ articleContent }</pre>
+							if (searchString.isEmpty) { <pre>{ articleContent }</pre> }
+							else
+								<pre>{
+									toUnparsedSafely(articleContent)(
+										ArticleModel.createFieldHighlighter(searchString, article.content.name, _)
+									).getOrElse(articleContent: NodeSeq)
+								} </pre>
 						} &
 						"data-bind=like-num" #> {
 							val articleId = article.idValue

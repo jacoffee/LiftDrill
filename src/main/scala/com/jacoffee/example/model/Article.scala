@@ -95,6 +95,18 @@ object Article extends Article with IndexableModelMeta[Article] {
 		)
 	}
 
+	def createFieldHighlighter(search: String, fieldToHighlight: String, textToDivide: String) = {
+		highlightText(
+			search,
+			fieldToHighlight,
+			Array(
+				author.name,
+				title.name,
+				content.name
+			),
+			textToDivide
+		)
+	}
 	def indexAll {
 		println(" IndexALL ING")
 		indexAll{ getAllDocuments._1.flatMap(doc => toObjectIdOption(doc.get(idIndexFieldName))).toList.distinct }

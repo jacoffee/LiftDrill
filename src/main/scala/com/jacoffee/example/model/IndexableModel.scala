@@ -138,18 +138,19 @@ trait IndexableModelMeta[ModelType <: IndexableModel[ModelType]] extends Indexab
 		)
 	}
 
-	def highlightText(query: Query, fieldName: String, textToDivide: String) = {
-		//val parser = new MultiFieldQueryParser(version, fieldNameArray, smartChineseAnalyzer)
-		// val parsedQuery = parser.parse(search)
-		val scorer = new QueryScorer(query, null)
+	def highlightText(search: String, fieldToHighlight: String, fieldNameArray: Array[String], textToDivide: String) = {
+		val parser = new MultiFieldQueryParser(version, fieldNameArray, smartChineseAnalyzer)
+		val parsedQuery = parser.parse(search)
+		val scorer = new QueryScorer(parsedQuery, fieldToHighlight)
 		val highlighter = new Highlighter(
 			new SimpleHTMLFormatter("""<span class="highlight">""", """</span>"""),
 			scorer
 		)
+
+		highlighter.setTextFragmenter(new SimpleSpanFragmenter(scorer,1000))
 		// 1000 stands for the size of byte that will be each hit
 		def toOptional(text: String) = if (Helpers.isBlank(text)) None else Some(text)
-		def geBestFragment(textToDivide: String) = toOptional(highlighter.getBestFragment(smartChineseAnalyzer, fieldName, textToDivide))
-		highlighter.setTextFragmenter(new SimpleSpanFragmenter(scorer,1000))
+		def geBestFragment(textToDivide: String) = toOptional(highlighter.getBestFragment(smartChineseAnalyzer, fieldToHighlight, textToDivide))
 		// @return highlighted text fragment or null if no terms found so you have another consideration
 		geBestFragment(textToDivide)
 	}
