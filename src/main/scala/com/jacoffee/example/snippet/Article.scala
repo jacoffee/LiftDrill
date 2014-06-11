@@ -58,11 +58,11 @@ object Article  extends DispatchSnippet {
 						"data-bind=article-title *" #> article.title.get &
 						"data-bind=article-author *" #> article.author.get &
 						"data-bind=article-time *" #> ArticleModel.getPublishDate(article.created_at.get) &
-						"data-bind=article-content" #> {
+						"data-bind=article-content *" #> {
 							val articleContent = article.content.get
 							// if (search.is.isEmpty) { <pre>{ articleContent }</pre> }
 							// else <pre>{ toUnparsedSafely(articleContent)(highlightText _).getOrElse(articleContent: NodeSeq) } </pre>
-							articleContent
+							<pre>{ articleContent }</pre>
 						} &
 						"data-bind=like-num" #> {
 							val articleId = article.idValue

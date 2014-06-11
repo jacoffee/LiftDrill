@@ -25,7 +25,13 @@ a:hover{
 	 color:#225599;
 	 cursor:pointer;
 }
-
+.clearfix:after {
+	content: ".";
+	display: block;
+	height: 0;
+	clear: both;
+	visibility: hidden;
+}
 h1, h2, h3, h4, h5 {
 	font-size: 14px;
 	font-weight: 700;
@@ -238,6 +244,9 @@ h1, h2, h3, h4, h5 {
 	padding: 5px;
 
 }
+.main-body {
+	margin: 10px 0px;
+}
 .articles .article-item {
 	position: relative;
 	border-bottom: 1px solid red;
@@ -252,6 +261,10 @@ h1, h2, h3, h4, h5 {
 	position: absolute;
 	top: 13px;
 	left: 3px;
+}
+.article-item  .article-image {
+	float: left;
+	margin-right: 20px;
 }
 .articles .article-item .article-action {
 	margin-right: 5px;
