@@ -90,7 +90,7 @@ object Article  extends DispatchSnippet {
 			// save upload pic in the database
 			fileParamHolder.foreach { fp => ArticleModel.saveImage(fp.fileName, fp.file) }
 			article.tags(List("政治", "文化", "教育"))
-			article.save(true)  // after save hook will tigger indexing operation
+			article.save_!  // after save hook will tigger indexing operation
 			S.redirectTo("/zhihu/article")
 		}
 		val initilaArticle = articleToSave.is

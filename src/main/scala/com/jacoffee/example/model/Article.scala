@@ -2,29 +2,16 @@ package com.jacoffee.example.model
 
 import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.io.{FileOutputStream, StringReader, Reader, File}
-import scala.io.{ Codec, Source }
-import scala.collection.JavaConversions.setAsJavaSet
-import org.apache.lucene.document.{NumericField, Field, Document}
+import java.io.{ FileOutputStream, File }
+import org.apache.lucene.document.NumericField
 import org.apache.lucene.document.Field.{ TermVector, Index, Store }
-import org.apache.lucene.index.{IndexReader, Term, IndexWriterConfig, IndexWriter}
-import org.apache.lucene.store.FSDirectory
-import org.apache.lucene.analysis.cn.smart.SmartChineseAnalyzer
-import org.apache.lucene.analysis.{WhitespaceAnalyzer, WordlistLoader, Analyzer}
-import org.apache.lucene.analysis.tokenattributes.{ TypeAttribute, OffsetAttribute, PositionIncrementAttribute, CharTermAttribute }
-import org.apache.lucene.queryParser.{MultiFieldQueryParser, QueryParser}
-import org.apache.lucene.search.{MatchAllDocsQuery, SortField, Sort, TermQuery, IndexSearcher}
-import org.apache.lucene.search.highlight._
+import org.apache.lucene.search.MatchAllDocsQuery
 import net.liftweb.record.field.{ StringField, IntField }
-import net.liftweb.mongodb.record.field.{MongoListField, ObjectIdPk}
-import net.liftweb.mongodb.record.{MongoRecord, MongoMetaRecord}
-import net.liftweb.json.JsonAST.JObject
+import net.liftweb.mongodb.record.field.MongoListField
 import com.jacoffee.example.util.Config.UploadPath
 // pay attention to the difference of seq2jvalue and list2jvalue
 import net.liftweb.json.JsonDSL.{ pair2jvalue, string2jvalue, int2jvalue, seq2jvalue }
-import org.bson.types.ObjectId
-import com.jacoffee.example.util.{ Helpers, Config }
-import com.jacoffee.example.util.Config.Lucene.{ version, getStopWordsSet, smartChineseAnalyzer }
+
 /**
  * Created by qbt-allen on 20114-4-19.
  */

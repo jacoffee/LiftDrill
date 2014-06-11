@@ -37,6 +37,7 @@ trait MongoModel[ModelType <: MongoModel[ModelType]] extends MongoRecord[ModelTy
 		}
 	}
 
+	def save_! { save(true) }
 	def afterSave {}
 
 	// def invokeBeforeSave = meta.invokeBeforeSave(this)
