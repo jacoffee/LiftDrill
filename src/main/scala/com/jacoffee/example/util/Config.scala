@@ -13,11 +13,17 @@ import org.apache.lucene.analysis.cn.smart.SmartChineseAnalyzer
  */
 object Config {
 
-
+	val seperator = "/"
+	val dot = "."
 	object Path {
 		val path_shared = Props.get("path_shared").openOrThrowException {
 			"lucene_path must define in default.props"
 		}
+	}
+
+	object UploadPath {
+		def getPublicPath(collectionName: String, fileName: String) =
+			List(Path.path_shared, collectionName, fileName).mkString("", seperator, "")
 	}
 
 	class Lucene {}

@@ -2,7 +2,7 @@ package com.jacoffee.example.model
 
 import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.io.{ StringReader, Reader, File }
+import java.io.{FileOutputStream, StringReader, Reader, File}
 import scala.io.{ Codec, Source }
 import scala.collection.JavaConversions.setAsJavaSet
 import org.apache.lucene.document.{NumericField, Field, Document}
@@ -19,11 +19,12 @@ import net.liftweb.record.field.{ StringField, IntField }
 import net.liftweb.mongodb.record.field.{MongoListField, ObjectIdPk}
 import net.liftweb.mongodb.record.{MongoRecord, MongoMetaRecord}
 import net.liftweb.json.JsonAST.JObject
+import com.jacoffee.example.util.Config.UploadPath
 // pay attention to the difference of seq2jvalue and list2jvalue
 import net.liftweb.json.JsonDSL.{ pair2jvalue, string2jvalue, int2jvalue, seq2jvalue }
 import org.bson.types.ObjectId
 import com.jacoffee.example.util.{ Helpers, Config }
-import com.jacoffee.example.util.Config.Lucene.{ version, getIndexedFilePosition, getStopWordsSet, smartChineseAnalyzer }
+import com.jacoffee.example.util.Config.Lucene.{ version, getStopWordsSet, smartChineseAnalyzer }
 /**
  * Created by qbt-allen on 20114-4-19.
  */
@@ -107,6 +108,15 @@ object Article extends Article with IndexableModelMeta[Article] {
 		println(" IndexALL ING")
 		val oidsFromDoc = getAllDocuments._1.flatMap(doc => toObjectIdOption(doc.get(idIndexFieldName))).toList
 		indexAll(oidsFromDoc)
+	}
+
+	def saveImage(fileName: String, what: Array[Byte]) = {
+		val path = UploadPath.getPublicPath(collectionName, fileName)
+		val file = new File(path).getCanonicalFile
+		if (!file.getParentFile.exists) file.getParentFile.mkdirs
+		val outputStream = new FileOutputStream(file)
+		outputStream.write(what)
+		outputStream.close
 	}
 
 }

@@ -10,6 +10,9 @@ import net.liftweb.common.{ Empty, Full }
 import net.liftweb.http.js.JsCmds.{ jsExpToJsCmd, Noop }
 import com.jacoffee.example.model.{ Article => ArticleModel }
 import com.jacoffee.example.util.Helpers.isBlank
+import java.io.{File, FileOutputStream}
+import com.jacoffee.example.util.Config.UploadPath
+import com.jacoffee.example.util.Config
 
 /**
  * Created by qbt-allen on 14-4-19.
@@ -75,6 +78,8 @@ object Article  extends DispatchSnippet {
 	})
 	def createArticle = {
 
+		var fileParamHolder: Option[FileParamHolder] = None
+
 		def create {
 			val article = ArticleModel.createRecord
 			val articleInReq = articleToSave.is
@@ -82,6 +87,8 @@ object Article  extends DispatchSnippet {
 			article.title(articleInReq.title.get)
 			article.content(articleInReq.content.get)
 			article.comment(articleInReq.comment.get)
+			// save upload pic in the database
+			fileParamHolder.foreach { fp => ArticleModel.saveImage(fp.fileName, fp.file) }
 			article.tags(List("政治", "文化", "教育"))
 			article.save(true)  // after save hook will tigger indexing operation
 			S.redirectTo("/zhihu/article")
@@ -102,6 +109,9 @@ object Article  extends DispatchSnippet {
 				"data-bind=comment" #> {
 					SHtml.text(initilaArticle.comment.get,  c => articleToSave.is.comment(c))
 				} &
+				"data-bind=image" #> {
+					SHtml.fileUpload(fp => fileParamHolder = Some(fp))
+				} &
 				"data-bind=submit-action" #> SHtml.hidden(create _)
 			)(xhtml)
 		}
@@ -118,7 +128,7 @@ object Article  extends DispatchSnippet {
 		} match {
 			case  Full(num) => Full {
 				JsonResponse{
-					//("hello", "hello" ) ~ ("you", "ni")
+					// ("hello", "hello" ) ~ ("you", "ni")
 					("updatedLike", (num+1).toString)
 				}
 			}
