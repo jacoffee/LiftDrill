@@ -3,6 +3,8 @@
 body {
 	background: #f6f6f6 url("../images/article/main-bg.png") repeat top left;
 	font-family: "Microsoft YaHei";
+	-webkit-font-smoothing: antialiased;
+	-moz-font-smoothing: antialiased;
 }
 input, textarea, select, button {
 	font-family: 'Helvetica Neue',Helvetica,Arial,Sans-serif;
@@ -265,6 +267,8 @@ h1, h2, h3, h4, h5 {
 .article-item  .article-image {
 	float: left;
 	margin-right: 20px;
+	width: 220px;
+	height: 170px;
 }
 .articles .article-item .article-action {
 	margin-right: 5px;
