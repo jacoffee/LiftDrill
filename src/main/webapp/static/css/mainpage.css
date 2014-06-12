@@ -33,18 +33,17 @@ div.top {
 	color: white;
 }
 .right input[type="text"],input[type="password"]{
-   border:1px solid #1672B9;
-   background:none repeat scroll 0 0 #E7F1F8;
-   border-radius:5px 5px 5px 5px;
-   color:#555555;
-   font-size:15px;
-   line-height:20px;
-   padding:8px 10px;
-   height:"100%";
-   box-shadow:0 1px 2px rgba(15, 82, 135, 0.25) inset;
-   spacing:10px;
-   margin-left:25px;
-   text-shadow:0px 1px 2px rgba(0,0,0,0.25)  inset;
+	border:1px solid #1672B9;
+	background:none repeat scroll 0 0 #E7F1F8;
+	border-radius:5px 5px 5px 5px;
+	color:#555555;
+	font-size:15px;
+	line-height:20px;
+	padding:8px 10px;
+	height:"100%";
+	box-shadow:0 1px 2px rgba(15, 82, 135, 0.25) inset;
+	margin-left:25px;
+	text-shadow:0px 1px 2px rgba(0,0,0,0.25)  inset;
 }
 
 .right input[type="button"], input[type="submit"] {
