@@ -1,0 +1,5 @@
+<project name="LuceneInAction" default="copyfile">
+  <target name="copyfile">
+      <copy file="d:/a.txt" todir="D:/ant" overwrite="true" />
+  </target>
+</project>

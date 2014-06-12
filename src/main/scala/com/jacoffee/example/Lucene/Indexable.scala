@@ -3,7 +3,7 @@ package com.jacoffee.example.Lucene
 import java.io.{StringReader, File}
 import java.util.Calendar
 import org.apache.lucene.store.{ Directory, FSDirectory }
-import org.apache.lucene.index.{ Term, IndexWriter, IndexWriterConfig }
+import org.apache.lucene.index.{CheckIndex, Term, IndexWriter, IndexWriterConfig}
 import org.apache.lucene.analysis.{ WhitespaceAnalyzer, SimpleAnalyzer }
 import org.apache.lucene.util.Version
 import org.apache.lucene.document.{ Document, Field, NumericField }
@@ -83,7 +83,7 @@ class  Indexable  {
 		// 调用上面的方法构造一个新的IndexWriter 并且每次都会上锁  通过iWriter.close 释放锁之后才能再进行新建
 	}
 
-	 def  addDocuments {
+	 def addDocuments {
 		val iWriter = getIndexWriter
 		def getCalendarTime(year: Int) = {
 			val cal = Calendar.getInstance
@@ -133,7 +133,8 @@ class  Indexable  {
 			iSearch.explain(termQuery, macthed.doc)
 		}
 		println( scoreTexts.map(_.toHtml) )
-
+		val index = new CheckIndex(indexedFilePosition)
+		println(" Index  " + index)
 		topDocs.totalHits
 	}
 
@@ -289,10 +290,7 @@ class  Indexable  {
 
 object LuceneTest extends Indexable with App {
 	// Index Document -- addDocuments 反复添加会不断的出现
-	/*
-		Query Document
 		println(" Query The City " + getHitCount("city", "Amsterdam"))
-	*/
 	/*
 		println(" Has Deletions 检查磁盘是否有被标记为删除的Document")
 		println(getIndexWriter.hasDeletions)
@@ -309,5 +307,5 @@ object LuceneTest extends Indexable with App {
 	// testQueryParser("city", "Amsterdam Or Shanghai")
 	// testNumericRangeQuery("population")
 	// testBooleanQuery
-	addDocuments
+	//addDocuments
 }

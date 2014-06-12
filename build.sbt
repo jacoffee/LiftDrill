@@ -19,7 +19,7 @@ seq(SbtStartScript.startScriptForClassesSettings: _*)
 
 // net.virtualvoid.sbt.graph.Plugin.graphSettings // for sbt dependency-graph plugin
 
-scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature")
+scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature", "-language:implicitConversions", "-language:postfixOps")
 
 libraryDependencies ++= {
   val liftVersion = "2.5"
@@ -38,6 +38,7 @@ libraryDependencies ++= {
     "ch.qos.logback"    % "logback-classic"     % "1.0.11",
     "com.h2database"    % "h2"     % "1.3.171",
     "org.jsoup"  %  "jsoup"  %  "1.7.3",
+	"org.apache.lucene" % "lucene-parent" %	 "3.6.2",
     "org.apache.lucene" % "lucene-smartcn" % "3.4.0",
 	"org.apache.lucene" % "lucene-highlighter" % "3.4.0",
 	"junit" % "junit" % "4.4"

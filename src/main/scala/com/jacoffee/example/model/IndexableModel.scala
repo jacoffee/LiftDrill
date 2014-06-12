@@ -14,6 +14,7 @@ import org.apache.lucene.queryParser.MultiFieldQueryParser
 import org.apache.lucene.search.highlight.{SimpleSpanFragmenter, SimpleHTMLFormatter, Highlighter, QueryScorer}
 import org.bson.types.ObjectId
 import com.jacoffee.example.util.{ TempCache, Helpers }
+import org.apache.lucene.index.IndexWriter.IndexReaderWarmer
 
 
 /**
@@ -178,6 +179,8 @@ trait LuceneUtil {
 
 	def getIndexWriter = {
 		val config = new IndexWriterConfig(version, smartChineseAnalyzer)
+		// max buffer docs before flushing to Disk
+		println(" 最大缓冲 " + config.getMaxBufferedDocs)
 		new IndexWriter(directory, config)
 	}
 
