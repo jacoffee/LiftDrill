@@ -1,29 +1,16 @@
 package com.jacoffee.example.snippet
 
 import java.text.SimpleDateFormat
-import java.util.Date
 import scala.xml.NodeSeq
 import scala.xml.Text
-import scala.xml.parsing.XhtmlParser
 import scala.util.Random
-import scala.io.Source
-import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
-import org.apache.lucene.analysis.cn.smart.SmartChineseAnalyzer
-import org.apache.lucene.util.Version
-import org.apache.lucene.analysis.WordlistLoader
-import org.apache.lucene.analysis.Analyzer
-import org.apache.lucene.analysis.tokenattributes.CharTermAttribute
-import net.liftweb.builtin.snippet.Form
-import net.liftweb.builtin.snippet.Tail
 import net.liftweb.common.{ Full, Box, Empty, Loggable }
 import net.liftweb.util.Helpers.strToCssBindPromoter
-import net.liftweb.util.BindPlus.nodeSeqToBindable
-import net.liftweb.util.{ PassThru, Helpers, JsonCmd }
+import net.liftweb.util.{ PassThru, JsonCmd }
 import net.liftweb.http.{ S, SHtml, DispatchSnippet, RequestVar, SessionVar }
-import net.liftweb.http.js.{ JsCmd, JsExp}
+import net.liftweb.http.js.JsCmd
 import net.liftweb.http.JsonHandler
-import net.liftweb.http.js.JsCmds.{SetHtml, Alert, Run, Script, SetValById, Function}
+import net.liftweb.http.js.JsCmds.{ SetHtml, Run, Script, SetValById, Function }
 import net.liftweb.http.js.JE.{ JsVar, JsRaw }
 import net.liftmodules.widgets.autocomplete.AutoComplete
 
