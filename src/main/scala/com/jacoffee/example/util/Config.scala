@@ -42,7 +42,6 @@ object Config {
 				stopWordSrc.close
 			}
 		}
-		IKAnalyzer
 		// val smartChineseAnalyzer = new SmartChineseAnalyzer(version,  getStopWordsSet)
 		val smartChineseAnalyzer = new IKAnalyzer
 	}
