@@ -70,6 +70,7 @@ class Boot extends Bootable{
 			case "FormSubmit" => com.jacoffee.example.snippet.FormSubmit
 			case "RenderNode" => com.jacoffee.example.snippet.RenderNode
 			case "Article" => com.jacoffee.example.snippet.Article
+			case "Chat" => com.jacoffee.example.snippet.Chat
 		}
 	}
 
