@@ -101,7 +101,8 @@ class Boot extends Bootable{
 			Menu(Loc("DataBase", Link("mongo" :: Nil, true, "/mongo/"), "DataBase")) ,
 			Menu(Loc("Ajax", Link("ajax" :: Nil, true, "/ajax/formsubmit"), "Ajax")),
 			Menu(Loc("Zhihu", Link("zhihu" :: Nil, true, "/zhihu/index"), "Zhihu")),
-			Menu(Loc("Design", Link("design" :: Nil, true, "/design/hover"), "Design"))
+			Menu(Loc("Design", Link("design" :: Nil, true, "/design/hover"), "Design")),
+			Menu(Loc("Chat", Link("chat":: Nil, true, "/chat/"), "Chat"))
 		)
 	}
 }
