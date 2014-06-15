@@ -1,0 +1,7 @@
+@CHARSET "UTF-8";
+
+.chat-room ul li {
+	float:left;
+	margin-right: 10px;
+	width: 200px;
+}

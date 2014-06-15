@@ -2,14 +2,13 @@ package net.liftweb.example.model
 
 import net.liftweb.mongodb.record.{ MongoRecord, MongoMetaRecord }
 import net.liftweb.mongodb.record.field.ObjectIdPk
-import net.liftweb.record.field.{ StringField,  EnumField }
+import net.liftweb.record.field.StringField
 import net.liftweb.json.JsonDSL._
 import net.liftweb.json.JsonAST.JObject
-import net.liftweb.record.field.DateTimeField
 import net.liftweb.util.Helpers
 import java.util.{ Calendar, Date }
-import java.text.SimpleDateFormat
 import net.liftweb.record.field.IntField
+import com.jacoffee.example.util.Helpers.formatString
 
 
 object Person extends Person with MongoMetaRecord[Person] {
@@ -21,9 +20,6 @@ object Person extends Person with MongoMetaRecord[Person] {
 	def listFieldsName = List(username, email, personalityType).map(_.name)
 	def getPersonAttrs(person: Person) =  List(username, email, personalityType)
 
-	def formatPattern = new SimpleDateFormat("yyyy-MM-dd HH:mm")
-	def formatDate(date: Date) = formatPattern.format(date)
-	def formatString(dateLike: String) = formatPattern.parse(dateLike)
 
 	// transferorm string to calendar, usually the string is from input
 	def stringToCal(dateLike: String) = {

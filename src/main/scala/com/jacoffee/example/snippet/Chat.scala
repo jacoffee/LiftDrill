@@ -1,8 +1,11 @@
 package com.jacoffee.example.snippet
 
+import java.util.Date
 import net.liftweb.util.Helpers.strToCssBindPromoter
 import net.liftweb.http.{ S, SHtml, DispatchSnippet }
 import net.liftweb.http.js.JsCmds.SetValById
+import com.jacoffee.example.comet.ChatServer
+import com.jacoffee.example.comet.Message
 
 
 /**
@@ -18,6 +21,7 @@ object Chat extends DispatchSnippet {
 		val userName = "Miss X"
 
 		def send {
+			println(" Msg Sent")
 			S.param("msg").map { m =>
 				ChatServer ! Message(new Date(), userName, m.trim)
 			}.openOr {

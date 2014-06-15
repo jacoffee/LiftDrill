@@ -23,7 +23,7 @@ class Boot extends Bootable{
 		//Init the jQuery module, see http://liftweb.net/jquery for more information.
 		// 选择默认的 js支持
 		//LiftRules.jsArtifacts = JQueryArtifacts
-
+		LiftRules.addToPackages("com.jacoffee.example")
 		//Show the spinny image when an Ajax call starts
 		LiftRules.ajaxStart = Full(() => LiftRules.jsArtifacts.show("ajax-loader").cmd)
 

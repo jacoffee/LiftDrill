@@ -1,12 +1,32 @@
 <div data-lift="surround?with=default;at=content" class="wrapper">
+	<head>
+		<link rel="stylesheet" type="text/css" href="/static/css/chat.css">
+	</head>
 	<h2>Comet Chat</h2>
 	<p>Let's build our chat app here, shall we?</p>
-	<!--<span data-lift="comet?type=ChatBrowserComponent"></span>-->
-	<form class="chat-box" data-lift="Chat.frontEnd" method="POST">
-		<input type="text" placeholder="say what you want" name="msg" id="inp_chat"/>
-		<button id="submit" class="btn btn-primary btn-large">
-			<span data-bind="action"></span>
-			<i class="icon-white icon-ok"></i>Say Something
-		</button>
+	<span data-lift="comet?type=ChatBrowserComponent"></span>
+	<h3>What do your friends Say??</h3>
+	<div id="chat-room" class="chat-room">
+		<div class="chat-room-header clearfix">
+			<ul>
+				<li>Time</li><li>Name</li><li>Message</li>
+			</ul>
+		</div>
+<!--		<div class="chat-room-body clearfix">
+			<ul>
+				<li>2013-03-19</li>
+				<li>ZML</li>
+				<li>Hello, you all</li>
+			</ul>
+		</div>-->
+	</div>
+	<form data-lift="form.ajax">
+		<div class="chat-box" data-lift="Chat.frontEnd">
+			<input type="text" placeholder="say what you want" name="msg" id="inp_chat"/>
+			<button id="submit" class="btn btn-primary btn-large">
+				<span data-bind="action"></span>
+				<i class="icon-white icon-ok"></i>Say Something
+			</button>
+		</div>
 	</form>
 </div>
