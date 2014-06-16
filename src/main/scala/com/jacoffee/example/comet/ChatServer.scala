@@ -16,6 +16,8 @@ import com.jacoffee.example.util.Helpers.formatDate
  * To change this template use File | Settings | File Templates.
  */
 case class Message(time: Date, user: String, msg: String)
+// ListenerManager ---> protected def lowPriority: PartialFunction[Any, Unit] = Map.empty
+// trait MapLike[A, +B, +This <: MapLike[A, B, This] with Map[A, B]] extends PartialFunction[A, B]
 object ChatServer extends LiftActor with ListenerManager {
 
 	private var msgs = Vector[Message]()
@@ -29,29 +31,33 @@ object ChatServer extends LiftActor with ListenerManager {
 	override def lowPriority = {
 		case m: Message => {
 			msgs :+= m; // add newest msg to the Msg Vector
-			updateListeners(m)
+			updateListeners(m) // when the listener(actor) being registered !!
 		}
 	}
 }
 
 class ChatBrowserComponent extends CometActor with CometListener {
-	private var msgs: Vector[Message] = Vector()
-	// register this component
+	type ALL = Vector[Message]
+	private var msgs: ALL = Vector()
+	// This controls which Actor to register with for updates. Typically
 	def registerWith = ChatServer
 	// listen for messages
 	override def lowPriority = {
 		case m: Message => {
 			msgs :+= m
+//  Perform a partial update of the comet component based
+// on the JsCmd.  This means that the JsCmd will be sent to
+// all of the currently listening browser tabs
 			partialUpdate(appendMessage(m))
 		}
-		case all: Vector[Message] =>{
+		case all: ALL =>{
 			msgs = all
 			reRender()
 		}
 	}
-	def appendMessage(m: Message): JsCmd =
-		AppendHtml("chat-room", buildMessageHtml(m))
+	def appendMessage(m: Message): JsCmd = AppendHtml("chat-room", buildMessageHtml(m))
 
+	// RenderOut
 	def render = {
 		Script(
 			SetHtml(

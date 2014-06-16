@@ -9,9 +9,11 @@ organization := "net.liftweb"
 scalaVersion := "2.10.2"
 
 
-resolvers ++= Seq("snapshots"     at "http://oss.sonatype.org/content/repositories/snapshots",
-                "releases"        at "http://oss.sonatype.org/content/repositories/releases"
-                )
+resolvers ++= 
+	Seq(
+		"snapshots"     at "http://oss.sonatype.org/content/repositories/snapshots",
+		"releases"        at "http://oss.sonatype.org/content/repositories/releases"
+	)
 
 seq(com.github.siasia.WebPlugin.webSettings :_*)
 
@@ -38,7 +40,6 @@ libraryDependencies ++= {
     "ch.qos.logback"    % "logback-classic"     % "1.0.11",
     "com.h2database"    % "h2"     % "1.3.171",
     "org.jsoup"  %  "jsoup"  %  "1.7.3",
-	"org.apache.lucene" % "lucene-parent" %	 "3.6.2",
     "org.apache.lucene" % "lucene-smartcn" % "3.4.0",
 	"org.apache.lucene" % "lucene-highlighter" % "3.4.0",
 	"junit" % "junit" % "4.4"
