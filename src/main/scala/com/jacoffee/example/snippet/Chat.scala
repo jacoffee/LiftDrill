@@ -19,16 +19,13 @@ object Chat extends DispatchSnippet {
 
 	def frontEnd = {
 		val userName = "Miss X"
-
 		def send {
-			println(" Msg Sent")
 			S.param("msg").map { m =>
 				ChatServer ! Message(new Date(), userName, m.trim)
 			}.openOr {
 				SetValById("inp_chat", "")
 			}
 		}
-
 		"data-bind=action" #> {
 			SHtml.hidden(send _)
 		}

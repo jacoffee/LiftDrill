@@ -3,9 +3,8 @@ package com.jacoffee.example.util
 import org.apache.lucene.util.Version
 import net.liftweb.util.Props
 import net.liftweb.mongodb.MongoIdentifier
-import scala.io.{Codec, Source}
+import scala.io.{ Codec, Source }
 import org.apache.lucene.analysis.WordlistLoader
-import org.apache.lucene.analysis.cn.smart.SmartChineseAnalyzer
 import org.wltea.analyzer.lucene.IKAnalyzer
 
 /**
