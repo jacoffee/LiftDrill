@@ -107,6 +107,7 @@ var b = new Array(10);
 // iterate array
 var obj = {x: 1, y: 2, z: 3}
 var arr = Object.keys(obj)  // [x, y, z]
+arr.reduce(function(x, y) {return x+y; })
 var objValues = [];
 for (var i in arr) { // this is used to converse object rather array
 	console.log(i); // key is  0 1 2
