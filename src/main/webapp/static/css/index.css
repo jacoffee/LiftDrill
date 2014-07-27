@@ -274,6 +274,7 @@ a.city {
 	padding: 10px;
 	font-weight: bolder;
 	color: #FFFFFF;
+	cursor: move;
 	opacity: 0.6;
 }
 

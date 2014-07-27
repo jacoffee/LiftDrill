@@ -56,15 +56,23 @@ PageScroll = $.extend(
 			event.stopPropagation();
 			event.preventDefault();
 
+			function validatedLeft(elementToDrag, currentX) {
+				var selfWidth = elementToDrag.width();
+				if (currentX < 0) return 0;
+				else if (currentX + selfWidth >= $(window).width()) return $(window).width() - selfWidth;
+				else  return currentX;
+			}
+
 			function moveHandler(e) {
 				var e = e  || window.event;
 				var scoll = _this.getScrollOffsets();
 				// elementToDrag.left = (e.clientX + scroll.x - deltaX) + "px";
 				// elementToDrag.top = (e.clientY + scroll.y- deltaY) + "px";
+				var currentY = e.clientY + scroll.y - deltaY;
 				elementToDrag.offset(
 					{
-						'left': (e.clientX + scroll.x - deltaX), // -deltaX 是为了让 left能够以元素的上边界为准
-						'top': (e.clientY + scroll.y - deltaY)
+						'left': validatedLeft(elementToDrag, (e.clientX + scroll.x - deltaX)), // -deltaX 是为了让 left能够以元素的上边界为准
+						'top': topY = currentY < 0 ? 0 : currentY
 					}
 				);
 				// elementToDrag.css('left', (e.clientX + scroll.x - deltaX) + "px");
