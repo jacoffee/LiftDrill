@@ -5,7 +5,7 @@ import net.liftweb.util.Props
 import net.liftweb.mongodb.MongoIdentifier
 import scala.io.{ Codec, Source }
 import org.apache.lucene.analysis.WordlistLoader
-import org.wltea.analyzer.lucene.IKAnalyzer
+import org.apache.lucene.analysis.cn.smart.SmartChineseAnalyzer
 
 /**
  * Created by qbt-allen on 14-4-23.
@@ -41,8 +41,8 @@ object Config {
 				stopWordSrc.close
 			}
 		}
-		// val smartChineseAnalyzer = new SmartChineseAnalyzer(version,  getStopWordsSet)
-		val smartChineseAnalyzer = new IKAnalyzer
+		val smartChineseAnalyzer = new SmartChineseAnalyzer(version,  getStopWordsSet)
+		//val smartChineseAnalyzer = new IKAnalyzer
 	}
 
 	object Mongo {

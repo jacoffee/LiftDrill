@@ -46,4 +46,3 @@ libraryDependencies ++= {
 	"junit" % "junit" % "4.4"
   )
 }
-port in container.Configuration := 80

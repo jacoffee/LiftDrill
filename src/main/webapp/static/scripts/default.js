@@ -37,7 +37,7 @@ BasePopup = {
 			{
 				/* 第二次出现的时候  由于CSS添加了 宽度所以起作用了 to be done */
 				left: ($(window).width() - this.getElement().width()) / 2 + "px",
-				top: $(document).scrollTop() + top + "px"
+				top: $(document).scrollTop + top + "px"
 			}
 		);
 	},
@@ -73,6 +73,9 @@ BasePopup = {
 	show: function(){
 		this.setPosition();
 		this.getElement().appendTo($("body")).show();
+		$(document).delegate('div.'+this.classNames[0], 'mousedown', function(e){
+			PageScroll.drag($(this), e);
+		});
 	}
 },
 BlackOverlayPop = $.extend(
@@ -81,10 +84,6 @@ BlackOverlayPop = $.extend(
 		overlayClassName: ['black-overlay'],
 		renderblackOverLay: function() {
 			return $("<div></div>").addClass(this.overlayClassName.join(" "));
-		},
-		show: function() {
-			this.setPosition();
-			this.getElement().appendTo($("body")).show();
 		}
 	}
 )
