@@ -80,7 +80,7 @@ BasePopup = {
 	hide: function() {
 		this.getElement().remove();
 	},
-	show: function(){
+	show: function() {
 		this.setPosition();
 		this.getElement().appendTo($("body")).show();
 		$(document).delegate('div.'+this.classNames[0], 'mousedown', function(e){

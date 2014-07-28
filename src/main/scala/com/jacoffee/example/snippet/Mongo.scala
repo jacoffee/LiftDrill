@@ -145,39 +145,39 @@ object Mongo extends DispatchSnippet {
 												// when clicking the 确认修改按钮 首先获取要传递的数据 并进行验证然后 提交提交到服务器端进行相关处理
 												// 最后以JsCmd进行回调处理
 												SHtml.jsonCall(Call("sendAsynData.person", ValById(userId), ValById(emailId)), validateAndUpdate _) /*&
-												SHtml.jsonCall(
-													JsArray {
-														List(
-															ValById(userId),
-															ValById(emailId)
-														)
-													},
-													{
-														_ match {
-																case JArray( JString(username) :: JString(email) :: Nil) => {
-																	try {
-																		//进行更新操作  先查询 然后再进行更新 验证
-																		PersonModel.find(idValue) match {
-																			case Full(person) => {
-																				person.username(username)
-																				.email(email)
-																				.save
+														SHtml.jsonCall(
+															JsArray {
+																List(
+																	ValById(userId),
+																	ValById(emailId)
+																)
+															},
+															{
+																_ match {
+																		case JArray( JString(username) :: JString(email) :: Nil) => {
+																			try {
+																				//进行更新操作  先查询 然后再进行更新 验证
+																				PersonModel.find(idValue) match {
+																					case Full(person) => {
+																						person.username(username)
+																						.email(email)
+																						.save
+																					}
+																					case _ =>
+																				}
+																				Call("window.location.reload")
+																			} catch {
+																				case e: Exception => {
+																					Call("window.location.reload")
+																				}
 																			}
-																			case _ =>
 																		}
-																		Call("window.location.reload")
-																	} catch {
-																		case e: Exception => {
+																		case _ => {
 																			Call("window.location.reload")
 																		}
-																	}
 																}
-																case _ => {
-																	Call("window.location.reload")
-																}
-														}
-													}:(JValue => JsCmd)
-												)*/
+															}:(JValue => JsCmd)
+														)*/
 											)
 										)
 									).cmd
