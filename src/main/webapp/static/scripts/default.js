@@ -58,6 +58,7 @@ BasePopup = {
 		if (Helper.isNullable(this.element)) {
 			// dynamic add attribute for JavaScript
 			// just add empty the rest will be filled with othe method
+			var _this = this;
 			this.element = $("<div></div>").addClass(this.classNames.join(" ")).css(
 				{
 					"z-index": this.zIndex
@@ -67,8 +68,17 @@ BasePopup = {
 			).append(
 				$("<div></div>").addClass(this.contentClassNames.join(" "))
 			);
+
+			$(document).keydown(function(event){
+				if (event.keyCode === 27) {
+					_this.hide();
+				}
+			});
 		}
 		return this.element;
+	},
+	hide: function() {
+		this.getElement().remove();
 	},
 	show: function(){
 		this.setPosition();
