@@ -5,7 +5,7 @@ import net.liftweb.actor.LiftActor
 import net.liftweb.http.{CometListener, CometActor, ListenerManager}
 import net.liftweb.http.js.JsCmd
 import net.liftweb.http.js.jquery.JqJsCmds.AppendHtml
-import net.liftweb.http.js.JsCmds.{SetHtml, Script }
+import net.liftweb.http.js.JsCmds.{ SetHtml, Script }
 import com.jacoffee.example.util.Helpers.formatDate
 
 /**
