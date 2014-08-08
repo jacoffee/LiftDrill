@@ -23,7 +23,7 @@ BasePopup = {
 
 	contentClassNames: ["content-wrapper"],
 
-	actionClassNames: ["process"],
+	actionClassNames: ["action-container"],
 
 	zIndex: 99999,
 
@@ -49,8 +49,8 @@ BasePopup = {
 		this.getElement().find("." +this.contentClassNames[0]).html(contentHtml);
 		return this;
 	},
-	renderActionElement: function(actionObj) {
-		this.getElement().find("." +this.actionClassNames[0]).append(actionObj);
+	renderActionElement: function(actionElem) {
+		this.getElement().find("." +this.actionClassNames[0]).html(actionElem);
 		return this;
 	},
 	getElement: function() {
@@ -59,6 +59,13 @@ BasePopup = {
 			// dynamic add attribute for JavaScript
 			// just add empty the rest will be filled with othe method
 			var _this = this;
+
+			$(document).keydown(function(event){
+				if (event.keyCode === 27) {
+					_this.hide();
+				}
+			});
+
 			this.element = $("<div></div>").addClass(this.classNames.join(" ")).css(
 				{
 					"z-index": this.zIndex
@@ -67,13 +74,10 @@ BasePopup = {
 				$("<div></div>").addClass(this.titleClassNames.join(" "))
 			).append(
 				$("<div></div>").addClass(this.contentClassNames.join(" "))
+			).append(
+				$("<div></div>").addClass(this.actionClassNames.join(" "))
 			);
 
-			$(document).keydown(function(event){
-				if (event.keyCode === 27) {
-					_this.hide();
-				}
-			});
 		}
 		return this.element;
 	},
@@ -83,11 +87,11 @@ BasePopup = {
 	show: function() {
 		this.setPosition();
 		this.getElement().appendTo($("body")).show();
-		$(document).delegate('div.'+this.classNames[0], 'mousedown', function(e){
+		$(document).delegate('div.'+this.classNames[0], 'mousedown', function(e) {
 			PageScroll.drag($(this), e);
 		});
 	}
-},
+}
 BlackOverlayPop = $.extend(
 	BasePopup,
 	{
