@@ -20,6 +20,7 @@ class ExampleClock(initSession: LiftSession,
 	    initName: Box[String],
 	    initDefaultXml: NodeSeq,
 	    initAttributes: Map[String, String]) extends CometActor {
+	initCometActor(initSession, initType, initName, initDefaultXml, initAttributes)
 	Schedule.schedule(this, Tick, TimeSpan(5 * 1000L))
 
 	def render =
@@ -39,5 +40,4 @@ class ExampleClock(initSession: LiftSession,
 			Schedule.schedule(this, Tick, TimeSpan(5 * 1000L))
 		}
 	}
-	initCometActor(initSession, initType, initName, initDefaultXml, initAttributes)
 }
