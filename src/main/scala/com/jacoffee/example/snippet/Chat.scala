@@ -13,9 +13,15 @@ import com.jacoffee.example.comet.Message
  */
 object Chat extends DispatchSnippet {
 	def dispatch = {
-		case "frontEnd" => frontEnd
+		case "frontEnd" 	=> frontEnd
+		case "time"		=> time
 	}
 
+	def time = {
+		"*" #> {
+			<p></p>
+		}
+	}
 
 	def frontEnd = {
 		val userName = "Miss X"

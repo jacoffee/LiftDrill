@@ -1,23 +1,17 @@
 package bootstrap.liftweb
 
-import net.liftweb._
-import common.Full
-import sitemap.Loc.{ Link, Hidden, LocGroup }
-import util.{Props, Helpers}
-import http._
-import sitemap._
-import Helpers._
-import example._
+import net.liftweb.common.Full
+import net.liftweb.sitemap.Loc.{ Link, Hidden, LocGroup }
+import net.liftweb.util.Props
 import net.liftmodules.widgets.autocomplete.AutoComplete
-import net.liftweb.mongodb.MongoDB
-import net.liftweb.mongodb.DefaultMongoIdentifier
 import com.mongodb.MongoOptions
-import net.liftweb.mongodb.MongoAddress
-import net.liftweb.mongodb.MongoHost
+import net.liftweb.mongodb.{ MongoDB, MongoAddress, MongoHost, DefaultMongoIdentifier }
+import net.liftweb.http.{ S, PostRequest, ParsePath, GetRequest, RewriteResponse, RewriteRequest, CometCreationInfo, Html5Properties, Req, LiftRules, Bootable }
+import net.liftweb.sitemap.{ *, Loc, SiteMap, Menu }
 import com.jacoffee.example.util.Config
-import com.jacoffee.example.snippet.Article
+import com.jacoffee.example.comet.ExampleClock
 
-class Boot extends Bootable{
+class Boot extends Bootable {
 
 	def boot {
 		//Init the jQuery module, see http://liftweb.net/jquery for more information.
@@ -36,6 +30,11 @@ class Boot extends Bootable{
 		// Use HTML5 for rendering
 		LiftRules.htmlProperties.default.set((r: Req) => new Html5Properties(r.userAgent))
 
+		// comet clock widget
+		LiftRules.cometCreation.append {
+			case CometCreationInfo( cometType @ "ExampleClock", name, defaultXml, attributes, session) =>
+				new ExampleClock(session, Full(cometType), name, defaultXml, attributes)
+		}
 
 		Props.whereToLook = () =>
 			(
@@ -78,7 +77,7 @@ class Boot extends Bootable{
 		LiftRules.dispatch.append {
 			// relative to root dir so the first one is /zhihu/article/like.json req
 			// corresponding ajax req => type: "POST", url: "/zhihu/article/like.json",
-			case Req("zhihu" :: "article" :: "like" :: Nil, "json", PostRequest) => Article.addLike _
+			case Req("zhihu" :: "article" :: "like" :: Nil, "json", PostRequest) => com.jacoffee.example.snippet.Article.addLike _
 		}
 	}
 

@@ -2,7 +2,7 @@ import com.typesafe.sbt.SbtStartScript
 
 name := "LiftDrill"
 
-version := "0.0.1"
+version := "1.0"
 
 organization := "net.liftweb"
 
@@ -12,7 +12,8 @@ scalaVersion := "2.10.2"
 resolvers ++= 
 	Seq(
 		"snapshots"			at "http://oss.sonatype.org/content/repositories/snapshots",
-		"releases"          at "http://oss.sonatype.org/content/repositories/releases"
+		"releases"          at "http://oss.sonatype.org/content/repositories/releases",
+		"Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
 	)
 
 seq(com.github.siasia.WebPlugin.webSettings :_*)
@@ -43,7 +44,8 @@ libraryDependencies ++= {
     "org.jsoup"  %  "jsoup"  %  "1.7.3",
     "org.apache.lucene" % "lucene-smartcn" % "3.4.0",
 	"org.apache.lucene" % "lucene-highlighter" % "3.4.0",
-	"junit" % "junit" % "4.4"
+	"junit" % "junit" % "4.4",
+	"com.typesafe.akka" % "akka-actor" % "2.0.1"
   )
 }
 
