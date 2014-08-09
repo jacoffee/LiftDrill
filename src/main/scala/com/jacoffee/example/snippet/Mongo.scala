@@ -19,6 +19,7 @@ import net.liftweb.http.js.JE.ValById
 import net.liftweb.json.JsonAST.JArray
 import net.liftweb.http.js.JE.Call
 import net.liftweb.json.JsonAST.JString
+import net.liftweb.http.js.jquery.JqJE.JqId
 
 object Mongo extends DispatchSnippet {
 

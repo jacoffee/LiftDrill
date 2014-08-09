@@ -3,9 +3,9 @@
 		<link rel="stylesheet" type="text/css" href="/static/css/chat.css">
 	</head>
 	<h2>Comet Chat</h2>
-	<div data-lift="comet?type=ExampleClock">
-		Current Time:<br /><span id="clock_time">Missing Clock</span>
-	</div>
+	<!--<div data-lift="comet?type=ExampleClock">-->
+		<!--Current Time:<br /><span id="clock_time">Missing Clock</span>-->
+	<!--</div>-->
 	<p>Let's build our chat app here, shall we?</p>
 	<span data-lift="comet?type=ChatBrowserComponent"></span>
 	<h3>What do your friends Say??</h3>
@@ -19,10 +19,20 @@
 	<form data-lift="form.ajax">
 		<div class="chat-box" data-lift="Chat.frontEnd">
 			<input type="text" placeholder="say what you want" name="msg" id="inp_chat"/>
+			<div id="error_notice"></div>
 			<button id="submit" class="btn btn-primary btn-large">
 				<span data-bind="action"></span>
 				<i class="icon-white icon-ok"></i>Say Something
 			</button>
 		</div>
 	</form>
+	<script type="text/javascript">
+		$(function(){
+			$('#submit').bind('click', function(){
+				if ($('#inp_chat').val().length === 0) {
+					$('#error_notice').html('消息不能为空');
+				};
+			});
+		});
+	</script>
 </div>

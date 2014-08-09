@@ -5,3 +5,12 @@
 	margin-right: 10px;
 	width: 200px;
 }
+
+input[type=text] {
+	height: 15px;
+	display: block;
+}
+.error_notice {
+	color: red;
+}
+

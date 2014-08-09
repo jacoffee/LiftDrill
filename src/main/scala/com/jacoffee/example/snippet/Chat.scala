@@ -6,6 +6,11 @@ import net.liftweb.http.{ S, SHtml, DispatchSnippet }
 import net.liftweb.http.js.JsCmds.SetValById
 import com.jacoffee.example.comet.ChatServer
 import com.jacoffee.example.comet.Message
+import net.liftweb.http.js.jquery.JqJE.JqId
+import net.liftweb.http.js.jquery.JqJsCmds.jsExpToJsCmd
+import net.liftweb.http.js.jquery.JqJsCmds.JqSetHtml
+import scala.xml.Text
+import net.liftweb.http.js.{JsMember, JsExp}
 
 
 /**
@@ -26,15 +31,20 @@ object Chat extends DispatchSnippet {
 	def frontEnd = {
 		val userName = "Miss X"
 		def send {
-			S.param("msg").map { m =>
-				ChatServer ! Message(new Date(), userName, m.trim)
-			}.openOr {
-				SetValById("inp_chat", "")
+			val msg = S.param("msg").map(_.trim).openOr("")
+			if (msg.nonEmpty) {
+				ChatServer ! Message(new Date(), userName, msg)
 			}
+			JqVal("inp_chat")
+			SetValById("inp_chat", "")
 		}
 		"data-bind=action" #> {
 			SHtml.hidden(send _)
 		}
 	}
 
+}
+
+case class JqVal(id: JsExp) extends JsExp {
+	override def toJsCmd = "jQuery('#'+" + id.toJsCmd + ").val()"
 }
