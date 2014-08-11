@@ -11,16 +11,24 @@ import com.jacoffee.example.util.Helpers
 
 /**
  * Created by qbt-allen on 14-8-9.
+ * abstract
  */
 
-case object Tick
+abstract class Comet(initSession: LiftSession,
+		initType: Box[String],
+		initName: Box[String],
+		initDefaultXml: NodeSeq,
+		initAttributes: Map[String, String]) extends CometActor {
+		initCometActor(initSession, initType, initName, initDefaultXml, initAttributes)
+}
 
+case object Tick
 class ExampleClock(initSession: LiftSession,
-	    initType: Box[String],
-	    initName: Box[String],
-	    initDefaultXml: NodeSeq,
-	    initAttributes: Map[String, String]) extends CometActor {
-	initCometActor(initSession, initType, initName, initDefaultXml, initAttributes)
+		initType: Box[String],
+		initName: Box[String],
+		initDefaultXml: NodeSeq,
+		initAttributes: Map[String, String]) extends Comet(initSession, initType, initName, initDefaultXml, initAttributes) {
+
 	Schedule.schedule(this, Tick, TimeSpan(5 * 1000L))
 
 	def render =
