@@ -6,8 +6,7 @@ import net.liftweb.common.{ Full, Box, Empty }
 import scala.xml.{ Text, NodeSeq }
 import net.liftweb.actor.LiftActor
 import net.liftweb.util.Schedule
-import net.liftweb.http.js.JsCmds.{Run, SetHtml}
-
+import net.liftweb.http.js.JsCmds.{ Run, SetHtml }
 /**
  * Created by qbt-allen on 14-8-11.
  */
@@ -46,14 +45,14 @@ object Lobby extends LiftActor {
 				// 每次取最新的两个人 match
 				val players = lobby.take(2)
 				val game = new Game(players.head, players.last)
-				games = game :: games
+				games ::= game
 				players.foreach(_ ! NowPlaying(game))
 				lobby diff players // 剔除已经 参赛的 Actor
 			}
 
 		}
 		case AddPlayer(who) => {
-			lobby = who :: lobby
+			lobby ::= who
 			// 添加一个参赛者 之后 要立即帮它配对
 			this ! PairPlayersInLobby
 		}
@@ -64,8 +63,9 @@ object Lobby extends LiftActor {
 }
 
 class Game(playerOne: CometActor, playerTwo: CometActor) extends LiftActor {
+	import scala.collection.mutable.Map
 	private var moves: Map[CometActor, Box[Move]] = Map()
-	// clearMoves()
+	clearMoves()
 
 	private def sendToAllPlayers(msg: Any){
 		moves.foreach(_._1 ! msg)
@@ -96,7 +96,7 @@ class Game(playerOne: CometActor, playerTwo: CometActor) extends LiftActor {
 		}
 
 		case Make(move, from) => {
-			moves.updated(from,Full(move))
+			moves.update(from, Full(move))
 			println(" moves " + moves)
 			println(" Move Maded !!!")
 			if(moves.flatMap(_._2).size == 2){
@@ -108,14 +108,13 @@ class Game(playerOne: CometActor, playerTwo: CometActor) extends LiftActor {
 				moves.filter(_._1 ne from).head._1 ! HurryUpAndMakeYourMove
 			}
 		}
-		case ResetGame =>
+		case ResetGame => {
 			clearMoves()
 			sendToAllPlayers(ResetGame)
-
+		}
 		case LeaveGame =>
 		// one player left, you cant play on your own so
 		// both players are sent back to the lobby
-
 	}
 }
 
@@ -157,7 +156,7 @@ class PaperScissorRock(initSession: LiftSession,
 		else
 			"#game *" #> "Waiting in the lobby for an opponent..."
 
-	override def lifespan: Box[TimeSpan] = Full(TimeSpan(1000L * 60 * 2))
+	//override def lifespan: Box[TimeSpan] = Full(TimeSpan(1000L * 60 * 2))
 
 	override def mediumPriority = {
 		case NowPlaying(g) => {
@@ -180,14 +179,11 @@ class PaperScissorRock(initSession: LiftSession,
 				case s: String if (s.trim.length > 2)=> {
 					nickname = s.trim
 					Lobby ! AddPlayer(this)
-					reRender(false)
 				}
 				case _ => {
 					askUserForNickname
-					reRender(false)
 				}
 			}
-
 		}
 	}
 }
