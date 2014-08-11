@@ -8,18 +8,32 @@ import net.liftweb.http.js.JsCmds.SetHtml
 import net.liftweb.common.Box
 import com.jacoffee.example.util.Helpers
 
-
 /**
  * Created by qbt-allen on 14-8-9.
  * abstract
  */
-
 abstract class Comet(initSession: LiftSession,
 		initType: Box[String],
 		initName: Box[String],
 		initDefaultXml: NodeSeq,
 		initAttributes: Map[String, String]) extends CometActor {
 		initCometActor(initSession, initType, initName, initDefaultXml, initAttributes)
+
+		/*
+		*  This method will be called after the Actor has started.  Do any setup here.
+   		*  DO NOT do initialization in the constructor or in initCometActor... do it here.
+		* */
+		override protected def localSetup {
+
+			super.localSetup
+		}
+
+		// This method will be called as part of the shut-down of the actor.  Release any resources here
+		override protected def localShutdown {
+
+			super.localShutdown
+		}
+
 }
 
 case object Tick

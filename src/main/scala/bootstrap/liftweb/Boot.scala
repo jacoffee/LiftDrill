@@ -9,7 +9,7 @@ import net.liftweb.mongodb.{ MongoDB, MongoAddress, MongoHost, DefaultMongoIdent
 import net.liftweb.http.{ S, PostRequest, ParsePath, GetRequest, RewriteResponse, RewriteRequest, CometCreationInfo, Html5Properties, Req, LiftRules, Bootable }
 import net.liftweb.sitemap.{ *, Loc, SiteMap, Menu }
 import com.jacoffee.example.util.Config
-import com.jacoffee.example.comet.ExampleClock
+import com.jacoffee.example.comet.{ ExampleClock, PaperScissorRock }
 
 class Boot extends Bootable {
 
@@ -34,6 +34,8 @@ class Boot extends Bootable {
 		LiftRules.cometCreation.append {
 			case CometCreationInfo( cometType @ "ExampleClock", name, defaultXml, attributes, session) =>
 				new ExampleClock(session, Full(cometType), name, defaultXml, attributes)
+			case CometCreationInfo( cometType @ "PaperScissorRock", name, defaultXml, attributes, session) =>
+				new PaperScissorRock(session, Full(cometType), name, defaultXml, attributes)
 		}
 
 		Props.whereToLook = () =>
