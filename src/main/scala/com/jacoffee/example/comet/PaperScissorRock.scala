@@ -185,7 +185,10 @@ class PaperScissorRock(initSession: LiftSession,
 
 class AskName extends CometActor {
 	def render = SHtml.ajaxForm(
-		<p>What is your player nickname? <br />{
-			SHtml.text("",n => answer(n.trim))}</p> ++
-			<input type="submit" value="Enter Lobby"/>)
+		<p>What is your player nickname? <br />
+			{
+				SHtml.text("",n => answer(n.trim))
+			}</p> ++
+		<input type="submit" value="Enter Lobby"/>
+	)
 }
