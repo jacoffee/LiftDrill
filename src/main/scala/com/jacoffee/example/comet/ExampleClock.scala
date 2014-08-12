@@ -17,6 +17,9 @@ abstract class Comet(initSession: LiftSession,
 		initName: Box[String],
 		initDefaultXml: NodeSeq,
 		initAttributes: Map[String, String]) extends CometActor {
+		// 从comet actor的初始化 可以看出 每一个CometActor的初始化 是与LiftSession相对应的
+		// 所以在此可以简单的理解为  每一个浏览器算一个Session
+		// 而每一个浏览器 Tab 则可以当作一个 listener
 		initCometActor(initSession, initType, initName, initDefaultXml, initAttributes)
 
 		/*
