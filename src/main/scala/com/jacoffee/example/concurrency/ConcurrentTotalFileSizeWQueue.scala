@@ -1,17 +1,10 @@
 package com.jacoffee.example.concurrency
 
 import java.io.File
-import scala.collection.mutable.ListBuffer
-import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-import java.util.concurrent.Future
-import java.util.concurrent.Callable
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicLong
-import java.util.concurrent.CountDownLatch
 import java.util.concurrent.ArrayBlockingQueue
-import scala.collection.JavaConversions.collectionAsScalaIterable
-import scala.collection.JavaConverters
 
 object ConcurrentTotalFileSizeWQueue extends App {
 		val service = Executors.newFixedThreadPool(1000)
