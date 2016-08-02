@@ -30,27 +30,27 @@ import net.liftmodules.textile.TextileParser
 /**
  * Respond to JSON requests in a stateless dispatch
  */
-object StatelessJson {
-  def init() {
-    // register the JSON handler
-    LiftRules.statelessDispatch.append {
-      case r@Req("stateless_json_call" :: Nil, _, PostRequest) => () => handleJson(r)
-    }
-  }
-
-  implicit def iterableToBox[X](in: Iterable[X]): Box[X] = in.toList.headOption
-
-  def handleJson(req: Req): Box[LiftResponse] =
-    for {
-      json <- req.json // get the JSON
-      JObject(List(JField("command", JString(cmd)), JField("params", JString(params)))) <- json
-    } yield JavaScriptResponse(SetHtml("json_result", cmd match {
-      // build the response
-      case "show" => Text(params)
-      case "textile" => TextileParser.toHtml(params, Empty)
-      case "count" => Text(params.length + " Characters")
-      case x => <b>Problem... didn't handle JSON message
-        {x}
-      </b>
-    }))
-}
+//object StatelessJson {
+//  def init() {
+//    // register the JSON handler
+//    LiftRules.statelessDispatch.append {
+//      case r@Req("stateless_json_call" :: Nil, _, PostRequest) => () => handleJson(r)
+//    }
+//  }
+//
+//  implicit def iterableToBox[X](in: Iterable[X]): Box[X] = in.toList.headOption
+//
+//  def handleJson(req: Req): Box[LiftResponse] =
+//    for {
+//      json <- req.json // get the JSON
+//      JObject(List(JField("command", JString(cmd)), JField("params", JString(params)))) <- json
+//    } yield JavaScriptResponse(SetHtml("json_result", cmd match {
+//      // build the response
+//      case "show" => Text(params)
+//      case "textile" => TextileParser.toHtml(params, Empty)
+//      case "count" => Text(params.length + " Characters")
+//      case x => <b>Problem... didn't handle JSON message
+//        {x}
+//      </b>
+//    }))
+//}

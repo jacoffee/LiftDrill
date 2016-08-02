@@ -43,9 +43,9 @@ libraryDependencies ++= {
     "com.h2database"    % "h2"     % "1.3.171",
     "org.jsoup"  %  "jsoup"  %  "1.7.3",
     "org.apache.lucene" % "lucene-smartcn" % "3.4.0",
-	"org.apache.lucene" % "lucene-highlighter" % "3.4.0",
-	"junit" % "junit" % "4.4",
-	"com.typesafe.akka" % "akka-actor" % "2.0.1"
+    "org.apache.lucene" % "lucene-highlighter" % "3.4.0",
+    "junit" % "junit" % "4.4",
+    "com.typesafe.akka" % "akka-actor" % "2.0.1"
   )
 }
 

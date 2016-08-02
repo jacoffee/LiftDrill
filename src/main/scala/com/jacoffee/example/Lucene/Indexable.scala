@@ -8,7 +8,7 @@ import org.apache.lucene.analysis.{ WhitespaceAnalyzer, SimpleAnalyzer }
 import org.apache.lucene.util.Version
 import org.apache.lucene.document.{ Document, Field, NumericField }
 import org.apache.lucene.document.Field.{ Store, Index }
-import org.apache.lucene.search.{ IndexSearcher, TermQuery, Filter, NumericRangeQuery, PrefixQuery, BooleanQuery, BooleanClause, MatchAllDocsQuery }
+import org.apache.lucene.search._
 import org.apache.lucene.queryParser.{MultiFieldQueryParser, QueryParser}
 import org.apache.lucene.analysis.standard.StandardAnalyzer
 import org.apache.lucene.search.highlight.{SimpleHTMLFormatter, Highlighter, SimpleSpanFragmenter, QueryScorer}
@@ -51,22 +51,24 @@ object myMkString  {
 // 学习如何建立 index
 class  Indexable  {
 	// prepare materials for indexing
-	protected val ids = Array("1", "2", "3", "4", "5")
-	protected val unindexedCountry = Array( "Netherlands", "Italy", "China", "US", "Chile")
-	protected val unindexedCity = Array("Amsterdam", "Venice", "Shanghai", "Los Angeles", "Santiago")
+	protected val ids = Array("26", "27")
+	protected val contents = Array(
+		"maxItemsPerBlock", "henry junior morgan"
+	)
+	protected val unindexedCountry = Array( "Netherlands", "Italy")
+	protected val unindexedCity = Array("Amsterdam", "Venice")
 	protected val unstoredDesp = Array(
 		"阿姆斯特丹是个优美的地方",
-		"威尼斯是个水上城市",
-		"上海是中国的文化和政治中心",
-		"洛杉矶有很多的NBA球星",
-		"智利的足球世界闻名"
+		"威尼斯是个水上城市"
 	)
-	protected val population = Array(100, 231, 245, 267, 120)
-	protected val foundTime = Array(1913, 1867,1949, 1776, 1345)
+	protected val population = Array(100, 231)
+	protected val foundTime = Array(1913, 1867)
+	protected val pathArr = Array("/lucene-5.1.0/core/src/java/org/apache/lucene/codecs/blocktree/Stats.java",
+		"/lucene/my")
 
 	// directory to write the index to
 	// XXX  Take Care When Storing Index in Memory, It will be cleared so you have to build Index iteratively
-	val indexedFilePosition = FSDirectory.open(new File("D:/Lucene/Country"))
+	val indexedFilePosition = FSDirectory.open(new File("/Users/allen/Lucene/Country"))
 	val version = Version.LUCENE_34
 
 	// build  document and establish index
@@ -76,7 +78,7 @@ class  Indexable  {
 		// IndexWriter会看相应的目录是否已经有了 索引相关的文件 如果有了, 就会直接往后面添加;这也就是为什么 在前一个程序中不断运行会不断添加新的索引文件
 
 		// config && analyzer
-		val config = new IndexWriterConfig(version, new WhitespaceAnalyzer(version))
+		val config = new IndexWriterConfig(version, new StandardAnalyzer((version)))
 		// write to where  and how to write
 		/* About  IndexWriter的锁机制 */
 		new IndexWriter(indexedFilePosition, config)
@@ -91,29 +93,36 @@ class  Indexable  {
 			cal.getTimeInMillis
 		}
 
-		for(i <- 0  until ids.length ) {
+		 // val result = new QueryParser(version, "", new WhitespaceAnalyzer(version)).parse("+contents:maxItemsPerBlock +path:/lucene-5.1.0/core/src/java/org/apache/lucene/codecs/blocktree/Stats.java")
+		for(i <- 0  until 1 ) {
 			val doc = new Document()
 			val cityName = unindexedCity(i)
 			doc.add(new Field("id", ids(i), Store.YES, Index.NOT_ANALYZED))
 			doc.add(new Field("country", unindexedCountry(i), Store.YES, Index.NO))
 			doc.add(new Field("city", cityName, Store.YES, Index.ANALYZED))
-			doc.add(new Field("contents", unstoredDesp(i), Store.NO, Index.ANALYZED))
+			doc.add(new Field("contents", contents(i), Field.Store.YES, Field.Index.NOT_ANALYZED))
+			doc.add(new Field("contents", "minItemsPerBlock", Field.Store.YES, Field.Index.NOT_ANALYZED))
+			doc.add(new Field("path", pathArr(i), Field.Store.YES, Field.Index.NOT_ANALYZED))
 			// Index Numeric Value in Lucene
 				// -> pure number
-			val pop = new NumericField("population").setIntValue(population(i))
-			val found =new NumericField("foundTime").setLongValue(getCalendarTime(foundTime(i)))
+		 val pop = new NumericField("population").setIntValue(population(i))
+		 val found = new NumericField("foundTime").setLongValue(getCalendarTime(foundTime(i)))
 				// ->Date time String
 /*			val foundTime = new NumericField("foundTime").setLongValue{
 				setCalendar(-((i+1)*100)).getTimeInMillis
 			}
-*/			doc.add(pop)
+*/		doc.add(pop)
 			doc.add(found)
 
 			// doc.add(new NumericField
-			if (cityName == "China") { doc.setBoost(1.5f) } else { doc.setBoost(1.0f) }
+		//	if (cityName == "China") { doc.setBoost(1.5f) } else { doc.setBoost(1.0f) }
 			iWriter.addDocument(doc)
 		}
 		println(" 新增加的文档数: " + iWriter.numDocs() )
+	//	indexedFilePosition.close();
+		 iWriter.maybeMerge()
+	 iWriter.deleteDocuments(new TermQuery(new Term("id", "15")));
+		 iWriter.commit
 		iWriter.close // commit changes to Directory
 	}
 
@@ -138,12 +147,13 @@ class  Indexable  {
 		topDocs.totalHits
 	}
 
-	def testQueryParser(fieldName: String,  searchString: String) = {
+	def testQueryParser(searchString: String) = {
 		val iSearch = new IndexSearcher(indexedFilePosition)
 		// query parser translate user-enter query expression into query object for IndexSearcher to execute
 		// 确保和索引文档时所用的 分词器一致
-		val parser = new MultiFieldQueryParser(version, Array(fieldName, "title"), new WhitespaceAnalyzer(version))
-		// "Amsterdam Or Shanghai"
+		// val parser = new MultiFieldQueryParser(version, Array(fieldName, "title"), new WhitespaceAnalyzer(version))
+
+		val parser = new QueryParser(version, "", new WhitespaceAnalyzer((version)))
 		val parsedQuery = parser.parse(searchString)
 		val topDocs = iSearch.search(parsedQuery, 5)
 		val docId = topDocs.scoreDocs.toList.map(_.doc)
@@ -178,7 +188,7 @@ class  Indexable  {
 		println("all the document " +iSearch.search(new MatchAllDocsQuery, 5).totalHits )
 	}
 
-/*	// with default SimpleSpanFragmenter
+	// with default SimpleSpanFragmenter
 	def testHighlighting = {
 		val textToDivide = "The quick brown fox jumps over the lazy dog"
 		val query = new TermQuery(new Term("field", "fox"));
@@ -192,7 +202,7 @@ class  Indexable  {
 		val fragmenter = new SimpleSpanFragmenter(scorer)
 
 		//  To successfully highlight terms, the terms in the Queryneed to match Tokens emitted from the TokenStream
-		//         为了成功的高亮 查询的Term必须和 Analyze分词的Term匹配上
+		//         为了成功的高亮 查询的Term必须和 Analyze分词的Term匹配上sbt
 		val highlighter = new Highlighter(scorer)
 
 		// user what kind of fragmenter to fragment the hit text <span></span> or <b></b>
@@ -206,31 +216,25 @@ class  Indexable  {
 
 	// wth customized hightling fragmenter that is wrap the hit term in TokenStream with our defined style
 	// such as wrap it like <span class="highlight">fox</span>
-	def testHightingIt = {
-		val textToDivide = "In this section we'll show you how to make the simplest " +
-		"programmatic query, searching for a single term, and then " +
-		"we'll see how to use QueryParser to accept textual queries. " +
-		"In the sections that follow, we’ll take this simple example " +
-		"further by detailing all the query types built into Lucene. " +
-		"We begin with the simplest search of all: searching for all " +
-		"documents that contain a single term."
-		val tokenStream = new StandardAnalyzer(Version.LUCENE_30).tokenStream("f", new StringReader(textToDivide));
-		val searchString = "term"
-		val parser = new QueryParser(version, "f", new WhitespaceAnalyzer(version))
-		// "Amsterdam Or Shanghai"
+	def singleFieldHighlighter = {
+		val textToDivide = "In 2014 and 2015 the results were ... [more] ... and Sony are developing ... [more]"
+		val tokenStream = new StandardAnalyzer(Version.LUCENE_30).tokenStream("fullText", new StringReader(textToDivide));
+		val searchString = "loadTime:[2014 TO 2015] AND fullText:sony"
+		val parser = new MultiFieldQueryParser(Version.LUCENE_30, Array("fullText", "loadTime"), new WhitespaceAnalyzer(Version.LUCENE_30))
+
+		val phraseQuery = new PhraseQuery()
+		phraseQuery.add(new Term("Sony are"))
+
 		val parsedQuery = parser.parse(searchString)
 
-		val scorer = new QueryScorer(parsedQuery, "f")
+
+		val scorer = new QueryScorer(phraseQuery, "fullText")
 		val formatter = new SimpleHTMLFormatter("<span class='highlight'>", "</span>")
 		val highlighter = new Highlighter(formatter, scorer)
 		highlighter.setTextFragmenter(new SimpleSpanFragmenter(scorer))
-		// pay attention to getBest   means there are possibly only one hit (cause most relevant)
-		//val result2 = highlighter.getBestFragment(tokenStream, textToDivide)
-		// result2
-		// <span class='highlight'>term</span>, and then we'll see how to use QueryParser to accept textual queries. In the sections
-		val allresult = highlighter.getBestFragments(tokenStream, textToDivide, 3, "...")
-		allresult
-	}*/
+		highlighter.getBestFragments(tokenStream, textToDivide, 3, "...")
+	}
+
 	// remove index
 	// conditon For instance, a newspaper publisher may want to keep only the last week’s worth of news in its searchable indexes.
 
@@ -289,23 +293,23 @@ class  Indexable  {
 
 
 object LuceneTest extends Indexable with App {
-	// Index Document -- addDocuments 反复添加会不断的出现
-		println(" Query The City " + getHitCount("city", "Amsterdam"))
-	/*
-		println(" Has Deletions 检查磁盘是否有被标记为删除的Document")
-		println(getIndexWriter.hasDeletions)
-	*/
-	// it.removeDocuments(new Term("id","1"))
-	//println(" IndexWriter 对应的Docs " +getIndexWriter.numDocs)
-	// it.removeDocuments(writer, new Term("country", "Netherlands"), writer.optimize)
-	/*
-		Update Lucene Index
-		updateDocument 一句话 先删后更新 || 更新的
-	*/
-	//AMSTERDAM
-	// getHitCount("city", "Amsterdam")  // case incentive
-	// testQueryParser("city", "Amsterdam Or Shanghai")
-	// testNumericRangeQuery("population")
-	// testBooleanQuery
-	//addDocuments
+	println("Index")
+	testQueryParser("+(contents:maxItemsPerBlock contents:minItemsPerBlock) +path:/lucene-5.1.0/core/src/java/org/apache/lucene/codecs/blocktree/Stats.java")
+
+	// println(singleFieldHighlighter)
+	// addDocuments
+	//val iSearch = new IndexSearcher(indexedFilePosition)
+
+//	val query = new PhraseQuery();
+//	List("henry", "morgan").foreach { term =>
+//		query.add(new Term("contents", term))
+//	}
+
+	println(singleFieldHighlighter)
+
+//	val matches = iSearch.search(query, 10);
+//	println(matches.totalHits)
+//	println(" 所有命中的文档的Id " + matches.scoreDocs.toList.map(_.doc)) // docId starts from one
+//	println(" 所有命中的文档的Score " + matches.scoreDocs.toList.map(_.score))
+
 }
